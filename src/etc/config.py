@@ -101,6 +101,10 @@ class Options:
         self.verbosity: MessageLevel = verbosity
         self.print_commands: bool = print_commands
 
+    # TODO: Consider letting each command parse its own value to make
+    # sure that only the values required by each command are required.
+    # That might also be required to properly allow extending the
+    # program.
     @classmethod
     def parse(cls, args: argparse.Namespace) -> "Options":
         command = cast(CommandName | None, args.command)
