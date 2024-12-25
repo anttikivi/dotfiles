@@ -10,8 +10,8 @@ from etc.config import (
     StepConfig,
     SystemPackagesStepConfig,
 )
-from etc.runners.step import Step
 from etc.shell import Shell
+from etc.steps.base_step import BaseStep
 from etc.ui import UserInterface
 
 if sys.version_info >= (3, 12):
@@ -26,7 +26,7 @@ else:
         return method
 
 
-class SystemPackagesStep(Step):
+class SystemPackagesStep(BaseStep):
     def __init__(self) -> None:
         super().__init__("system-packages", "packages")
 

@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING, Protocol, cast, final, runtime_checkable
 
 from etc import config
 from etc.config import Config, Options, StepConfig
-from etc.runners.system_packages import SystemPackagesStep
 from etc.shell import MessageLevel, Shell
+from etc.steps.system_packages import SystemPackagesStep
 from etc.ui import UserInterface
 from etc.version import VERSION
 

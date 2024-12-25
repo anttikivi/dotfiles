@@ -3,7 +3,7 @@ from collections.abc import Sequence
 import sys
 from typing import cast
 
-from etc.config import Config, Options, StepConfig, StepDirective
+from etc.config import Options, StepConfig, StepDirective
 from etc.shell import Shell
 from etc.ui import UserInterface
 
@@ -20,11 +20,10 @@ else:
         return method
 
 
-class Step(ABC):
+class BaseStep(ABC):
     """
-    StepRunner is a helper base class for the step runners of the
-    program. It implements common functionality shared between the
-    internal step runners.
+    BaseStep is a helper base class for the steps of the program. It
+    implements common functionality shared between the internal steps.
     """
 
     def __init__(
