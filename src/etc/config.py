@@ -150,7 +150,7 @@ class Options:
             if "remote_repository" not in args
             else cast(str, args.remote_repository)
         )
-        if remote_repo is None:
+        if command == "bootstrap" and remote_repo is None:
             raise ValueError("the remote repository is None")
 
         verbosity = MessageLevel.INFO - MessageLevel(cast(int, args.verbose))
