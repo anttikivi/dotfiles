@@ -2,8 +2,7 @@ import sys
 from abc import ABC, abstractmethod
 from typing import Literal, TextIO
 
-from etc.message_level import MessageLevel
-from etc.shell import Shell
+from etc.shell import MessageLevel, Shell
 
 if sys.version_info >= (3, 12):
     from typing import override

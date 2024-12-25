@@ -4,16 +4,15 @@ from typing import cast
 
 from etc.config import (
     DarwinPackagesConfig,
+    Options,
     PackagesDeclaration,
     Platform,
-    SystemPackagesStepConfig,
     StepConfig,
+    SystemPackagesStepConfig,
 )
-from etc.options import Options
+from etc.runners.step import Step
 from etc.shell import Shell
-from etc.step_runner import StepRunner
 from etc.ui import UserInterface
-
 
 if sys.version_info >= (3, 12):
     from typing import override
@@ -27,13 +26,19 @@ else:
         return method
 
 
-class SystemPackagesRunner(StepRunner):
-    def __init__(self, opts: Options, shell: Shell, ui: UserInterface) -> None:
-        super().__init__("system-packages", "packages", opts, shell, ui)
+class SystemPackagesStep(Step):
+    def __init__(self) -> None:
+        super().__init__("system-packages", "packages")
 
     @override
-    def run(self, config: StepConfig) -> int:
-        self._ui.start_step(
+    def __call__(
+        self,
+        config: StepConfig,
+        opts: Options,
+        shell: Shell,
+        ui: UserInterface,
+    ) -> int:
+        ui.start_step(
             (
                 f'Invoking the "{self.directive}" runner for the '
                 f'"{config["directive"]}" step'
@@ -41,22 +46,20 @@ class SystemPackagesRunner(StepRunner):
         )
         config = cast(SystemPackagesStepConfig, config)
 
-        self._ui.trace("Created the configuration instance")
-        self._ui.trace(f"Received the following configuration: {config}")
+        ui.trace("Created the configuration instance")
+        ui.trace(f"Received the following configuration: {config}")
 
         # Populate the packages first from the `packages` list. If the
         # key does not exist, this the packages are set to an empty
         # dictionary by default and updated later with the packages from
         # `platforms.all`.
         all_packages: PackagesDeclaration = {}
-        self._ui.trace("Created the `all_packages` instance")
+        ui.trace("Created the `all_packages` instance")
         if "packages" in config:
-            self._ui.debug(
-                'Found the key "packages" in the system packages step'
-            )
+            ui.debug('Found the key "packages" in the system packages step')
             all_packages = config["packages"]
 
-        self._ui.trace(
+        ui.trace(
             (
                 "After populating from `packages`, `all_packages` is now "
                 f"{all_packages}"
@@ -65,9 +68,9 @@ class SystemPackagesRunner(StepRunner):
 
         # Convert the packages to a dict if they are given as a list.
         if type(all_packages) is list:
-            self._ui.trace("`all_packages` is a list")
+            ui.trace("`all_packages` is a list")
             all_packages = {pkg: "" for pkg in all_packages}
-        self._ui.trace(
+        ui.trace(
             (
                 "`all_packages` is now converted to a dictionary and is "
                 f"{all_packages}"
@@ -81,7 +84,7 @@ class SystemPackagesRunner(StepRunner):
             type(all_packages) is dict
         ), 'variable "all_packages" is not a dictionary'
 
-        self._ui.trace(
+        ui.trace(
             (
                 "Assertion for `all_packages` complete, the type is "
                 f"{type(all_packages)}"
@@ -89,14 +92,12 @@ class SystemPackagesRunner(StepRunner):
         )
 
         platforms_config = None
-        self._ui.trace("Created the `platforms_config` configuration instance")
+        ui.trace("Created the `platforms_config` configuration instance")
         if "platforms" in config:
-            self._ui.debug(
-                'Found the key "platforms" in the system packages step'
-            )
+            ui.debug('Found the key "platforms" in the system packages step')
             platforms_config = config["platforms"]
 
-        self._ui.trace(
+        ui.trace(
             (
                 'After populating from "platforms", variable '
                 f"`platforms_config` is now {platforms_config}"
@@ -106,7 +107,7 @@ class SystemPackagesRunner(StepRunner):
         # Start by checking if there are packages to install on all
         # platforms and merge them with the
         if "all" in platforms_config:
-            self._ui.debug(
+            ui.debug(
                 (
                     'Found the key "all" in the platforms configuration of the '
                     "system packages step"
@@ -115,7 +116,7 @@ class SystemPackagesRunner(StepRunner):
             platform_all_pkgs = platforms_config["all"]
             if type(platform_all_pkgs) is list:
                 platform_all_pkgs = {pkg: "" for pkg in platform_all_pkgs}
-            self._ui.trace(
+            ui.trace(
                 (
                     'After populating from "platforms.all", variable '
                     f"`platform_all_pkgs` is now {platform_all_pkgs}"
@@ -127,7 +128,7 @@ class SystemPackagesRunner(StepRunner):
             assert type(platform_all_pkgs) is dict
             all_packages.update(platform_all_pkgs)
 
-        self._ui.trace(
+        ui.trace(
             (
                 'After merging with packages from "platforms.all", variable '
                 f"`all_packages` is now {all_packages}"
@@ -135,13 +136,13 @@ class SystemPackagesRunner(StepRunner):
         )
 
         # TODO: Handle Linux distros.
-        self._shell.echo_uname_tr()
+        shell.echo_uname_tr()
         # TODO: Set this at the start of the program run and receive
         # the value from the caller.
         current_platform: Platform = cast(Platform, sys.platform)
 
-        self._ui.trace(f'Resolved "{current_platform}" as the platform')
-        self._ui.debug(
+        ui.trace(f'Resolved "{current_platform}" as the platform')
+        ui.debug(
             (
                 "Checking if there are platform-specific packages for "
                 f'"{current_platform}"'
@@ -153,7 +154,7 @@ class SystemPackagesRunner(StepRunner):
         all_casks: PackagesDeclaration = {}
 
         if current_platform in platforms_config:
-            self._ui.debug(
+            ui.debug(
                 (
                     f'Found the key "{current_platform}" in the platforms '
                     "configuration of the system packages step"
@@ -173,19 +174,19 @@ class SystemPackagesRunner(StepRunner):
                     "formulae" in current_platform_config
                     and "casks" in current_platform_config
                 ):
-                    self._ui.debug(
+                    ui.debug(
                         (
                             'Found the keys "formulae" and "casks" in the platforms configuration of the system packages step'
                         )
                     )
                 elif "formulae" in current_platform_config:
-                    self._ui.debug(
+                    ui.debug(
                         (
                             'Found the key "formulae" in the platforms configuration of the system packages step'
                         )
                     )
                 elif "casks" in current_platform_config:
-                    self._ui.debug(
+                    ui.debug(
                         (
                             'Found the key "casks" in the platforms configuration of the system packages step'
                         )
@@ -196,7 +197,7 @@ class SystemPackagesRunner(StepRunner):
                     formulae = current_platform_config["formulae"]
                     if type(formulae) is list:
                         formulae = {formula: "" for formula in formulae}
-                    self._ui.trace(
+                    ui.trace(
                         (
                             "After populating from "
                             '"platforms.darwin.formulae", variable '
@@ -213,7 +214,7 @@ class SystemPackagesRunner(StepRunner):
                     casks = current_platform_config["casks"]
                     if type(casks) is list:
                         casks = {cask: "" for cask in casks}
-                    self._ui.trace(
+                    ui.trace(
                         (
                             'After populating from "platforms.darwin.casks", '
                             f"variable `casks` is now {casks}"
@@ -230,7 +231,7 @@ class SystemPackagesRunner(StepRunner):
                 )
                 if type(platform_pkgs) is list:
                     platform_pkgs = {pkg: "" for pkg in platform_pkgs}
-                self._ui.trace(
+                ui.trace(
                     (
                         "After populating from "
                         f'"platforms.{current_platform}", variable '
@@ -242,7 +243,7 @@ class SystemPackagesRunner(StepRunner):
                 assert type(platform_pkgs) is dict
                 all_packages.update(platform_pkgs)
 
-        self._ui.trace(
+        ui.trace(
             (
                 "After merging with packages from "
                 f'"platforms.{current_platform}", variable `all_packages` is '
@@ -250,7 +251,7 @@ class SystemPackagesRunner(StepRunner):
             )
         )
         if current_platform == "darwin":
-            self._ui.trace(
+            ui.trace(
                 (
                     "After merging with casks from "
                     f'"platforms.{current_platform}", variable `all_casks` is '
@@ -258,21 +259,21 @@ class SystemPackagesRunner(StepRunner):
                 )
             )
 
-        self._ui.start_task("Starting to install the packages")
-        self._ui.trace("Going to install:")
+        ui.start_task("Starting to install the packages")
+        ui.trace("Going to install:")
         for k, v in all_packages.items():
             s = f" - {k}"
             if v != "":
                 s = f"{s}@{v}"
-            self._ui.trace(s)
+            ui.trace(s)
 
         if current_platform == "darwin":
-            self._install_darwin_packages(all_packages)
+            self._install_darwin_packages(shell, ui, all_packages)
 
             if all_casks:
-                self._ui.start_task("Installing casks")
-                self._install_darwin_packages(all_casks, casks=True)
-                self._ui.complete_task("Casks installed")
+                ui.start_task("Installing casks")
+                self._install_darwin_packages(shell, ui, all_casks, casks=True)
+                ui.complete_task("Casks installed")
         else:
             raise ValueError(
                 (
@@ -281,53 +282,53 @@ class SystemPackagesRunner(StepRunner):
                 )
             )  # pyright: ignore[reportUnreachable]
 
-        self._ui.complete_task("Packages installed")
+        ui.complete_task("Packages installed")
 
-        self._ui.complete_step(f'Step "{config["directive"]}" complete')
+        ui.complete_step(f'Step "{config["directive"]}" complete')
 
         return 0
 
     def _install_darwin_packages(
-        self, packages: dict[str, str], casks: bool | None = None
+        self,
+        shell: Shell,
+        ui: UserInterface,
+        packages: dict[str, str],
+        casks: bool | None = None,
     ):
-        self._ui.trace("Getting the list of installed Homebrew packages")
-        installed_packages = self._shell.output(["brew", "ls"])
+        ui.trace("Getting the list of installed Homebrew packages")
+        installed_packages = shell.output(["brew", "ls"])
         for pkg, ver in packages.items():
-            self._ui.trace(
-                f'Handling the {"cask" if casks else "package"} "{pkg}"'
-            )
-            self._ui.trace(
+            ui.trace(f'Handling the {"cask" if casks else "package"} "{pkg}"')
+            ui.trace(
                 (
                     f'Checking it the {"cask" if casks else "package"} '
                     f'"{pkg}" is installed'
                 )
             )
-            self._shell.print_command(["basename", pkg])
+            shell.print_command(["basename", pkg])
             pkg_name = os.path.basename(pkg) if "/" in pkg else pkg
             should_install = True
-            self._shell.print_command(
-                ["brew", "ls", "|", "grep", "-qx", pkg_name]
-            )
+            shell.print_command(["brew", "ls", "|", "grep", "-qx", pkg_name])
             for p in (p for p in installed_packages.splitlines()):
                 if pkg_name == p:
                     should_install = False
                     break
             if not should_install:
-                self._ui.debug(
+                ui.debug(
                     (
                         f'The {"cask" if casks else "package"} "{pkg}" is '
                         'already installed, skipping'
                     )
                 )
                 continue
-            self._ui.start_task(
+            ui.start_task(
                 f'Installing "{(pkg if ver == "" else f"{pkg}@{ver}")}"'
             )
-            self._shell(
+            shell(
                 ["brew", "install", "--cask", pkg]
                 if casks
                 else ["brew", "install", pkg]
             )
-            self._ui.complete_task(
+            ui.complete_task(
                 f'"{(pkg if ver == "" else f"{pkg}@{ver}")}" installed'
             )
