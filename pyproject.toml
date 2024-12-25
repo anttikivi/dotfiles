@@ -42,3 +42,7 @@ line-length = 79
 docstring-code-format = true
 indent-style = "space"
 quote-style = "double"
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint.isort]
+extra-standard-library = ["tomllib"]
