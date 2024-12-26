@@ -24,6 +24,16 @@ if not AK.pick.register(picker) then
   return {}
 end
 
+local function symbols_filter(entry, ctx)
+  if ctx.symbols_filter == nil then
+    ctx.symbols_filter = AK.config.get_kind_filter(ctx.bufnr) or false
+  end
+  if ctx.symbols_filter == false then
+    return true
+  end
+  return vim.tbl_contains(ctx.symbols_filter, entry.kind)
+end
+
 return {
   {
     "ibhagwan/fzf-lua",
@@ -186,6 +196,7 @@ return {
     end,
     init = function()
       AK.on_very_lazy(function()
+        ---@diagnostic disable-next-line: duplicate-set-field
         vim.ui.select = function(...)
           require("lazy").load({ plugins = { "fzf-lua" } })
           local opts = AK.opts("fzf-lua") or {}
@@ -230,6 +241,24 @@ return {
       },
       { "<leader>sh", "<cmd>FzfLua help_tags<cr>", desc = "Help pages" },
       -- TODO: LSP searches at least.
+      {
+        "<leader>ss",
+        function()
+          require("fzf-lua").lsp_document_symbols({
+            regex_filter = symbols_filter,
+          })
+        end,
+        desc = "Goto Symbol",
+      },
+      {
+        "<leader>sS",
+        function()
+          require("fzf-lua").lsp_live_workspace_symbols({
+            regex_filter = symbols_filter,
+          })
+        end,
+        desc = "Goto Symbol (Workspace)",
+      },
     },
   },
   {

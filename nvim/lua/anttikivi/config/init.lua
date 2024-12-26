@@ -102,6 +102,27 @@ local config = {
   },
 }
 
+---@param buf? number
+---@return string[]?
+function M.get_kind_filter(buf)
+  buf = (buf == nil or buf == 0) and vim.api.nvim_get_current_buf() or buf
+  local ft = vim.bo[buf].filetype
+  if M.kind_filter == false then
+    return
+  end
+  if M.kind_filter[ft] == false then
+    return
+  end
+  if type(M.kind_filter[ft]) == "table" then
+    return M.kind_filter[ft]
+  end
+  ---@diagnostic disable-next-line: return-type-mismatch
+  return type(M.kind_filter) == "table"
+      and type(M.kind_filter.default) == "table"
+      and M.kind_filter.default
+    or nil
+end
+
 M.did_init = false
 function M.init()
   if M.did_init then
