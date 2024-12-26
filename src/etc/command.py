@@ -3,10 +3,25 @@ import os
 import sys
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
-from typing import TYPE_CHECKING, Protocol, cast, final, runtime_checkable
+from typing import (
+    TYPE_CHECKING,
+    MutableSequence,
+    Protocol,
+    cast,
+    final,
+    runtime_checkable,
+)
 
 from etc import config
-from etc.config import Config, Options, StepConfig
+from etc.config import (
+    BootstrapOptions,
+    CommandName,
+    CommandOptions,
+    OldConfig,
+    Options,
+    StepConfig,
+    SubcommandOptions,
+)
 from etc.shell import MessageLevel, Shell
 from etc.steps.system_packages import SystemPackagesStep
 from etc.ui import UserInterface
@@ -32,7 +47,7 @@ else:
 
 class Command(Protocol):
     def __call__(
-        self, config: Config, opts: Options, shell: Shell, ui: UserInterface
+        self, config: OldConfig, opts: Options, shell: Shell, ui: UserInterface
     ) -> int: ...
 
     @property
@@ -69,6 +84,14 @@ class Subparser(Protocol):
         """
         ...
 
+    def parse_arguments(self, args: argparse.Namespace) -> CommandOptions:
+        """
+        Parses the command-line arguments associated with this
+        subcommand from the Namespace and returns the CommandOptions for
+        this subcommand.
+        """
+        ...
+
 
 @final
 class BaseCommand:
@@ -80,16 +103,16 @@ class BaseCommand:
     def __init__(self) -> None:
         self.name: str = "etc"
         self.aliases: None = None
-        self.commands: list[Command] = []
+        self.commands: MutableSequence[Command] = list()
 
     def __call__(
-        self, config: Config, opts: Options, shell: Shell, ui: UserInterface
+        self, config: OldConfig, opts: Options, shell: Shell, ui: UserInterface
     ) -> int:
         """
         Runs the base command or selects the correct subcommand and
         runs that.
         """
-        if opts.command is None:
+        if opts.command == "etc":
             # TODO: Run the base command.
             raise NotImplementedError("bare base command cannot be run")
         for cmd in self.commands:
@@ -123,6 +146,54 @@ class BaseCommand:
                 _ = subcommand.create_subparser(subparsers)
 
         return parser
+
+    def parse_arguments(self, parser: argparse.ArgumentParser) -> Options:
+        args = parser.parse_args()
+        assert len(self.commands) > 0, (
+            "subcommands for the base command is an empty list while parsing "
+            "the command-line arguments"
+        )
+
+        colors = cast(bool | None, args.colors)
+        if colors is None:
+            # TODO: Use a better way to determine the default value.
+            colors = True
+
+        dry_run = cast(bool, args.dry_run)
+
+        print_commands = (
+            False
+            if "print_commands" not in args
+            else cast(bool, args.print_commands)
+        ) or dry_run
+
+        verbosity = MessageLevel.INFO - MessageLevel(cast(int, args.verbose))
+
+        cmd_name = cast(CommandName | None, args.command)
+        if cmd_name is None:
+            cmd_name = "etc"
+
+        command: Subparser | None = None
+        for cmd in filter(
+            lambda c: c.name
+            or (c.aliases is not None and cmd_name in c.aliases),
+            self.commands,
+        ):
+            if isinstance(cmd, Subparser):
+                command = cmd
+
+        cmd_opts: CommandOptions | None = None
+        if command is not None and cmd_name != "etc":
+            cmd_opts = command.parse_arguments(args)
+
+        return Options(
+            colors=colors,
+            command=cmd_name,
+            dry_run=dry_run,
+            print_commands=print_commands,
+            verbosity=verbosity,
+            command_opts=cmd_opts,
+        )
 
     def _create_global_parser(
         self, parser: argparse.ArgumentParser
@@ -198,7 +269,7 @@ class Subcommand(ABC):
 
     @abstractmethod
     def __call__(
-        self, config: Config, opts: Options, shell: Shell, ui: UserInterface
+        self, config: OldConfig, opts: Options, shell: Shell, ui: UserInterface
     ) -> int: ...
 
     def create_subparser(
@@ -223,6 +294,18 @@ class Subcommand(ABC):
                 )
 
         return parsers
+
+    def parse_arguments(self, args: argparse.Namespace) -> CommandOptions:
+        base_directory, config_file = self._parse_config_file_arguments(args)
+        return SubcommandOptions(base_directory, config_file)
+
+    # TODO: Should this function return something the steps were not
+    # created successfully?
+    def _create_steps(self, config: OldConfig, ui: UserInterface) -> None:  # pyright: ignore[reportUnusedParameter]
+        ui.start_step("Creating steps")
+        # TODO: Allow defining steps as plugins.
+        self.steps = [SystemPackagesStep()]
+        ui.complete_step("Steps created")
 
     def _create_subparser_with_configuration_file(
         self,
@@ -261,13 +344,36 @@ class Subcommand(ABC):
         )
         return parser
 
-    # TODO: Should this function return something the steps were not
-    # created successfully?
-    def _create_steps(self, config: Config, ui: UserInterface) -> None:  # pyright: ignore[reportUnusedParameter]
-        ui.start_step("Creating steps")
-        # TODO: Allow defining steps as plugins.
-        self.steps = [SystemPackagesStep()]
-        ui.complete_step("Steps created")
+    def _parse_config_file_arguments(self, args: argparse.Namespace):
+        if "base_directory" not in args:
+            raise ValueError(
+                (
+                    f"the arguments namespace passed to command {self.name} "
+                    'does not contain the key "base_directory"'
+                )
+            )
+        base_directory = os.path.expandvars(
+            os.path.expanduser(cast(str, args.base_directory))
+        )
+        if not os.path.isabs(base_directory):
+            base_directory = os.path.abspath(base_directory)
+
+        if "config_file" not in args:
+            raise ValueError(
+                (
+                    f"the arguments namespace passed to command {self.name} "
+                    'does not contain the key "config_file"'
+                )
+            )
+        config_file = os.path.expandvars(
+            os.path.expanduser(cast(str, args.config_file))
+        )
+        if not os.path.isabs(config_file):
+            config_file = os.path.normpath(
+                os.path.join(base_directory, config_file)
+            )
+
+        return base_directory, config_file
 
 
 class BootstrapCommand(Subcommand):
@@ -281,37 +387,36 @@ class BootstrapCommand(Subcommand):
 
     @override
     def __call__(
-        self, config: Config, opts: Options, shell: Shell, ui: UserInterface
+        self, config: OldConfig, opts: Options, shell: Shell, ui: UserInterface
     ) -> int:
         ui.start_phase("Starting to bootstrap to configuration")
 
-        assert (
-            opts.base_directory is not None
-        ), "the base directory passed to bootstrapping is None"
+        assert isinstance(opts.command_opts, BootstrapOptions), (
+            f'the command options passed to the command "{self.name}" is not '
+            "an instance of bootstrap options"
+        )
 
-        shell.echo_test_e(opts.base_directory)
-        if os.path.exists(opts.base_directory):
-            ui.error(
-                f"The configuration directory at {opts.base_directory} exists"
-            )
+        base_directory = opts.command_opts.base_directory
+
+        shell.echo_test_e(base_directory)
+        if os.path.exists(base_directory):
+            ui.error(f"The configuration directory at {base_directory} exists")
             ui.error("Bootstrapping must be done using a clean installation")
             return 1
 
-        assert (
-            opts.remote_repository_url is not None
-        ), "the remote repository URL passed to bootstrapping is None"
+        remote_repository = opts.command_opts.remote_repository
 
         # Check if the given remote URL is an SSH URL. If so, it needs to be
         # converted to HTTPS URL for the initial clone. It will be changed
         # back later.
-        remote_url = opts.remote_repository_url
+        remote_url = remote_repository
         if remote_url.startswith("git@github.com:"):
             _, repo_name = remote_url.split(":")
             remote_url = f"https://github.com/{repo_name}"
 
         ui.start_step("Cloning the remote directory")
-        ui.debug(f'Cloning from "{remote_url}" to "{opts.base_directory}"')
-        _ = shell(["git", "clone", remote_url, opts.base_directory])
+        ui.debug(f'Cloning from "{remote_url}" to "{base_directory}"')
+        _ = shell(["git", "clone", remote_url, base_directory])
         ui.complete_step("Repository cloned")
 
         # TODO: Run the new install!
@@ -323,20 +428,20 @@ class BootstrapCommand(Subcommand):
         ui.start_step("Changing the remote URL for the local repository")
         ui.trace("Checking the current remote URL for origin")
         result = shell.output(
-            ["git", "-C", opts.base_directory, "remote", "get-url", "origin"]
+            ["git", "-C", base_directory, "remote", "get-url", "origin"]
         )
         current_remote = result.strip()
         ui.trace(f"Got {current_remote} as the current remote URL")
-        if current_remote != opts.remote_repository_url:
+        if current_remote != remote_repository:
             shell(
                 [
                     "git",
                     "-C",
-                    opts.base_directory,
+                    base_directory,
                     "remote",
                     "set-url",
                     "origin",
-                    opts.remote_repository_url,
+                    remote_repository,
                 ]
             )
         ui.debug(
@@ -344,15 +449,15 @@ class BootstrapCommand(Subcommand):
             bold=True,
         )
         shell(
-            ["git", "-C", opts.base_directory, "remote", "-v"],
+            ["git", "-C", base_directory, "remote", "-v"],
             allow_output=opts.verbosity <= MessageLevel.DEBUG,
         )
         ui.debug("Fetching the remote")
-        shell(["git", "-C", opts.base_directory, "fetch"])
+        shell(["git", "-C", base_directory, "fetch"])
 
         ui.debug("The status of the repository now is:", bold=True)
         shell(
-            ["git", "-C", opts.base_directory, "status"],
+            ["git", "-C", base_directory, "status"],
             allow_output=opts.verbosity <= MessageLevel.DEBUG,
         )
 
@@ -390,6 +495,19 @@ class BootstrapCommand(Subcommand):
 
         return parsers
 
+    @override
+    def parse_arguments(self, args: argparse.Namespace) -> CommandOptions:
+        base_directory, config_file = self._parse_config_file_arguments(args)
+        if "remote_repository" not in args:
+            raise ValueError(
+                (
+                    f"the arguments namespace passed to command {self.name} "
+                    'does not contain the key "remote_repository"'
+                )
+            )
+        remote_repo = cast(str, args.remote_repository)
+        return BootstrapOptions(base_directory, config_file, remote_repo)
+
 
 class InstallCommand(Subcommand):
     help: str | None = "Install the workstation configuration and environment."
@@ -399,7 +517,7 @@ class InstallCommand(Subcommand):
 
     @override
     def __call__(
-        self, config: Config, opts: Options, shell: Shell, ui: UserInterface
+        self, config: OldConfig, opts: Options, shell: Shell, ui: UserInterface
     ) -> int:
         ui.start_phase("Starting the install suite")
 

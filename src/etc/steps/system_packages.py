@@ -1,5 +1,6 @@
 import os
 import sys
+from collections.abc import Mapping, MutableMapping, Sequence
 from typing import cast
 
 from etc.config import (
@@ -27,6 +28,10 @@ else:
 
 
 class SystemPackagesStep(BaseStep):
+    """
+    Installs system-wide packages.
+    """
+
     def __init__(self) -> None:
         super().__init__("system-packages", "packages")
 
@@ -67,7 +72,7 @@ class SystemPackagesStep(BaseStep):
         )
 
         # Convert the packages to a dict if they are given as a list.
-        if type(all_packages) is list:
+        if isinstance(all_packages, Sequence):
             ui.trace("`all_packages` is a list")
             all_packages = {pkg: "" for pkg in all_packages}
         ui.trace(
@@ -80,9 +85,9 @@ class SystemPackagesStep(BaseStep):
         # `all_packages` should always be a dictionary at this point.
         # The LSP understands the assert statement, so it is placed here
         # for convenience.
-        assert (
-            type(all_packages) is dict
-        ), 'variable "all_packages" is not a dictionary'
+        assert isinstance(
+            all_packages, MutableMapping
+        ), 'variable "all_packages" is not a mapping'
 
         ui.trace(
             (
@@ -106,7 +111,7 @@ class SystemPackagesStep(BaseStep):
 
         # Start by checking if there are packages to install on all
         # platforms and merge them with the
-        if "all" in platforms_config:
+        if platforms_config is not None and "all" in platforms_config:
             ui.debug(
                 (
                     'Found the key "all" in the platforms configuration of the '
@@ -114,7 +119,7 @@ class SystemPackagesStep(BaseStep):
                 )
             )
             platform_all_pkgs = platforms_config["all"]
-            if type(platform_all_pkgs) is list:
+            if isinstance(platform_all_pkgs, Sequence):
                 platform_all_pkgs = {pkg: "" for pkg in platform_all_pkgs}
             ui.trace(
                 (
@@ -125,7 +130,9 @@ class SystemPackagesStep(BaseStep):
 
             # `platform_all_pkgs` should always be a dictionary at this
             # point.
-            assert type(platform_all_pkgs) is dict
+            assert isinstance(
+                platform_all_pkgs, Mapping
+            ), 'variable "platform_all_pkgs" is not a mapping'
             all_packages.update(platform_all_pkgs)
 
         ui.trace(
@@ -153,7 +160,10 @@ class SystemPackagesStep(BaseStep):
         # running Darwin.
         all_casks: PackagesDeclaration = {}
 
-        if current_platform in platforms_config:
+        if (
+            platforms_config is not None
+            and current_platform in platforms_config
+        ):
             ui.debug(
                 (
                     f'Found the key "{current_platform}" in the platforms '
@@ -195,7 +205,7 @@ class SystemPackagesStep(BaseStep):
                 # Populate the packages from `formulae`.
                 if "formulae" in current_platform_config:
                     formulae = current_platform_config["formulae"]
-                    if type(formulae) is list:
+                    if isinstance(formulae, Sequence):
                         formulae = {formula: "" for formula in formulae}
                     ui.trace(
                         (
@@ -206,13 +216,15 @@ class SystemPackagesStep(BaseStep):
                     )
                     # `formulae` should always be a dictionary at this
                     # point.
-                    assert type(formulae) is dict
+                    assert isinstance(
+                        formulae, Mapping
+                    ), 'variable "formulae" is not a mapping'
                     all_packages.update(formulae)
 
                 # Populate the packages from `formulae`.
                 if "casks" in current_platform_config:
                     casks = current_platform_config["casks"]
-                    if type(casks) is list:
+                    if isinstance(casks, Sequence):
                         casks = {cask: "" for cask in casks}
                     ui.trace(
                         (
@@ -222,14 +234,17 @@ class SystemPackagesStep(BaseStep):
                     )
                     # `casks` should always be a dictionary at this
                     # point.
-                    assert type(casks) is dict
+                    assert isinstance(
+                        casks, Mapping
+                    ), 'variable "casks" is not a mapping'
+
                     all_casks.update(casks)
 
             else:
                 platform_pkgs: PackagesDeclaration = cast(
                     PackagesDeclaration, platforms_config[current_platform]
                 )
-                if type(platform_pkgs) is list:
+                if isinstance(platform_pkgs, Sequence):
                     platform_pkgs = {pkg: "" for pkg in platform_pkgs}
                 ui.trace(
                     (
@@ -240,7 +255,9 @@ class SystemPackagesStep(BaseStep):
                 )
                 # `platform_all_pkgs` should always be a dictionary at this
                 # point.
-                assert type(platform_pkgs) is dict
+                assert isinstance(
+                    platform_pkgs, Mapping
+                ), 'variable "platform_pkgs" is not a mapping'
                 all_packages.update(platform_pkgs)
 
         ui.trace(
@@ -292,7 +309,7 @@ class SystemPackagesStep(BaseStep):
         self,
         shell: Shell,
         ui: UserInterface,
-        packages: dict[str, str],
+        packages: Mapping[str, str],
         casks: bool | None = None,
     ):
         ui.trace("Getting the list of installed Homebrew packages")
