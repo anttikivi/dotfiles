@@ -1,7 +1,13 @@
-[[install.steps]]
-directive = "packages"
+[[steps]]
+directive = "clean"
 
-[install.steps.platforms.darwin]
+[steps.directories."~"]
+[steps.directories."~/.config"]
+force = true
+
+[[steps]]
+directive = "packages"
+platform = "darwin"
 formulae = [
   "awscli",
   "bat",

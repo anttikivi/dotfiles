@@ -1,16 +1,17 @@
 import os
 import sys
 from collections.abc import Mapping, MutableMapping, Sequence
-from typing import cast
+from typing import Any, cast, get_args
 
 from etc.config import (
     DarwinPackagesConfig,
     Options,
-    PackagesDeclaration,
     Platform,
     StepConfig,
-    SystemPackagesStepConfig,
+    StepDirective,
+    SystemPackagesConfig,
 )
+from etc.exceptions import ConfigTypeError, InvalidConfigError
 from etc.shell import Shell
 from etc.steps.base_step import BaseStep
 from etc.ui import UserInterface
@@ -38,272 +39,218 @@ class SystemPackagesStep(BaseStep):
     @override
     def __call__(
         self,
+        name: str,
         config: StepConfig,
         opts: Options,
         shell: Shell,
         ui: UserInterface,
     ) -> int:
         ui.start_step(
-            (
-                f'Invoking the "{self.directive}" runner for the '
-                f'"{config["directive"]}" step'
-            )
+            f'Invoking the "{name}" step for the "{config.directive}" step'
         )
-        config = cast(SystemPackagesStepConfig, config)
-
-        ui.trace("Created the configuration instance")
-        ui.trace(f"Received the following configuration: {config}")
-
-        # Populate the packages first from the `packages` list. If the
-        # key does not exist, this the packages are set to an empty
-        # dictionary by default and updated later with the packages from
-        # `platforms.all`.
-        all_packages: PackagesDeclaration = {}
-        ui.trace("Created the `all_packages` instance")
-        if "packages" in config:
-            ui.debug('Found the key "packages" in the system packages step')
-            all_packages = config["packages"]
-
-        ui.trace(
-            (
-                "After populating from `packages`, `all_packages` is now "
-                f"{all_packages}"
-            )
-        )
-
-        # Convert the packages to a dict if they are given as a list.
-        if isinstance(all_packages, Sequence):
-            ui.trace("`all_packages` is a list")
-            all_packages = {pkg: "" for pkg in all_packages}
-        ui.trace(
-            (
-                "`all_packages` is now converted to a dictionary and is "
-                f"{all_packages}"
-            )
-        )
-
-        # `all_packages` should always be a dictionary at this point.
-        # The LSP understands the assert statement, so it is placed here
-        # for convenience.
-        assert isinstance(
-            all_packages, MutableMapping
-        ), 'variable "all_packages" is not a mapping'
-
-        ui.trace(
-            (
-                "Assertion for `all_packages` complete, the type is "
-                f"{type(all_packages)}"
-            )
-        )
-
-        platforms_config = None
-        ui.trace("Created the `platforms_config` configuration instance")
-        if "platforms" in config:
-            ui.debug('Found the key "platforms" in the system packages step')
-            platforms_config = config["platforms"]
-
-        ui.trace(
-            (
-                'After populating from "platforms", variable '
-                f"`platforms_config` is now {platforms_config}"
-            )
-        )
-
-        # Start by checking if there are packages to install on all
-        # platforms and merge them with the
-        if platforms_config is not None and "all" in platforms_config:
-            ui.debug(
+        if not isinstance(config, SystemPackagesConfig):
+            raise TypeError(
                 (
-                    'Found the key "all" in the platforms configuration of the '
-                    "system packages step"
-                )
-            )
-            platform_all_pkgs = platforms_config["all"]
-            if isinstance(platform_all_pkgs, Sequence):
-                platform_all_pkgs = {pkg: "" for pkg in platform_all_pkgs}
-            ui.trace(
-                (
-                    'After populating from "platforms.all", variable '
-                    f"`platform_all_pkgs` is now {platform_all_pkgs}"
+                    f'the "{name}" step received a config that is not an '
+                    "instance of SystemPackagesConfig but the type of which "
+                    f'is "{type(config)}"'
                 )
             )
 
-            # `platform_all_pkgs` should always be a dictionary at this
-            # point.
-            assert isinstance(
-                platform_all_pkgs, Mapping
-            ), 'variable "platform_all_pkgs" is not a mapping'
-            all_packages.update(platform_all_pkgs)
+        if config.platform is not None and opts.platform != config.platform:
+            ui.complete_step(
+                (
+                    f'The "{name}" step is configured for {config.platform} '
+                    f"but the program is running on {opts.platform}, skipping"
+                )
+            )  # pyright: ignore[reportUnreachable]
+            return 0
 
-        ui.trace(
-            (
-                'After merging with packages from "platforms.all", variable '
-                f"`all_packages` is now {all_packages}"
-            )
-        )
-
-        # TODO: Handle Linux distros.
-        shell.echo_uname_tr()
-        # TODO: Set this at the start of the program run and receive
-        # the value from the caller.
-        current_platform: Platform = cast(Platform, sys.platform)
-
-        ui.trace(f'Resolved "{current_platform}" as the platform')
-        ui.debug(
-            (
-                "Checking if there are platform-specific packages for "
-                f'"{current_platform}"'
-            )
-        )
-
-        # Create the instance for casks as it is needed if we are
-        # running Darwin.
-        all_casks: PackagesDeclaration = {}
-
-        if (
-            platforms_config is not None
-            and current_platform in platforms_config
+        if config.platform == "darwin" and not isinstance(
+            config, DarwinPackagesConfig
         ):
-            ui.debug(
+            raise TypeError(
                 (
-                    f'Found the key "{current_platform}" in the platforms '
-                    "configuration of the system packages step"
+                    f'on Darwin, the "{name}" step received a config that is '
+                    "not an instance of DarwinPackagesConfig but the type of "
+                    f'which is "{type(config)}"'
                 )
             )
-            current_platform_config = platforms_config[current_platform]
-            if current_platform == "darwin" and (
-                "formulae" in current_platform_config
-                or "casks" in current_platform_config
-            ):
-                current_platform_config = cast(
-                    DarwinPackagesConfig, current_platform_config
-                )
-                # NOTE: This is stupid, but I want to print the
-                # granular debug messages.
-                if (
-                    "formulae" in current_platform_config
-                    and "casks" in current_platform_config
-                ):
-                    ui.debug(
-                        (
-                            'Found the keys "formulae" and "casks" in the platforms configuration of the system packages step'
-                        )
-                    )
-                elif "formulae" in current_platform_config:
-                    ui.debug(
-                        (
-                            'Found the key "formulae" in the platforms configuration of the system packages step'
-                        )
-                    )
-                elif "casks" in current_platform_config:
-                    ui.debug(
-                        (
-                            'Found the key "casks" in the platforms configuration of the system packages step'
-                        )
-                    )
 
-                # Populate the packages from `formulae`.
-                if "formulae" in current_platform_config:
-                    formulae = current_platform_config["formulae"]
-                    if isinstance(formulae, Sequence):
-                        formulae = {formula: "" for formula in formulae}
-                    ui.trace(
-                        (
-                            "After populating from "
-                            '"platforms.darwin.formulae", variable '
-                            f"`formulae` is now {formulae}"
-                        )
-                    )
-                    # `formulae` should always be a dictionary at this
-                    # point.
-                    assert isinstance(
-                        formulae, Mapping
-                    ), 'variable "formulae" is not a mapping'
-                    all_packages.update(formulae)
-
-                # Populate the packages from `formulae`.
-                if "casks" in current_platform_config:
-                    casks = current_platform_config["casks"]
-                    if isinstance(casks, Sequence):
-                        casks = {cask: "" for cask in casks}
-                    ui.trace(
-                        (
-                            'After populating from "platforms.darwin.casks", '
-                            f"variable `casks` is now {casks}"
-                        )
-                    )
-                    # `casks` should always be a dictionary at this
-                    # point.
-                    assert isinstance(
-                        casks, Mapping
-                    ), 'variable "casks" is not a mapping'
-
-                    all_casks.update(casks)
-
-            else:
-                platform_pkgs: PackagesDeclaration = cast(
-                    PackagesDeclaration, platforms_config[current_platform]
-                )
-                if isinstance(platform_pkgs, Sequence):
-                    platform_pkgs = {pkg: "" for pkg in platform_pkgs}
-                ui.trace(
-                    (
-                        "After populating from "
-                        f'"platforms.{current_platform}", variable '
-                        f"`platform_pkgs` is now {platform_pkgs}"
-                    )
-                )
-                # `platform_all_pkgs` should always be a dictionary at this
-                # point.
-                assert isinstance(
-                    platform_pkgs, Mapping
-                ), 'variable "platform_pkgs" is not a mapping'
-                all_packages.update(platform_pkgs)
-
-        ui.trace(
-            (
-                "After merging with packages from "
-                f'"platforms.{current_platform}", variable `all_packages` is '
-                f"now {all_packages}"
-            )
-        )
-        if current_platform == "darwin":
-            ui.trace(
-                (
-                    "After merging with casks from "
-                    f'"platforms.{current_platform}", variable `all_casks` is '
-                    f"now {all_casks}"
-                )
-            )
+        ui.trace(f"Received the following configuration: {config}")
 
         ui.start_task("Starting to install the packages")
         ui.trace("Going to install:")
-        for k, v in all_packages.items():
+        for k, v in config.packages.items():
             s = f" - {k}"
             if v != "":
                 s = f"{s}@{v}"
             ui.trace(s)
 
-        if current_platform == "darwin":
-            self._install_darwin_packages(shell, ui, all_packages)
+        if config.platform == "darwin":
+            config = cast(DarwinPackagesConfig, config)
+            self._install_darwin_packages(shell, ui, config.packages)
 
-            if all_casks:
+            if config.casks:
                 ui.start_task("Installing casks")
-                self._install_darwin_packages(shell, ui, all_casks, casks=True)
+                ui.trace("Going to install:")
+                for k, v in config.casks.items():
+                    s = f" - {k}"
+                    if v != "":
+                        s = f"{s}@{v}"
+                    ui.trace(s)
+                self._install_darwin_packages(
+                    shell, ui, config.casks, casks=True
+                )
                 ui.complete_task("Casks installed")
         else:
-            raise ValueError(
-                (
-                    "trying to install packages on an unsupported platform: "
-                    f"{current_platform}"
-                )
-            )  # pyright: ignore[reportUnreachable]
+            config = cast(SystemPackagesConfig, config)
+            if opts.platform == "darwin":
+                self._install_darwin_packages(shell, ui, config.packages)
+            else:
+                raise ValueError(
+                    (
+                        f"trying to install packages on an unsupported "
+                        f"platform: {opts.platform}"
+                    )
+                )  # pyright: ignore[reportUnreachable]
 
         ui.complete_task("Packages installed")
 
-        ui.complete_step(f'Step "{config["directive"]}" complete')
+        ui.complete_step(f'Step "{name}" complete')
 
         return 0
+
+    def parse_config(
+        self,
+        raw: Mapping[str, Any],  # pyright: ignore[reportExplicitAny]
+        ui: UserInterface,
+        order: int,
+    ) -> StepConfig:
+        """
+        Parses the configuration of the system packages step.
+
+        Valid configuration is one of the following (in addition to
+        either `directive` or `name` key):
+            - String `platform` corresponding to one of the valid
+              platforms given in the type etc.config.Platform. If this
+              string is present, the packages in this step are installed
+              only on the given platform.
+            - Array or table `packages` that contains packages to be
+              installed. If no `platform` is given, the packages are
+              installed on all platforms. If `packages` is given as a
+              table, the key of the table is the name of the package and
+              the value is the version to install. The version
+              information is optional and can be an empty string. If it
+              is, the functionality is essentially the same as if the
+              package was given using the `packages` array.
+
+        Darwin-specific configuration:
+            - Array or table `formulae` that contains Homebrew formulae
+              to install. This functions similar to the `packages` array
+              or table. You can use `packages` as a synonym for
+              `formulae` on Darwin.
+            - Array or table `casks` that contains Homebrew casks to
+              install. This functions similar to the `packages` array or
+              table.
+        """
+        name = BaseStep.get_step_name(self.directive, order)
+        platform: Platform | None = None
+        if "platform" in raw:
+            t = type(raw["platform"])  # pyright: ignore[reportAny, reportUnknownVariableType]
+            if t is not str:
+                raise ConfigTypeError(
+                    (
+                        f'in step "{name}": type of the value "platform" is '
+                        f'not "str" but "{t}"'
+                    )
+                )
+            pkgs = cast(str, raw["platform"])
+            if pkgs not in get_args(Platform):
+                raise InvalidConfigError
+            platform = cast(Platform, pkgs)
+
+        ui.trace(f'Resolved "{platform}" as the platform of the "{name}" step')
+
+        if "formulae" in raw and platform != "darwin":
+            raise InvalidConfigError(
+                (
+                    f'the "{name}" step for platform other than "darwin" '
+                    f'({platform}) contains the key "formulae"'
+                )
+            )
+        if "casks" in raw and platform != "darwin":
+            raise InvalidConfigError(
+                (
+                    f'the "{name}" step for platform other than "darwin" '
+                    f'({platform}) contains the key "casks"'
+                )
+            )
+        if platform == "darwin" and "packages" in raw and "formulae" in raw:
+            raise InvalidConfigError(
+                (
+                    f'the "{name}" step for "darwin" has both "packages" and '
+                    '"formulae" keys'
+                )
+            )
+
+        packages: MutableMapping[str, str] = {}
+        packages_found = False
+        if "packages" in raw:
+            ui.trace('Found the key "packages" in the step')
+            packages_found = True
+            pkgs = self._parse_config_packages(raw["packages"], "packages", ui)
+            packages.update(pkgs)
+        ui.trace(
+            (
+                'After parsing from "packages", the packages for the '
+                f'"{name}" step are: {packages}'
+            )
+        )
+
+        if platform == "darwin" and "formulae" in raw:
+            ui.trace('Found the key "formulae" in the step')
+            packages_found = True
+            pkgs = self._parse_config_packages(raw["formulae"], "formulae", ui)
+            packages.update(pkgs)
+        ui.trace(
+            (
+                'After parsing from "formulae", the packages for the '
+                f'"{name}" step are: {packages}'
+            )
+        )
+
+        casks: MutableMapping[str, str] = {}
+        if platform == "darwin" and "casks" in raw:
+            ui.trace('Found the key "casks" in the step')
+            packages_found = True
+            pkgs = self._parse_config_packages(raw["casks"], "casks", ui)
+            casks.update(pkgs)
+            ui.trace(
+                (
+                    f'After parsing from "casks", the casks for the "{name}" '
+                    f"step are: {casks}"
+                )
+            )
+
+        if not packages_found:
+            raise InvalidConfigError(
+                f'no valid packages configuration found for the "{name}"'
+            )
+
+        if platform == "darwin":
+            return DarwinPackagesConfig(
+                directive=cast(StepDirective, raw["directive"]),
+                packages=packages,
+                platform=platform,
+                casks=casks,
+            )
+        else:
+            return SystemPackagesConfig(
+                directive=cast(StepDirective, raw["directive"]),
+                packages=packages,
+                platform=platform,
+            )
 
     def _install_darwin_packages(
         self,
@@ -349,3 +296,49 @@ class SystemPackagesStep(BaseStep):
             ui.complete_task(
                 f'"{(pkg if ver == "" else f"{pkg}@{ver}")}" installed'
             )
+
+    def _parse_config_packages(
+        self,
+        raw: Any,  # pyright: ignore[reportAny, reportExplicitAny]
+        key: str,
+        ui: UserInterface,
+    ) -> Mapping[str, str]:
+        ui.trace(f'Parsing the packages from "{key}"')
+        packages: MutableMapping[str, str] = {}
+        if isinstance(raw, Sequence):
+            ui.trace(f'The value found for "{key}" is a Sequence')
+            for pkg in cast(list[str], raw):
+                if type(pkg) is not str:
+                    raise ConfigTypeError(
+                        (
+                            f'the entry {pkg} in "{key}" in the '
+                            f'"{self.directive}" step is not a string'
+                        )
+                    )
+                packages[pkg] = ""
+        elif isinstance(raw, Mapping):
+            ui.trace(f'The value found for "{key}" is a Mapping')
+            for k, v in cast(dict[str, str], raw).items():
+                if type(k) is not str:
+                    raise ConfigTypeError(
+                        (
+                            f'the key "{k}" in "{key}" in the '
+                            f'"{self.directive}" step is not a string'
+                        )
+                    )
+                if type(v) is not str:
+                    raise ConfigTypeError(
+                        (
+                            f'the value "{v}" for the key "{k}" in "{key}" in '
+                            f'the "{self.directive}" step is not a string'
+                        )
+                    )
+                packages[k] = v
+        else:
+            raise ConfigTypeError(
+                (
+                    "invalid type for packages specification in the "
+                    f'"{self.directive}" step: {raw}'
+                )
+            )
+        return packages

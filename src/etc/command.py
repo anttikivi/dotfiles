@@ -2,27 +2,25 @@ import argparse
 import os
 import sys
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
-from typing import (
-    TYPE_CHECKING,
-    MutableSequence,
-    Protocol,
-    cast,
-    final,
-    runtime_checkable,
-)
+from collections.abc import Mapping, MutableMapping, MutableSequence, Sequence
+from typing import TYPE_CHECKING, Any, Protocol, cast, final, runtime_checkable
 
 from etc import config
 from etc.config import (
+    CONFIG_PARSED_MARKER,
     BootstrapOptions,
     CommandName,
     CommandOptions,
-    OldConfig,
+    Config,
     Options,
+    Platform,
     StepConfig,
+    StepDirective,
     SubcommandOptions,
 )
+from etc.exceptions import InvalidConfigError
 from etc.shell import MessageLevel, Shell
+from etc.steps.base_step import BaseStep
 from etc.steps.system_packages import SystemPackagesStep
 from etc.ui import UserInterface
 from etc.version import VERSION
@@ -46,15 +44,11 @@ else:
 
 
 class Command(Protocol):
-    def __call__(
-        self, config: OldConfig, opts: Options, shell: Shell, ui: UserInterface
-    ) -> int: ...
+    @property
+    def name(self) -> CommandName: ...
 
     @property
-    def name(self) -> str: ...
-
-    @property
-    def aliases(self) -> Sequence[str] | None: ...
+    def aliases(self) -> Sequence[CommandName]: ...
 
     @property
     def commands(self) -> Sequence["Command"] | None:
@@ -62,6 +56,48 @@ class Command(Protocol):
         A sequence of child commands associated with this command.
         """
         ...
+
+
+@runtime_checkable
+class CallableCommand(Command, Protocol):
+    def __call__(
+        self, config: Config, opts: Options, shell: Shell, ui: UserInterface
+    ) -> int: ...
+
+
+@runtime_checkable
+class RunnableCommand(Command, Protocol):
+    def run(
+        self, config: Config, opts: Options, shell: Shell, ui: UserInterface
+    ) -> int: ...
+
+
+@runtime_checkable
+class CallableStepsCommand(Command, Protocol):
+    def __call__(
+        self,
+        config: Config,
+        opts: Options,
+        shell: Shell,
+        ui: UserInterface,
+        steps: Sequence["Step"],
+    ) -> int: ...
+
+
+@runtime_checkable
+class RunnableStepsCommand(Command, Protocol):
+    def run(
+        self,
+        config: Config,
+        opts: Options,
+        shell: Shell,
+        ui: UserInterface,
+        steps: Sequence["Step"],
+    ) -> int: ...
+
+
+# TODO: Add a ConfigurableCommand that can parse configuration related
+# to a command.
 
 
 @runtime_checkable
@@ -102,11 +138,13 @@ class BaseCommand:
 
     def __init__(self) -> None:
         self.name: str = "etc"
-        self.aliases: None = None
+        self.aliases: Sequence[str] = list()
         self.commands: MutableSequence[Command] = list()
 
+        self.steps: Sequence[Step | CallableStep | RunnableStep] | None = None
+
     def __call__(
-        self, config: OldConfig, opts: Options, shell: Shell, ui: UserInterface
+        self, config: Config, opts: Options, shell: Shell, ui: UserInterface
     ) -> int:
         """
         Runs the base command or selects the correct subcommand and
@@ -115,11 +153,17 @@ class BaseCommand:
         if opts.command == "etc":
             # TODO: Run the base command.
             raise NotImplementedError("bare base command cannot be run")
+        assert self.steps is not None, "the steps in the base commands is None"
         for cmd in self.commands:
-            if opts.command == cmd.name or (
-                cmd.aliases is not None and opts.command in cmd.aliases
-            ):
-                return cmd(config, opts, shell, ui)
+            if opts.command == cmd.name or opts.command in cmd.aliases:
+                if isinstance(cmd, CallableStepsCommand):
+                    return cmd(config, opts, shell, ui, self.steps)
+                elif isinstance(cmd, RunnableStepsCommand):
+                    return cmd.run(config, opts, shell, ui, self.steps)
+                elif isinstance(cmd, CallableCommand):
+                    return cmd(config, opts, shell, ui)
+                elif isinstance(cmd, RunnableCommand):
+                    return cmd.run(config, opts, shell, ui)
         return 1
 
     def create_argument_parser(self) -> argparse.ArgumentParser:
@@ -147,7 +191,9 @@ class BaseCommand:
 
         return parser
 
-    def parse_arguments(self, parser: argparse.ArgumentParser) -> Options:
+    def parse_arguments(
+        self, parser: argparse.ArgumentParser, platform: Platform
+    ) -> Options:
         args = parser.parse_args()
         assert len(self.commands) > 0, (
             "subcommands for the base command is an empty list while parsing "
@@ -174,12 +220,10 @@ class BaseCommand:
             cmd_name = "etc"
 
         command: Subparser | None = None
-        for cmd in filter(
-            lambda c: c.name
-            or (c.aliases is not None and cmd_name in c.aliases),
-            self.commands,
-        ):
-            if isinstance(cmd, Subparser):
+        for cmd in self.commands:
+            if isinstance(cmd, Subparser) and (
+                cmd_name == cmd.name or cmd_name in cmd.aliases
+            ):
                 command = cmd
 
         cmd_opts: CommandOptions | None = None
@@ -187,6 +231,7 @@ class BaseCommand:
             cmd_opts = command.parse_arguments(args)
 
         return Options(
+            platform=platform,
             colors=colors,
             command=cmd_name,
             dry_run=dry_run,
@@ -194,6 +239,128 @@ class BaseCommand:
             verbosity=verbosity,
             command_opts=cmd_opts,
         )
+
+    def parse_config(self, raw: Mapping[str, Any], ui: UserInterface):  # pyright: ignore[reportExplicitAny]
+        """
+        Parses the configuration dictionary read from a TOML file into
+        a `Config`.
+        """
+        ui.debug("Starting to parse the configuration")
+        ui.trace(f"Received the following raw data: {raw}")
+
+        # TODO: Root-level configuration.
+
+        # TODO: Read and load the places for external steps here.
+        self._create_steps(ui)
+        assert (
+            self.steps is not None
+        ), "the steps created in the base command is None"
+
+        # `steps` is a special table that is shared between multiple
+        # internal commands. Therefore it is parsed by the base command
+        # not delegated.
+        steps: MutableMapping[str, StepConfig] = {}
+        raw_steps: Sequence[MutableMapping[str, Any]] = list()  # pyright: ignore[reportExplicitAny]
+        if "steps" in raw:
+            if isinstance(raw["steps"], Sequence):
+                for raw_step in raw["steps"]:
+                    if not isinstance(raw_step, Mapping):
+                        ui.error(
+                            (
+                                "A step configuration is not a Mapping: "
+                                f"{raw_step}"
+                            )
+                        )
+                        raise InvalidConfigError(
+                            'the value of "steps" in config file is invalid'
+                        )
+                raw_steps = cast(
+                    Sequence[MutableMapping[str, Any]],  # pyright: ignore[reportExplicitAny]
+                    raw["steps"],
+                )
+            else:
+                ui.error(
+                    (
+                        'Configuration file has the key "steps" but its '
+                        "type is invalid; the steps configuration must be an "
+                        f"array of tables, got: {raw['steps']}"
+                    )
+                )
+                raise InvalidConfigError(
+                    'the value of "steps" in config file is invalid'
+                )
+
+        # Mark each step config as not parsed. The values are later used
+        # for checking that every step configuration was parsed.
+        for raw_step in raw_steps:
+            raw_step[CONFIG_PARSED_MARKER] = False
+
+        order = 0
+        steps_order: list[str] = []
+        for raw_step in raw_steps:
+            directive: StepDirective | None = None
+            if "directive" in raw_step:
+                directive = cast(StepDirective, raw_step["directive"])
+            elif "name" in raw_step:
+                directive = cast(StepDirective, raw_step["name"])
+            else:
+                ui.error(
+                    (
+                        'A step does not have either the "directive" or the '
+                        f'"name" key: {raw_step}'
+                    )
+                )
+                raise InvalidConfigError('step without "directive" or "name"')
+
+            for step in self.steps:
+                if step.can_run(directive) and isinstance(
+                    step, ConfigurableStep
+                ):
+                    parsed: StepConfig | None = None
+                    try:
+                        parsed = step.parse_config(raw_step, ui, order)
+                    except Exception as e:
+                        ui.error(
+                            (
+                                "Failed to parse the configuration for step "
+                                f'"{directive}": {e}'
+                            )
+                        )
+                        raise InvalidConfigError(
+                            f"failed to parse step configuration: {e}"
+                        )
+                    name = BaseStep.get_step_name(step.directive, order)
+                    steps[name] = parsed
+                    steps_order.append(name)
+                    raw_step[CONFIG_PARSED_MARKER] = True
+                    order += 1
+
+        unparsed: list[Mapping[str, Any]] = []  # pyright: ignore[reportExplicitAny]
+        for raw_step in raw_steps:
+            if CONFIG_PARSED_MARKER not in raw_step:
+                ui.error(
+                    (
+                        'A step configuration without the "parsed marker" '
+                        f"was found: {raw_step}"
+                    )
+                )
+                raise RuntimeError
+            if not raw_step[CONFIG_PARSED_MARKER]:
+                unparsed.append(raw_step)
+
+        if len(unparsed) > 0:
+            if len(unparsed) == 1:
+                ui.warning("Configuration for a step was not parsed:")
+            else:
+                ui.warning("Configurations for some steps were not parsed:")
+            for s in unparsed:
+                ui.warning(f"{s}")
+
+        config: Config = Config(steps=steps, steps_order=steps_order)
+
+        ui.trace(f"The configuration was parsed to:\n{config}")
+
+        return config
 
     def _create_global_parser(
         self, parser: argparse.ArgumentParser
@@ -243,6 +410,15 @@ class BaseCommand:
 
         return parser
 
+    # TODO: Should this function return something the steps were not
+    # created successfully?
+    # TODO: Accept configuration for loading external plugins as steps.
+    def _create_steps(self, ui: UserInterface) -> None:
+        ui.start_step("Creating steps")
+        # TODO: Allow defining steps as plugins.
+        self.steps = [SystemPackagesStep()]
+        ui.complete_step("Steps created")
+
 
 class Subcommand(ABC):
     """
@@ -259,17 +435,20 @@ class Subcommand(ABC):
         help: str | None = None,
     ) -> None:
         self.name: str = name
-        self.aliases: Sequence[str] | None = aliases
+        self.aliases: Sequence[str] = list() if aliases is None else aliases
         self.commands: Sequence[Command] | None = commands
 
         if help is not None:
             self.help: str | None = help
 
-        self.steps: Sequence[Step | CallableStep | RunnableStep] | None = None
-
     @abstractmethod
     def __call__(
-        self, config: OldConfig, opts: Options, shell: Shell, ui: UserInterface
+        self,
+        config: Config,
+        opts: Options,
+        shell: Shell,
+        ui: UserInterface,
+        steps: Sequence["Step"],
     ) -> int: ...
 
     def create_subparser(
@@ -285,27 +464,18 @@ class Subcommand(ABC):
                 self.name, subparsers
             )
         ]
-        if self.aliases:
-            for alias in self.aliases:
-                parsers.append(
-                    self._create_subparser_with_configuration_file(
-                        alias, subparsers
-                    )
+        for alias in self.aliases:
+            parsers.append(
+                self._create_subparser_with_configuration_file(
+                    alias, subparsers
                 )
+            )
 
         return parsers
 
     def parse_arguments(self, args: argparse.Namespace) -> CommandOptions:
         base_directory, config_file = self._parse_config_file_arguments(args)
         return SubcommandOptions(base_directory, config_file)
-
-    # TODO: Should this function return something the steps were not
-    # created successfully?
-    def _create_steps(self, config: OldConfig, ui: UserInterface) -> None:  # pyright: ignore[reportUnusedParameter]
-        ui.start_step("Creating steps")
-        # TODO: Allow defining steps as plugins.
-        self.steps = [SystemPackagesStep()]
-        ui.complete_step("Steps created")
 
     def _create_subparser_with_configuration_file(
         self,
@@ -387,7 +557,12 @@ class BootstrapCommand(Subcommand):
 
     @override
     def __call__(
-        self, config: OldConfig, opts: Options, shell: Shell, ui: UserInterface
+        self,
+        config: Config,
+        opts: Options,
+        shell: Shell,
+        ui: UserInterface,
+        steps: Sequence["Step"],
     ) -> int:
         ui.start_phase("Starting to bootstrap to configuration")
 
@@ -517,74 +692,69 @@ class InstallCommand(Subcommand):
 
     @override
     def __call__(
-        self, config: OldConfig, opts: Options, shell: Shell, ui: UserInterface
+        self,
+        config: Config,
+        opts: Options,
+        shell: Shell,
+        ui: UserInterface,
+        steps: Sequence["Step"],
     ) -> int:
         ui.start_phase("Starting the install suite")
 
-        # TODO: Maybe check the prerequisites again?
-        self._create_steps(config, ui)
-        assert (
-            self.steps is not None
-        ), "the steps required by the install command are not created"
-
         ui.start_phase("Starting to run the install steps")
 
-        if "install" not in config:
-            ui.warning(
-                msg=(
-                    'No "install" key was provided in the configuration file, '
-                    "thus there are no steps to run"
+        if not config.steps or not config.steps_order:
+            ui.complete_phase("No install steps to run, skipping")
+            return 0
+        for step_name in config.steps_order:
+            ui.debug(
+                (
+                    "Finding runners for the current step with the name "
+                    f'"{step_name}"'
                 )
             )
-        if "install" in config and "steps" not in config["install"]:
-            ui.warning(
-                msg=(
-                    'No "install.steps" key was provided in the configuration '
-                    "file, thus there are no steps to run"
-                )
-            )
-
-        if "install" in config and "steps" in config["install"]:
-            for step_config in config["install"]["steps"]:
-                ui.debug(
-                    (
-                        "Finding runners for the current step with the "
-                        f'"{step_config["directive"]}" directive'
-                    )
-                )
-                for step in filter(
-                    lambda s: s.can_run(step_config["directive"]), self.steps
-                ):
+            step_config = config.steps[step_name]
+            for step in steps:
+                if step.can_run(step_config.directive):
                     try:
                         ui.trace(
                             (
-                                f"Calling the step {step} with the "
-                                "following configuration: {step}"
+                                f'Calling the step "{step_name}" with the '
+                                f"following configuration: {step}"
                             )
                         )
-                        step_exit_code = 1
+                        step_exit_code = 1  # TODO: Or something.
                         if isinstance(step, CallableStep):
-                            step_exit_code = step(step_config, opts, shell, ui)
+                            step_exit_code = step(
+                                step_name, step_config, opts, shell, ui
+                            )
                         elif isinstance(step, RunnableStep):
                             step_exit_code = step.run(
-                                step_config, opts, shell, ui
+                                step_name, step_config, opts, shell, ui
                             )
                         else:
                             ui.error(
-                                f"The step {step} is not a CallableStep or a RunnableStep"
+                                (
+                                    f'The step "{step_name}" (directive: '
+                                    f"{step_config.directive}) is not a "
+                                    "CallableStep or a RunnableStep"
+                                )
                             )
                             return step_exit_code
                         if step_exit_code != 0:
                             ui.error(
                                 (
-                                    f"The execution of {step} returned "
-                                    f"a non-zero exit code: {step_exit_code}"
+                                    f"The execution of {step_name} returned a "
+                                    f"non-zero exit code: {step_exit_code}"
                                 )
                             )
                             return step_exit_code
                     except Exception as e:
                         ui.error(
-                            f"An error occured when executing {step}: {e}"
+                            (
+                                "An error occured when executing "
+                                f"{step_name}: {e}"
+                            )
                         )
                         return 1  # TODO: Or something.
 
@@ -599,7 +769,7 @@ class Step(Protocol):
     def directive(self) -> str: ...
 
     @property
-    def aliases(self) -> Sequence[str] | None: ...
+    def aliases(self) -> Sequence[str]: ...
 
     def can_run(self, directive: str) -> bool: ...
 
@@ -608,19 +778,63 @@ class Step(Protocol):
 class CallableStep(Step, Protocol):
     def __call__(
         self,
+        name: str,
         config: StepConfig,
         opts: Options,
         shell: Shell,
         ui: UserInterface,
-    ) -> int: ...
+    ) -> int:
+        """
+        Runs the step.
+
+        The function receives the internal name for it which can be used
+        for debugging, the parsed configuration associated with this
+        step, the parsed command-line arguments for the program, the
+        shell utility instance, and the user interface instance.
+        """
+        ...
 
 
 @runtime_checkable
 class RunnableStep(Step, Protocol):
     def run(
         self,
+        name: str,
         config: StepConfig,
         opts: Options,
         shell: Shell,
         ui: UserInterface,
-    ) -> int: ...
+    ) -> int:
+        """
+        Runs the step.
+
+        The function receives the internal name for it which can be used
+        for debugging, the parsed configuration associated with this
+        step, the parsed command-line arguments for the program, the
+        shell utility instance, and the user interface instance.
+        """
+
+        ...
+
+
+@runtime_checkable
+class ConfigurableStep(Protocol):
+    def parse_config(
+        self,
+        raw: Mapping[str, Any],  # pyright: ignore[reportExplicitAny]
+        ui: UserInterface,
+        order: int,
+    ) -> StepConfig:
+        """
+        Parses the configuration for this step.
+
+        The parameter `raw` contains the data for this step read from
+        the TOML configuration file. The parameter `ui` is an user
+        interface instance for printing messages to the user. The
+        parameter `order` is the ordinal number for this step; steps
+        are run in order in the ordinal number is appended to the end of
+        the step directive so will become "{directive}-{order}". The
+        parameter in this function can be used to print more accurate
+        messages for debugging.
+        """
+        ...

@@ -2,89 +2,67 @@ import sys
 from abc import ABC
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Literal, NotRequired, TypedDict
+from typing import Literal
 
 from etc.exceptions import UnsupportedPlatformError
 from etc.shell import MessageLevel
 
 Platform = Literal["darwin"]
 
-StepDirective = Literal["clean", "system-packages", "packages"]
+StepDirective = Literal["clean", "system-packages", "packages"] | str
+
+CONFIG_PARSED_MARKER = "etc_has_parsed"
 
 
-#######################################################################
-# OLD CONFIG
-#######################################################################
+@dataclass
+class Config:
+    """
+    Config is the parsed configuration for a run of the program.
+
+    The `steps` are the parsed configurations for the steps used by the
+    program. The key of the mapping is a combination of a step's
+    directive and the order number of the step within the same type of
+    steps.
+
+    The `steps_order` is simply an ordered sequence of the keys for the
+    step configurations stored in `steps`.
+    """
+
+    steps: Mapping[str, "StepConfig"]
+    steps_order: Sequence[str]
 
 
-class StepConfig(TypedDict):
+@dataclass
+class StepConfig(ABC):
     directive: StepDirective
 
 
-#######################################################################
-# SYSTEM PACKAGES CONFIG
-#######################################################################
-
-
-# Packages can be declared either as a list of package names or as
-# key-value pairs where the key is the name of the package and the value
-# is the wanted version. If only a list of strings is given, the latest
-# versions will be used. Latest version will also be used if the given
-# version string is empty.
-PackagesDeclaration = Sequence[str] | Mapping[str, str]
-
-PlatformPackagesConfig = PackagesDeclaration
-
-DarwinPackagesConfig = TypedDict(
-    "DarwinPackagesConfig",
-    {
-        "formulae": NotRequired[PackagesDeclaration],
-        "casks": NotRequired[PackagesDeclaration],
-    },
-)
-
-_SystemPackagesPlatformsConfig = TypedDict(
-    "_SystemPackagesPlatformsConfig",
-    {
-        "all": NotRequired[PlatformPackagesConfig],
-        "darwin": NotRequired[PlatformPackagesConfig | DarwinPackagesConfig],
-    },
-)
-
-
-class SystemPackagesStepConfig(StepConfig):
-    packages: NotRequired[PackagesDeclaration]
-    platforms: NotRequired[_SystemPackagesPlatformsConfig]
-
-
-#######################################################################
-# INSTALL CONFIG
-#######################################################################
-
-
-_InstallConfig = TypedDict(
-    "_InstallConfig", {"steps": NotRequired[Sequence[StepConfig]]}
-)
-
-
-#######################################################################
-# BASE CONFIG
-#######################################################################
-
-
-class OldConfig(TypedDict):
+@dataclass
+class SystemPackagesConfig(StepConfig):
     """
-    Config represents a parsed configuration file.
+    SystemPackagesConfig is the type of the parsed configuration for the
+    "system-packages" step. It resolves all of the packages to install
+    into the `packages` mapping. The keys of the mapping are the names
+    of the packages and the values are their version. The version info
+    can be an empty string.
     """
 
-    install: NotRequired[_InstallConfig]
+    packages: Mapping[str, str]
+    platform: Platform | None
+
+
+@dataclass
+class DarwinPackagesConfig(SystemPackagesConfig):
+    casks: Mapping[str, str]
 
 
 #######################################################################
 # OPTIONS
 #######################################################################
 
-CommandName = Literal["etc", "bootstrap", "init", "initialize", "install"]
+CommandName = (
+    Literal["etc", "bootstrap", "init", "initialize", "install"] | str
+)
 
 DEFAULT_LINUX_BASE_DIRECTORY = "~/etc"
 DEFAULT_DARWIN_BASE_DIRECTORY = "~/Preferences"
@@ -108,28 +86,10 @@ class Options:
     of the program.
     """
 
-    # def __init__(
-    #     self,
-    #     base_directory: str | None,
-    #     command: CommandName | None,
-    #     config_file: str | None,
-    #     dry_run: bool,
-    #     remote_repository_url: str | None,
-    #     use_colors: bool,
-    #     verbosity: MessageLevel,
-    #     print_commands: bool,
-    # ):
-    #     self.base_directory: str | None = base_directory
-    #     self.command: CommandName | None = command
-    #     self.config_file: str | None = config_file
-    #     self.dry_run: bool = dry_run
-    #     self.remote_repository_url: str | None = remote_repository_url
-    #     self.use_colors: bool = use_colors
-    #     self.verbosity: MessageLevel = verbosity
-    #     self.print_commands: bool = print_commands
+    platform: Platform
 
     colors: bool
-    command: CommandName | str
+    command: CommandName
     dry_run: bool
     print_commands: bool
     verbosity: MessageLevel

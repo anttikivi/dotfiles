@@ -1,2 +1,7 @@
-class UnsupportedPlatformError(Exception):
-    pass
+class ConfigTypeError(TypeError): ...
+
+
+class InvalidConfigError(ValueError): ...
+
+
+class UnsupportedPlatformError(Exception): ...

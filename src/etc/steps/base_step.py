@@ -1,12 +1,11 @@
+import sys
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
-import sys
 from typing import cast
 
 from etc.config import Options, StepConfig, StepDirective
 from etc.shell import Shell
 from etc.ui import UserInterface
-
 
 if sys.version_info >= (3, 12):
     from typing import override
@@ -32,17 +31,24 @@ class BaseStep(ABC):
         aliases: StepDirective | Sequence[StepDirective] | None = None,
     ) -> None:
         self.directive: StepDirective = directive
-        self.aliases: Sequence[str] | None = None
-        if aliases is not None:
-            self.aliases = (
-                cast(Sequence[str], [aliases])
+        self.aliases: Sequence[StepDirective] = (
+            cast(Sequence[StepDirective], list())
+            if aliases is None
+            else (
+                cast(Sequence[StepDirective], [aliases])
                 if type(aliases) is str
-                else cast(Sequence[str], aliases)
+                else cast(Sequence[StepDirective], aliases)
             )
+        )
+
+    @staticmethod
+    def get_step_name(directive: StepDirective, order: int) -> str:
+        return f"{directive}-{order}"
 
     @abstractmethod
     def __call__(
         self,
+        name: str,
         config: StepConfig,
         opts: Options,
         shell: Shell,
@@ -54,6 +60,4 @@ class BaseStep(ABC):
         return f"<{self.__class__.__name__} '{self.directive}'>"
 
     def can_run(self, directive: str) -> bool:
-        return directive == self.directive or (
-            self.aliases is not None and directive in self.aliases
-        )
+        return directive == self.directive or directive in self.aliases
