@@ -11,6 +11,7 @@ path=("${LOCAL_BIN_DIR}" "${path[@]}")
 path=("/usr/local/go/bin" "${path[@]}")
 path=("${GOBIN}" "${path[@]}")
 path=("${LOCAL_OPT_DIR}/nvim/bin" "${path[@]}")
+path=("/Applications/Ghostty.app/Contents/MacOS" "${path[@]}")
 
 if [ -e "${HOME}/.cargo/env" ]; then
   # shellcheck disable=SC1091
