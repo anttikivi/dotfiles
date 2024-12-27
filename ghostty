@@ -1,5 +1,5 @@
 font-size = 13
-font-thicken = true
+font-thicken = false
 adjust-cell-height = 20%
 theme = dark:tokyonight-storm,light:tokyonight-day
 window-colorspace = display-p3

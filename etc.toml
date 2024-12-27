@@ -1,11 +1,60 @@
+[defaults]
+link = { create = true, force = true }
+
+
 [[steps]]
 directive = "clean"
 
 [steps.directories."~"]
-[steps.directories."~/.config"]
+[steps.directories."${XDG_CONFIG_HOME}"]
 force = true
 
 [[steps]]
+directive = "link"
+name = "basic-links"
+links = [
+  "~/.bash",
+  "~/.bash_profile",
+  "~/.editorconfig",
+  "~/.gitconfig",
+  "~/.gitignore_global",
+  "~/.tmux.conf",
+  "~/.zprofile",
+  "~/.zsh",
+  "~/.zshenv",
+  "~/.zshrc",
+]
+
+[[steps]]
+directive = "link"
+
+[steps.links."~/.aerospace.toml"]
+platform = "darwin"
+
+[steps.links."${XDG_CONFIG_HOME}/env/color_scheme.sh"]
+path = "color_scheme.sh"
+
+[steps.links."${XDG_CONFIG_HOME}/env/directories.sh"]
+path = "directories.sh"
+
+[steps.links."${XDG_CONFIG_HOME}/nvim"]
+path = "nvim"
+
+[steps.links."${XDG_CONFIG_HOME}/tmux-sessionizer/directories"]
+path = "tmux-directories"
+
+[steps.links."~/.local/bin/"]
+glob = true
+path = "bin/*"
+
+[steps.links."~/.zfunctions/async"]
+path = "purus/async.zsh"
+
+[steps.links."~/.zfunctions/prompt_purus_setup"]
+path = "purus/purus.zsh"
+
+[[steps]]
+name = "darwin-packages"
 directive = "packages"
 platform = "darwin"
 formulae = [
@@ -36,7 +85,7 @@ formulae = [
 casks = [
   "1password",
   "1password-cli",
-  "font-jetbrains-mono",
-  "font-jetbrains-mono-nerd-font",
+  # "font-jetbrains-mono",
+  # "font-jetbrains-mono-nerd-font",
   "nikitabobko/tap/aerospace",
 ]
