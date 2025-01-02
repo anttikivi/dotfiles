@@ -11,3 +11,8 @@ vim.g.ak_python_lsp = "basedpyright"
 
 ---@type "ruff" | "ruff_lsp"
 vim.g.ak_python_ruff = "ruff"
+
+local opt = vim.opt
+
+-- TODO: Toggle this if some statusline plugin is in use.
+opt.showmode = true
