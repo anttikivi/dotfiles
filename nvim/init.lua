@@ -3,3 +3,4 @@ if vim.loader then
 end
 
 require("config.lazy").load()
+require("filetypes")
