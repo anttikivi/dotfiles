@@ -259,6 +259,7 @@ return {
         end,
         desc = "Goto Symbol (Workspace)",
       },
+      { "<leader>sr", "<cmd>FzfLua resume<cr>", desc = "Resume" },
     },
   },
   {
