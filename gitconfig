@@ -1,7 +1,7 @@
 [user]
 	name = Antti Kivi
 	email = antti@anttikivi.fi
-  signingkey = 501D24478EA632F0
+	signingkey = 0B9B2D86252AFFE8
 [commit]
 	gpgsign = True
 [tag]
