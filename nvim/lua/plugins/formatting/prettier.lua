@@ -5,10 +5,12 @@
 local M = {}
 
 local supported = {
+  "blade",
   "css",
   "graphql",
   "handlebars",
   "html",
+  "htmldjango",
   "javascript",
   "javascriptreact",
   "json",
