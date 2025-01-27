@@ -30,11 +30,11 @@ export PROJECT_DIR
 TMP_DIR="${HOME}/tmp"
 export TMP_DIR
 
-UNIVERSITY_PROJECT_DIR="${PROJECT_DIR}/university"
+UNIVERSITY_DIR="${HOME}/university"
 if [ "$(uname)" = "Darwin" ]; then
-  UNIVERSITY_PROJECT_DIR="${PROJECT_DIR}/University"
+  UNIVERSITY_DIR="${HOME}/University"
 fi
-export UNIVERSITY_PROJECT_DIR
+export UNIVERSITY_DIR
 
 VISIOSTO_PROJECT_DIR="${PROJECT_DIR}/visiosto"
 if [ "$(uname)" = "Darwin" ]; then
