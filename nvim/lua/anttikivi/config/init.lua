@@ -10,7 +10,6 @@ AK.config = M
 ---@field colorscheme AKColorscheme The color scheme to use. This is set via environment variable during the setup.
 ---@field colorscheme_dark_variant string The name of the dark variant for the current color scheme. This is set via environment variable during the setup.
 ---@field colorscheme_light_variant string The name of the light variant for the current color scheme. This is set via environment variable during the setup.
----@field true_colors boolean Whether to enable true colors in the terminal.
 ---@field use_icons boolean Whether to enable icons.
 local config = {
   -- If the completion engine supports the AI source, use that instead of inline
@@ -144,18 +143,12 @@ end
 
 ---@param opts? AKConfig Optional configuration to override the defaults. The parameter is provided mainly for easier debugging.
 function M.setup(opts)
-  config.true_colors = vim.g.ak_true_colors ~= nil and vim.g.ak_true_colors
-    or os.getenv("COLORTERM") == "truecolor"
-  config.colorscheme = config.true_colors and os.getenv("COLOR_SCHEME")
-    or "brunch"
-  config.colorscheme_dark_variant = config.true_colors
-      and os.getenv("COLOR_SCHEME_DARK_VARIANT")
-    or "saturday"
-  config.colorscheme_light_variant = config.true_colors
-      and os.getenv("COLOR_SCHEME_LIGHT_VARIANT")
-    or "sunday"
-  config.use_icons = vim.g.ak_use_icons ~= nil and vim.g.ak_use_icons
-    or config.true_colors
+  config.colorscheme = os.getenv("COLOR_SCHEME") or "catppuccin" --[[@as AKColorscheme]]
+  config.colorscheme_dark_variant = os.getenv("COLOR_SCHEME_DARK_VARIANT")
+    or "frappe"
+  config.colorscheme_light_variant = os.getenv("COLOR_SCHEME_LIGHT_VARIANT")
+    or "latte"
+  config.use_icons = vim.g.ak_use_icons ~= nil and vim.g.ak_use_icons or true
 
   config = vim.tbl_deep_extend("force", config, opts or {}) or {}
 

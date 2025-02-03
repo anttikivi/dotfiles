@@ -20,24 +20,4 @@ fi
 
 echo "The current system color scheme is ${system_color_scheme}"
 
-alacritty_color_scheme="${LIGHT_COLOR_SCHEME}"
-if [ "${system_color_scheme}" = "dark" ]; then
-  alacritty_color_scheme="${DARK_COLOR_SCHEME}"
-fi
-if [ "${COLOR_SCHEME}" = "${TOKYONIGHT}" ]; then
-  alacritty_color_scheme="$(echo "${alacritty_color_scheme}" | tr '-' '_')"
-fi
-kitty_color_scheme="${KITTY_LIGHT_COLOR_SCHEME}"
-if [ "${system_color_scheme}" = "dark" ]; then
-  kitty_color_scheme="${KITTY_DARK_COLOR_SCHEME}"
-fi
-
-if [ "${ENABLE_ALACRITTY}" = "true" ]; then
-  echo "Changing Alacritty to the ${system_color_scheme} color scheme: ${alacritty_color_scheme}"
-  cat "${XDG_CONFIG_HOME}/alacritty/themes/${alacritty_color_scheme}.toml" >"${XDG_CONFIG_HOME}/alacritty/color_scheme.toml"
-fi
-
-if [ "${ENABLE_KITTY}" = "true" ]; then
-  echo "Changing kitty to the ${system_color_scheme} color scheme: ${kitty_color_scheme}"
-  "${LOCAL_BIN_DIR}"/kitten themes --reload-in all "${kitty_color_scheme}"
-fi
+echo "theme = dark:${DARK_COLOR_SCHEME},light:${LIGHT_COLOR_SCHEME}" >"${XDG_CONFIG_HOME}/ghostty/colorscheme"

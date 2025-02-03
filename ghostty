@@ -1,6 +1,6 @@
+config-file = ~/.config/ghostty/colorscheme
 font-size = 13
 font-thicken = false
 adjust-cell-height = 20%
-theme = dark:catppuccin-mocha,light:catppuccin-latte
 cursor-invert-fg-bg = true
 window-colorspace = display-p3
