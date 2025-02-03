@@ -45,13 +45,13 @@ opt.pumblend = 10 -- Popup blend
 opt.pumheight = 10 -- Maximum number of entries in a popup
 opt.relativenumber = true -- Relative line numbers
 -- TODO: Check this out.
-opt.ruler = false -- Disable the default ruler
+opt.ruler = true -- Disable the default ruler
 opt.scrolloff = 8 -- Lines of context
 opt.shiftround = true -- Round indent
 opt.shiftwidth = 2 -- Size of an indent
 opt.shortmess:append({ W = true, I = true, c = true, C = true })
 -- TODO: Toggle this if some statusline plugin is in use.
-opt.showmode = false -- Don't show the mode, since it's already in status line
+opt.showmode = true -- Don't show the mode, since it's already in status line
 opt.sidescrolloff = 8 -- Columns of context
 opt.signcolumn = "yes" -- Always show the signcolumn, otherwise it would shift the text each time
 opt.smartcase = true -- Override the 'ignorecase' option if the search pattern contains upper case characters
