@@ -1,6 +1,7 @@
 return {
   {
     "stevearc/oil.nvim",
+    enabled = false,
     lazy = false,
     dependencies = { { "echasnovski/mini.icons", opts = {} } },
     ---@module "oil"
