@@ -47,7 +47,7 @@
     ${BUILD_DIR}:
     ${PROJECT_DIR}:
     ${TMP_DIR}:
-    ${UNIVERSITY_PROJECT_DIR}:
+    ${UNIVERSITY_DIR}:
     ${VISIOSTO_PROJECT_DIR}:
 
 - shell:
