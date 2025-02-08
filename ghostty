@@ -4,3 +4,4 @@ font-thicken = false
 adjust-cell-height = 20%
 cursor-invert-fg-bg = true
 window-colorspace = display-p3
+quit-after-last-window-closed = true
