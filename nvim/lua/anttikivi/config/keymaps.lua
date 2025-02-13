@@ -194,4 +194,4 @@ map({ "n", "v" }, "<leader>d", [["_d]], { desc = "Delete without yanking" })
 map("n", "<leader>x", [[:!chmod +x %<CR>]], { desc = "Make file executable" })
 
 -- Use the sessionizer.
-map("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
+-- map("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")

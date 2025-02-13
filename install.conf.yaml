@@ -17,11 +17,11 @@
       path: aerospace.toml
     ~/.bash:
     ~/.bash_profile:
-    ~/.config/alacritty/alacritty.toml: alacritty.toml
     ~/.config/env/color_scheme.sh: color_scheme.sh
     ~/.config/env/directories.sh: directories.sh
     ~/.config/env/terminals.sh: terminals.sh
-    ~/.config/kitty/user.conf: kitty.conf
+    ~/.config/findir: findir
+    ~/.config/findir-ignores: findir-ignores
     ~/.config/nvim: nvim
     ~/.config/tmux-sessionizer/directories: tmux-directories
     ~/.editorconfig:

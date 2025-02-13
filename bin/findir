@@ -1,0 +1,10 @@
+#!/bin/sh
+
+ignore_pattern="$(sed -e 's#^#^#' "${XDG_CONFIG_HOME}/findir-ignores" | tr '\n' '|' | sed 's/|$//')"
+# shellcheck disable=SC2046
+selected=$(find $(eval echo "$(xargs <"${XDG_CONFIG_HOME}/findir")") -mindepth 1 -maxdepth 1 -type d | grep -vE "${ignore_pattern}" | fzf)
+if [ -z "${selected}" ]; then
+  pwd
+else
+  echo "${selected}"
+fi
