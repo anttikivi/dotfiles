@@ -5,7 +5,13 @@ adjust-cell-height = 20%
 cursor-invert-fg-bg = true
 mouse-hide-while-typing = true
 
-# Keybinds
+keybind = super+shift+comma=reload_config
+keybind = super+d=new_split:right
+keybind = super+shift+d=new_split:down
+keybind = super+shift+h=goto_split:left
+keybind = super+shift+j=goto_split:down
+keybind = super+shift+k=goto_split:up
+keybind = super+shift+l=goto_split:right
 
 window-colorspace = display-p3
 focus-follows-mouse = true

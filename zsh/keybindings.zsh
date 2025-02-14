@@ -1,8 +1,6 @@
 # shellcheck shell=bash
 
-# bindkey -v
-# Close enough to ^C.
-# bindkey "^V" vi-cmd-mode
+bindkey -e
 
 autoload -U edit-command-line
 zle -N edit-command-line
