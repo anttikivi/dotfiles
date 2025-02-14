@@ -5,19 +5,4 @@ set -e
 # shellcheck source=../zshenv
 \. ~/.zshenv
 
-echo "Updating the color schemes"
-
-system_color_scheme="$1"
-if [ -z "$1" ]; then
-  echo "No color scheme was passed to the script, figuring it out..."
-  if [ "$(uname)" = "Darwin" ]; then
-    system_color_scheme="$(/opt/homebrew/bin/dark-notify -e)"
-  else
-    echo "Running on a system that is not supported, exiting..." >&2
-    exit 1
-  fi
-fi
-
-echo "The current system color scheme is ${system_color_scheme}"
-
-echo "theme = dark:${DARK_COLOR_SCHEME},light:${LIGHT_COLOR_SCHEME}" >"${XDG_CONFIG_HOME}/ghostty/colorscheme"
+echo "theme = dark:${DARK_COLOR_SCHEME},light:${LIGHT_COLOR_SCHEME}" >"${XDG_CONFIG_HOME}/ghostty/theme"

@@ -1,4 +1,4 @@
-config-file = ~/.config/ghostty/colorscheme
+config-file = ~/.config/ghostty/theme
 font-size = 13
 font-thicken = false
 adjust-cell-height = 20%
