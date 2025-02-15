@@ -18,5 +18,5 @@ keybind = ctrl+super+k=resize_split:up,10
 keybind = ctrl+super+l=resize_split:right,10
 
 window-colorspace = display-p3
-focus-follows-mouse = true
+focus-follows-mouse = false
 quit-after-last-window-closed = true
