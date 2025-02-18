@@ -1,6 +1,10 @@
 ---@type boolean
 vim.g.ak_eslint_auto_format = false
 
+-- Enable or disable Lualine.
+---@type boolean
+vim.g.ak_use_lualine = true
+
 -- Enable the option to require a Prettier config file. If set to true and no
 -- Prettier config file is found, the formatter will not be used.
 ---@type boolean

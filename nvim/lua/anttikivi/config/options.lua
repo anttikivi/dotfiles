@@ -44,14 +44,22 @@ opt.number = true -- Show line numbers
 opt.pumblend = 10 -- Popup blend
 opt.pumheight = 10 -- Maximum number of entries in a popup
 opt.relativenumber = true -- Relative line numbers
--- TODO: Check this out.
-opt.ruler = true -- Disable the default ruler
+
+opt.ruler = false -- Disable the default ruler
+if vim.g.ak_use_lualine ~= nil then
+  opt.ruler = not vim.g.ak_use_lualine
+end
+
 opt.scrolloff = 8 -- Lines of context
 opt.shiftround = true -- Round indent
 opt.shiftwidth = 2 -- Size of an indent
 opt.shortmess:append({ W = true, I = true, c = true, C = true })
--- TODO: Toggle this if some statusline plugin is in use.
-opt.showmode = true -- Don't show the mode, since it's already in status line
+
+opt.showmode = false -- Don't show the mode, since it's already in status line
+if vim.g.ak_use_lualine ~= nil then
+  opt.showmode = not vim.g.ak_use_lualine
+end
+
 opt.sidescrolloff = 8 -- Columns of context
 opt.signcolumn = "yes" -- Always show the signcolumn, otherwise it would shift the text each time
 opt.smartcase = true -- Override the 'ignorecase' option if the search pattern contains upper case characters

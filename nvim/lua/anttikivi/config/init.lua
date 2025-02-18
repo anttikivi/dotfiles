@@ -11,6 +11,7 @@ AK.config = M
 ---@field colorscheme_dark_variant string The name of the dark variant for the current color scheme. This is set via environment variable during the setup.
 ---@field colorscheme_light_variant string The name of the light variant for the current color scheme. This is set via environment variable during the setup.
 ---@field use_icons boolean Whether to enable icons.
+---@field use_lualine boolean Whether to enable Lualine.
 local config = {
   -- If the completion engine supports the AI source, use that instead of inline
   -- suggestions.
@@ -149,6 +150,10 @@ function M.setup(opts)
   config.colorscheme_light_variant = os.getenv("COLOR_SCHEME_LIGHT_VARIANT")
     or "latte"
   config.use_icons = vim.g.ak_use_icons ~= nil and vim.g.ak_use_icons or true
+  config.use_lualine = true
+  if vim.g.ak_use_lualine ~= nil then
+    config.use_lualine = vim.g.ak_use_lualine
+  end
 
   config = vim.tbl_deep_extend("force", config, opts or {}) or {}
 
