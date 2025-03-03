@@ -3,6 +3,7 @@ font-size = 13
 font-thicken = false
 adjust-cell-height = 20%
 cursor-invert-fg-bg = true
+cursor-style = block
 mouse-hide-while-typing = true
 
 keybind = super+shift+comma=reload_config
@@ -20,3 +21,4 @@ keybind = ctrl+super+l=resize_split:right,10
 window-colorspace = display-p3
 focus-follows-mouse = false
 quit-after-last-window-closed = true
+shell-integration-features = no-cursor
