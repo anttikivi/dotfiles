@@ -19,6 +19,7 @@ local supported = {
   "markdown",
   "markdown.mdx",
   "scss",
+  "svg",
   "typescript",
   "typescriptreact",
   "vue",
