@@ -377,19 +377,19 @@ main() {
     echo -e "${ESC_YELLOW}Updating pipx is not implemented yet${ESC_RESET}"
   fi
 
-  if ! command -v ansible >/dev/null 2>&1; then
-    if [ "${HAS_CONNECTION}" != "true" ]; then
-      echo "Ansible is not installed and there is not Internet connection, exiting..." >&2
-      exit 1
-    fi
-    echo -e "${ESC_BLUE}Installing Ansible${ESC_RESET}"
-    pipx install --include-deps ansible
-    echo -e "${ESC_GREEN}Ansible installed${ESC_RESET}"
-  elif [ "${HAS_CONNECTION}" = "true" ] && [ "${DISABLE_UPDATES}" != "true" ]; then
-    echo -e "${ESC_BLUE}Updating Ansible${ESC_RESET}"
-    pipx upgrade --include-injected ansible
-    echo -e "${ESC_GREEN}Ansible updated${ESC_RESET}"
-  fi
+  # if ! command -v ansible >/dev/null 2>&1; then
+  #   if [ "${HAS_CONNECTION}" != "true" ]; then
+  #     echo "Ansible is not installed and there is not Internet connection, exiting..." >&2
+  #     exit 1
+  #   fi
+  #   echo -e "${ESC_BLUE}Installing Ansible${ESC_RESET}"
+  #   pipx install --include-deps ansible
+  #   echo -e "${ESC_GREEN}Ansible installed${ESC_RESET}"
+  # elif [ "${HAS_CONNECTION}" = "true" ] && [ "${DISABLE_UPDATES}" != "true" ]; then
+  #   echo -e "${ESC_BLUE}Updating Ansible${ESC_RESET}"
+  #   pipx upgrade --include-injected ansible
+  #   echo -e "${ESC_GREEN}Ansible updated${ESC_RESET}"
+  # fi
 
   echo -e "\n${ESC_GREEN}==> All prerequisites are set up${ESC_RESET}"
 
