@@ -3,42 +3,41 @@ vim.g.maplocalleader = "\\"
 vim.g.netrw_list_hide = "^\\.DS_Store$"
 
 -- See: https://neovim.io/doc/user/options.html or :help options.
-local opt = vim.opt
 
 vim.schedule(function()
-  opt.clipboard = vim.env.SSH_TTY and "" or "unnamedplus"
+  vim.opt.clipboard = vim.env.SSH_TTY and "" or "unnamedplus"
 end)
 
-opt.colorcolumn = "80"
-opt.completeopt = "menu,menuone,noselect"
-opt.confirm = true
-opt.cursorline = true
-opt.expandtab = true
-opt.guicursor = ""
-opt.ignorecase = true
-opt.laststatus = 3
-opt.linebreak = true
-opt.list = true
-opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
-opt.number = true
-opt.relativenumber = true
-opt.scrolloff = 4
-opt.shiftround = true
-opt.shiftwidth = 2
-opt.showbreak = "+++ "
-opt.sidescrolloff = 8
-opt.signcolumn = "yes"
-opt.smartcase = true
-opt.smartindent = true
-opt.splitbelow = true
-opt.splitkeep = "screen"
-opt.splitright = true
-opt.tabstop = 2
-opt.tabstop = 2
-opt.termguicolors = true
-opt.timeoutlen = 1000 -- currently the default value
-opt.title = true
-opt.undofile = true
-opt.undolevels = 10000
-opt.updatetime = 100
-opt.wrap = true
+vim.opt.colorcolumn = "80"
+vim.opt.completeopt = "menu,menuone,noselect"
+vim.opt.confirm = true
+vim.opt.cursorline = true
+vim.opt.expandtab = true
+vim.opt.guicursor = ""
+vim.opt.ignorecase = true
+vim.opt.laststatus = 3
+vim.opt.linebreak = true
+vim.opt.list = true
+vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.scrolloff = 4
+vim.opt.shiftround = true
+vim.opt.shiftwidth = 2
+vim.opt.showbreak = "+++ "
+vim.opt.sidescrolloff = 8
+vim.opt.signcolumn = "yes"
+vim.opt.smartcase = true
+vim.opt.smartindent = true
+vim.opt.splitbelow = true
+vim.opt.splitkeep = "screen"
+vim.opt.splitright = true
+vim.opt.tabstop = 2
+vim.opt.tabstop = 2
+vim.opt.termguicolors = true
+vim.opt.timeoutlen = 1000 -- currently the default value
+vim.opt.title = true
+vim.opt.undofile = true
+vim.opt.undolevels = 10000
+vim.opt.updatetime = 100
+vim.opt.wrap = true
