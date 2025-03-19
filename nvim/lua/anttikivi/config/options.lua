@@ -73,6 +73,7 @@ opt.tabstop = 2 -- Number of spaces tabs count for
 opt.termguicolors = true -- True color support
 -- opt.textwidth = 0 -- Maximum width of text
 -- opt.timeoutlen = vim.g.vscode and 1000 or 300 -- Lower than default (1000) to quickly trigger which-key
+opt.title = true
 opt.undofile = true
 opt.undolevels = 10000
 opt.updatetime = 200 -- Save swap file and trigger CursorHold
