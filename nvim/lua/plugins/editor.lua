@@ -13,6 +13,7 @@ return {
         build = "make",
       },
     },
+    enabled = vim.g.finder == "telescope",
     opts = {},
     cmd = "Telescope",
     keys = {
