@@ -24,7 +24,7 @@ function M.get()
     },
     { "gr", vim.lsp.buf.references, desc = "Goto references", nowait = true },
     { "gI", vim.lsp.buf.implementation, desc = "Goto implementation" },
-    { "gy", vim.lsp.buf.type_definition, desc = "Goto Type Definition" },
+    { "gy", vim.lsp.buf.type_definition, desc = "Goto type definition" },
     { "gD", vim.lsp.buf.declaration, desc = "Goto declaration" },
     {
       "K",
@@ -62,13 +62,13 @@ function M.get()
   return M._keys
 end
 
----@param buf? integer
+---@param buffer? integer
 ---@param method string | string[]
 ---@return boolean
-function M.has(buf, method)
+function M.has(buffer, method)
   if type(method) == "table" then
     for _, m in ipairs(method) do
-      if M.has(buf, m) then
+      if M.has(buffer, m) then
         return true
       end
     end
@@ -78,7 +78,7 @@ function M.has(buf, method)
 
   method = method:find("/") and method or "textDocument/" .. method
 
-  local clients = lsp_util.get_clients({ bufnr = buf })
+  local clients = lsp_util.get_clients({ bufnr = buffer })
   for _, client in ipairs(clients) do
     if client:supports_method(method) then
       return true
@@ -88,9 +88,9 @@ function M.has(buf, method)
   return false
 end
 
----@param buf? integer
+---@param buffer? integer
 ---@return LspKeys[]
-function M.resolve(buf)
+function M.resolve(buffer)
   local Keys = require("lazy.core.handler.keys")
   if not Keys.resolve then
     return {}
@@ -98,7 +98,7 @@ function M.resolve(buf)
 
   local spec = vim.tbl_extend("force", {}, M.get())
   local opts = require("util.plugin").opts("nvim-lspconfig")
-  local clients = lsp_util.get_clients({ bufnr = buf })
+  local clients = lsp_util.get_clients({ bufnr = buffer })
 
   for _, client in ipairs(clients) do
     local maps = opts.servers[client.name] and opts.servers[client.name].keys
@@ -109,13 +109,13 @@ function M.resolve(buf)
   return Keys.resolve(spec)
 end
 
----@param buf? integer
-function M.on_attach(_, buf)
+---@param buffer? integer
+function M.on_attach(_, buffer)
   local Keys = require("lazy.core.handler.keys")
-  local keymaps = M.resolve(buf)
+  local keymaps = M.resolve(buffer)
 
-  for _, keys in ipairs(keymaps) do
-    local has = not keys.has or M.has(buf, keys.has)
+  for _, keys in pairs(keymaps) do
+    local has = not keys.has or M.has(buffer, keys.has)
     local cond = not (
       keys.cond == false
       or ((type(keys.cond) == "function") and not keys.cond())
@@ -127,7 +127,7 @@ function M.on_attach(_, buf)
       opts.cond = nil
       opts.has = nil
       opts.silent = opts.silent ~= false
-      opts.buffer = buf
+      opts.buffer = buffer
 
       vim.keymap.set(keys.mode or "n", keys.lhs, keys.rhs, opts)
     end
