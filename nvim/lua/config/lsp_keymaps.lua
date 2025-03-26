@@ -80,7 +80,7 @@ function M.has(buf, method)
 
   local clients = lsp_util.get_clients({ bufnr = buf })
   for _, client in ipairs(clients) do
-    if require("util.lsp").client_supports_method(client, method) then
+    if client:supports_method(method) then
       return true
     end
   end

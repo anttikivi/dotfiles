@@ -116,7 +116,7 @@ function M._check_methods(client, buffer)
   for method, clients in pairs(M._supports_method) do
     clients[client] = clients[client] or {}
     if not clients[client][buffer] then
-      if M.client_supports_method(client, method, buffer) then
+      if client:supports_method(method, buffer) then
         clients[client][buffer] = true
 
         vim.api.nvim_exec_autocmds("User", {
@@ -125,20 +125,6 @@ function M._check_methods(client, buffer)
         })
       end
     end
-  end
-end
-
--- This function resolves a difference between Neovim nightly (version 0.11) and stable (version 0.10).
----@param client vim.lsp.Client
----@param method string
----@param buffer? integer
----@return boolean
-function M.client_supports_method(client, method, buffer)
-  if vim.fn.has("nvim-0.11") == 1 then
-    ---@diagnostic disable-next-line: redundant-parameter, param-type-mismatch
-    return client:supports_method(method, buffer)
-  else
-    return client.supports_method(method, { bufnr = buffer })
   end
 end
 
