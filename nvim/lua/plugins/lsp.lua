@@ -117,6 +117,48 @@ return {
         },
         setup = {},
       }
+
+      local keys = lsp_keymaps.get()
+
+      if vim.g.finder == "telescope" then
+        local builtin = require("telescope.builtin")
+
+        vim.list_extend(keys, {
+          {
+            "gd",
+            function()
+              builtin.lsp_definitions({ reuse_win = true })
+            end,
+            desc = "Goto definition",
+            has = "definition",
+          },
+          {
+            "gr",
+            "<cmd>Telescope lsp_references<cr>",
+            desc = "References",
+            nowait = true,
+          },
+          {
+            "gI",
+            function()
+              builtin.lsp_implementations({
+                reuse_win = true,
+              })
+            end,
+            desc = "Goto implementation",
+          },
+          {
+            "gy",
+            function()
+              builtin.lsp_type_definitions({
+                reuse_win = true,
+              })
+            end,
+            desc = "Goto type Definition",
+          },
+        })
+      end
+
       return ret
     end,
     ---@param opts PluginLspOpts

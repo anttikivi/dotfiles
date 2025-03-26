@@ -10,3 +10,6 @@
 
 ---@alias ColorschemeLightVariant
 ---| '"latte"'
+
+---@alias Finder
+---| '"telescope"'
