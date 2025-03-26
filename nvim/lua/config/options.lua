@@ -2,6 +2,15 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.g.netrw_list_hide = "^\\.DS_Store$"
 
+---@type Colorscheme
+vim.g.colorscheme = vim.env.COLOR_SCHEME --[[@as Colorscheme]]
+
+---@type ColorschemeDarkVariant
+vim.g.colorscheme_dark_variant = vim.env.COLOR_SCHEME_DARK_VARIANT --[[@as ColorschemeDarkVariant]]
+
+---@type ColorschemeLightVariant
+vim.g.colorscheme_light_variant = vim.env.COLOR_SCHEME_LIGHT_VARIANT --[[@as ColorschemeLightVariant]]
+
 -- See: https://neovim.io/doc/user/options.html or :help options.
 
 vim.schedule(function()
