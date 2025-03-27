@@ -12,6 +12,7 @@ vim.keymap.set(
   { desc = "Up", expr = true, silent = true }
 )
 
+-- Go to the file explorer.
 vim.keymap.set(
   "n",
   "<leader>e",
