@@ -1,5 +1,3 @@
-local telescope_builtin = require("telescope.builtin")
-
 return {
   {
     "nvim-telescope/telescope.nvim",
@@ -16,9 +14,13 @@ return {
     enabled = vim.g.finder == "telescope",
     opts = {},
     cmd = "Telescope",
-    keys = {
-      { "<leader>ff", telescope_builtin.find_files, desc = "Find files" },
-      { "<leader>sg", telescope_builtin.live_grep, desc = "Grep" },
-    },
+    keys = function(_, keys)
+      local builtin = require("telescope.builtin")
+
+      return {
+        { "<leader>ff", builtin.find_files, desc = "Find files" },
+        { "<leader>sg", builtin.live_grep, desc = "Grep" },
+      }
+    end,
   },
 }
