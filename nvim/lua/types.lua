@@ -11,5 +11,8 @@
 ---@alias ColorschemeLightVariant
 ---| '"latte"'
 
+---@alias CmpEngine
+---| '"nvim-cmp"'
+
 ---@alias Finder
 ---| '"telescope"'
