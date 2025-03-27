@@ -87,7 +87,19 @@ return {
       },
     },
     enabled = vim.g.finder == "telescope",
-    opts = {},
+    opts = function()
+      local actions = require("telescope.actions")
+
+      return {
+        defaults = {
+          mappings = {
+            i = {
+              ["<esc>"] = actions.close,
+            },
+          },
+        },
+      }
+    end,
     cmd = "Telescope",
     keys = function()
       local builtin = require("telescope.builtin")
