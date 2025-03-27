@@ -58,3 +58,7 @@ vim.keymap.set(
   [[:!chmod +x %<CR>]],
   { desc = "Make file executable" }
 )
+
+-- Various commands
+vim.keymap.set("n", "<leader>L", "<cmd>Lazy<cr>", { desc = "Lazy" })
+vim.keymap.set("n", "<leader>M", "<cmd>Mason<cr>", { desc = "Mason" })
