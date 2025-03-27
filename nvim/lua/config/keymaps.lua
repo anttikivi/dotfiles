@@ -12,17 +12,10 @@ vim.keymap.set(
   { desc = "Up", expr = true, silent = true }
 )
 
--- To file explorer
 vim.keymap.set(
   "n",
   "<leader>e",
-  "<cmd>Rex<CR>",
-  { desc = "Resume to file explorer" }
-)
-vim.keymap.set(
-  "n",
-  "<leader>E",
-  "<cmd>Ex<CR>",
+  vim.cmd.Ex,
   { desc = "Resume to file explorer" }
 )
 
