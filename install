@@ -249,25 +249,25 @@ main() {
   OPTIND=1
   while getopts "DEe:hV" opt; do
     case "${opt}" in
-    D)
-      only_dotbot="true"
-      ;;
-    E)
-      all_extra_packages="true"
-      ;;
-    e)
-      extra_packages+=("${OPTARG}")
-      ;;
-    h)
-      print_help
-      ;;
-    V)
-      print_version
-      ;;
-    *)
-      echo "Unexpected option: ${opt}"
-      exit 1
-      ;;
+      D)
+        only_dotbot="true"
+        ;;
+      E)
+        all_extra_packages="true"
+        ;;
+      e)
+        extra_packages+=("${OPTARG}")
+        ;;
+      h)
+        print_help
+        ;;
+      V)
+        print_version
+        ;;
+      *)
+        echo "Unexpected option: ${opt}"
+        exit 1
+        ;;
     esac
   done
   shift "$((OPTIND - 1))"
