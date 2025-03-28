@@ -56,6 +56,7 @@ vim.opt.smartindent = true
 vim.opt.splitbelow = true
 vim.opt.splitkeep = "screen"
 vim.opt.splitright = true
+vim.opt.statusline = require("util.statusline").get()
 vim.opt.tabstop = 2
 vim.opt.tabstop = 2
 vim.opt.termguicolors = true
