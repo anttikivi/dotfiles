@@ -142,4 +142,12 @@ function M.setup()
   end, { desc = "Show info about the formatters for the current buffer" })
 end
 
+function M.formatexpr()
+  if require("util.plugin").has("conform.nvim") then
+    return require("conform").formatexpr()
+  end
+
+  return vim.lsp.formatexpr({ timeout_ms = 3000 })
+end
+
 return M

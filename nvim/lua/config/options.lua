@@ -36,6 +36,7 @@ vim.opt.completeopt = "menu,menuone,noselect"
 vim.opt.confirm = true
 vim.opt.cursorline = true
 vim.opt.expandtab = true
+vim.opt.formatexpr = "v:lua.require'util.format'.formatexpr()"
 vim.opt.guicursor = ""
 vim.opt.ignorecase = true
 vim.opt.laststatus = 3
