@@ -20,8 +20,12 @@ vim.keymap.set(
   { desc = "Resume to file explorer" }
 )
 
--- Clear highlights on search.
-vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+-- Clear highlights on search and stop snippets.
+vim.keymap.set({ "i", "n", "s" }, "<esc>", function()
+  vim.cmd("noh")
+  require("util.cmp").actions.snippet_stop()
+  return "<esc>"
+end, { expr = true, desc = "Clear highlights and stop snippet" })
 
 -- Better indenting.
 vim.keymap.set("v", "<", "<gv")
