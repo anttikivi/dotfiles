@@ -1,3 +1,5 @@
+local LazyUtil = require("lazy.core.util")
+
 ---@class util.lsp
 local M = {}
 
@@ -125,6 +127,58 @@ function M._check_methods(client, buffer)
         })
       end
     end
+  end
+end
+
+---@param opts? Formatter | { filter?: (string | util.lsp.Filter) }
+function M.formatter(opts)
+  opts = opts or {}
+  local filter = opts.filter or {}
+  filter = type(filter) == "string" and { name = filter } or filter
+  ---@cast filter util.lsp.Filter
+  ---@type Formatter
+  local ret = {
+    name = "LSP",
+    primary = true,
+    priority = 1,
+    format = function(buf)
+      M.format(LazyUtil.merge({}, filter, { bufnr = buf }))
+    end,
+    sources = function(buf)
+      local clients = M.get_clients(LazyUtil.merge({}, filter, { bufnr = buf }))
+      ---@param client vim.lsp.Client
+      local ret = vim.tbl_filter(function(client)
+        return client:supports_method("textDocument/formatting")
+          or client:supports_method("textDocument/rangeFormatting")
+      end, clients)
+      ---@param client vim.lsp.Client
+      return vim.tbl_map(function(client)
+        return client.name
+      end, ret)
+    end,
+  }
+
+  return LazyUtil.merge(ret, opts) --[[@as Formatter]]
+end
+
+---@alias util.lsp.Format { timeout_ms?: number, format_options?: table } | util.lsp.Filter
+
+---@param opts? util.lsp.Format
+function M.format(opts)
+  opts = vim.tbl_deep_extend(
+    "force",
+    {},
+    opts or {},
+    require("util.plugin").opts("nvim-lspconfig").format or {},
+    require("util.plugin").opts("conform.nvim").format or {}
+  )
+  local ok, conform = pcall(require, "conform")
+
+  if ok then
+    opts.formatters = {}
+    conform.format(opts)
+  else
+    vim.lsp.buf.format(opts)
   end
 end
 

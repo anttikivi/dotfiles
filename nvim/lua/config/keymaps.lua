@@ -31,6 +31,11 @@ end, { expr = true, desc = "Clear highlights and stop snippet" })
 vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
 
+-- Formatting
+vim.keymap.set({ "n", "v" }, "<leader>cf", function()
+  require("util.format")({ force = true })
+end, { desc = "Format" })
+
 -- Diagnostic keymaps
 vim.keymap.set(
   "n",

@@ -29,11 +29,28 @@ require("config.options")
 require("config.autocmds")
 require("config.keymaps")
 
+-- LazyFile event setup
 local Event = require("lazy.core.handler.event")
 
 Event.mappings.LazyFile =
   { id = "LazyFile", event = { "BufReadPost", "BufNewFile", "BufWritePre" } }
 Event.mappings["User LazyFile"] = Event.mappings.LazyFile
+
+-- Formatting setup
+local format = require("util.format")
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+  group = vim.api.nvim_create_augroup("util.format", {}),
+  callback = function(event)
+    format({ buf = event.buf })
+  end,
+})
+vim.api.nvim_create_user_command("Format", function()
+  format({ force = true })
+end, { desc = "Format selection or buffer" })
+vim.api.nvim_create_user_command("FormatInfo", function()
+  format.info()
+end, { desc = "Show info about the formatters for the current buffer" })
 
 require("lazy").setup({
   spec = {

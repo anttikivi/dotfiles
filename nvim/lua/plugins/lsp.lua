@@ -163,6 +163,7 @@ return {
     end,
     ---@param opts PluginLspOpts
     config = function(_, opts)
+      require("util.format").register(lsp_util.formatter())
       lsp_util.on_attach(lsp_keymaps.on_attach)
       lsp_util.setup()
       lsp_util.on_dynamic_capability(lsp_keymaps.on_attach)
