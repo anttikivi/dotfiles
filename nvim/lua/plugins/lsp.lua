@@ -6,8 +6,7 @@ local lsp_util = require("util.lsp")
 ---@class ServerConfig: lspconfig.Config
 ---@field cmd? lspconfig.Config.command
 
----@type string[]
-local tools = { "stylua" }
+local tools = { "selene", "stylua" }
 
 return {
   {
