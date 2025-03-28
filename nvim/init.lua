@@ -30,23 +30,7 @@ require("config.autocmds")
 require("config.keymaps")
 
 require("util.event").setup()
-
--- Formatting setup
-local format = require("util.format")
-
-vim.api.nvim_create_autocmd("BufWritePre", {
-  group = vim.api.nvim_create_augroup("util.format", {}),
-  callback = function(event)
-    format({ buf = event.buf })
-  end,
-})
-vim.api.nvim_create_user_command("Format", function()
-  format({ force = true })
-end, { desc = "Format selection or buffer" })
-vim.api.nvim_create_user_command("FormatInfo", function()
-  format.info()
-end, { desc = "Show info about the formatters for the current buffer" })
-
+require("util.format").setup()
 require("util.root").setup()
 
 require("lazy").setup({
