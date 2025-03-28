@@ -47,6 +47,8 @@ vim.api.nvim_create_user_command("FormatInfo", function()
   format.info()
 end, { desc = "Show info about the formatters for the current buffer" })
 
+require("util.root").setup()
+
 require("lazy").setup({
   spec = {
     { import = "plugins" },
