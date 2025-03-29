@@ -101,7 +101,10 @@ function M.setup()
   vim.api.nvim_create_autocmd({ "BufWritePost", "DirChanged", "BufEnter" }, {
     group = vim.api.nvim_create_augroup("git_cache", { clear = true }),
     callback = function()
-      vim.schedule(M._update_git_branch)
+      vim.schedule(function()
+        M._update_git_branch()
+        vim.cmd("redrawstatus!")
+      end)
     end,
   })
   vim.api.nvim_create_autocmd("ColorScheme", {
