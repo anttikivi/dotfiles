@@ -1,42 +1,113 @@
 return {
   {
-    "stevearc/oil.nvim",
-    enabled = true,
-    lazy = false,
-    dependencies = { { "echasnovski/mini.icons", opts = {} } },
-    ---@module "oil"
-    ---@type oil.SetupOpts
+    "lewis6991/gitsigns.nvim",
     opts = {
-      default_file_explorer = true,
-      columns = {
-        "icon",
-        -- "permissions",
-        -- "size",
+      signs = {
+        add = { text = "▎" },
+        change = { text = "▎" },
+        delete = { text = "" },
+        topdelete = { text = "" },
+        changedelete = { text = "▎" },
+        untracked = { text = "▎" },
       },
-      lsp_file_methods = {
-        enabled = true,
-        timeout_ms = 2000,
+      signs_staged = {
+        add = { text = "▎" },
+        change = { text = "▎" },
+        delete = { text = "" },
+        topdelete = { text = "" },
+        changedelete = { text = "▎" },
       },
-      watch_for_changes = true,
-      keymaps = {
-        ["<CR>"] = "actions.select",
-        ["<C-p>"] = "actions.preview",
-        ["<C-c>"] = { "actions.close", mode = "n" },
-        ["<C-l>"] = "actions.refresh",
-        ["-"] = { "actions.parent", mode = "n" },
-        ["_"] = { "actions.open_cwd", mode = "n" },
+    },
+    event = "LazyFile",
+  },
+  {
+    "ThePrimeagen/harpoon",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    opts = {
+      settings = {
+        save_on_toggle = true,
       },
-      -- TODO: Review the default keymaps.
-      use_default_keymaps = false,
-      view_options = {
-        show_hidden = true,
-        is_always_hidden = function(name)
-          return name == ".." or name == ".DS_Store" or name == ".git"
+    },
+    keys = function()
+      local keys = {
+        {
+          "<C-h>",
+          function()
+            require("harpoon"):list():add()
+          end,
+          desc = "Harpoon file",
+        },
+        {
+          "<leader>h",
+          function()
+            local harpoon = require("harpoon")
+            harpoon.ui:toggle_quick_menu(harpoon:list())
+          end,
+          desc = "Toggle Harpoon quick menu",
+        },
+      }
+
+      local ordinal = {
+        "first",
+        "second",
+        "third",
+        "fourth",
+        "fifth",
+        "sixth",
+        "seventh",
+        "eighth",
+        "ninth",
+      }
+      for i, v in ipairs(ordinal) do
+        table.insert(keys, {
+          "<leader>" .. i,
+          function()
+            require("harpoon"):list():select(i)
+          end,
+          desc = string.format("Switch to the %s Harpoon file", v),
+        })
+      end
+
+      return keys
+    end,
+    branch = "harpoon2",
+  },
+  {
+    "nvim-telescope/telescope.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      {
+        "nvim-telescope/telescope-fzf-native.nvim",
+        cond = function()
+          return vim.fn.executable("make") == 1
         end,
+        build = "make",
       },
     },
-    keys = {
-      { "-", "<cmd>Oil<CR>", mode = { "n" }, desc = "Open parent directory" },
-    },
+    enabled = vim.g.finder == "telescope",
+    opts = function()
+      local actions = require("telescope.actions")
+
+      return {
+        defaults = {
+          mappings = {
+            i = {
+              ["<esc>"] = actions.close,
+            },
+          },
+        },
+      }
+    end,
+    cmd = "Telescope",
+    keys = function()
+      local builtin = require("telescope.builtin")
+
+      return {
+        { "<leader>ff", builtin.find_files, desc = "Find files" },
+        { "<leader>sg", builtin.live_grep, desc = "Grep" },
+      }
+    end,
   },
 }

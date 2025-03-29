@@ -1,15 +1,11 @@
 local function augroup(name)
-  return vim.api.nvim_create_augroup(
-    "anttikivi_custom_" .. name,
-    { clear = true }
-  )
+  return vim.api.nvim_create_augroup("ak_" .. name, { clear = true })
 end
 
--- TODO: The options are not applied if I jump to a Python file by Harpoon.
-vim.api.nvim_create_autocmd("FileType", {
-  group = augroup("python_colorcolumn"),
-  pattern = "python",
+-- Highlight on yank.
+vim.api.nvim_create_autocmd("TextYankPost", {
+  group = augroup("highlight_yank"),
   callback = function()
-    vim.opt_local.colorcolumn = "72,79"
+    (vim.hl or vim.highlight).on_yank()
   end,
 })
