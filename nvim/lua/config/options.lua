@@ -3,6 +3,8 @@ vim.g.maplocalleader = " "
 vim.g.netrw_banner = false
 vim.g.netrw_list_hide = "^\\.DS_Store$"
 
+vim.g.custom_statusline = true
+
 ---@type Colorscheme
 vim.g.colorscheme = vim.env.COLOR_SCHEME --[[@as Colorscheme]]
 
@@ -56,8 +58,11 @@ vim.opt.smartindent = true
 vim.opt.splitbelow = true
 vim.opt.splitkeep = "screen"
 vim.opt.splitright = true
-vim.opt.statusline = require("util.statusline").get()
-vim.opt.tabstop = 2
+
+if vim.g.custom_statusline then
+  vim.opt.statusline = require("util.statusline").get()
+end
+
 vim.opt.tabstop = 2
 vim.opt.termguicolors = true
 vim.opt.timeoutlen = 1000 -- currently the default value
