@@ -57,6 +57,7 @@ function M.get()
       mode = { "n", "v" },
       has = "codeAction",
     },
+    { "<leader>cr", vim.lsp.buf.rename, desc = "Rename", has = "rename" },
   }
 
   return M._keys
