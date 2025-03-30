@@ -68,6 +68,14 @@ vim.keymap.set(
   { desc = "Make file executable" }
 )
 
+-- Git commands
+if vim.fn.executable("lazygit") == 1 then
+  vim.keymap.set("n", "<leader>gg", function()
+    ---@diagnostic disable-next-line: missing-fields
+    Snacks.lazygit({ cwd = require("util.root").git() })
+  end, { desc = "Lazygit (root dir)" })
+end
+
 -- Various commands
 vim.keymap.set("n", "<leader>L", "<cmd>Lazy<cr>", { desc = "Lazy" })
 vim.keymap.set("n", "<leader>M", "<cmd>Mason<cr>", { desc = "Mason" })
