@@ -121,4 +121,10 @@ return {
       }
     end,
   },
+  {
+    "folke/todo-comments.nvim",
+    opts = {},
+    event = "LazyFile",
+    cmd = { "TodoTrouble", "TodoTelescope" },
+  },
 }
