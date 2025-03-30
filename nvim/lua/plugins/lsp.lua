@@ -459,7 +459,6 @@ return {
               client.server_capabilities.hoverProvider = false
             end, "ruff")
           end,
-          rust_analyzer = {},
           vtsls = function(_, opts)
             lsp_util.on_attach(function(client)
               client.commands["_typescript.moveToFileRefactoring"] = function(
