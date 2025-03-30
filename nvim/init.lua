@@ -29,6 +29,8 @@ require("config.options")
 require("config.autocmds")
 require("config.keymaps")
 
+require("filetypes")
+
 require("util.event").setup()
 require("util.format").setup()
 require("util.root").setup()

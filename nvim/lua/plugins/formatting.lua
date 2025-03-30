@@ -30,12 +30,53 @@ return {
         lsp_format = "fallback",
       },
       formatters_by_ft = {
+        astro = { "prettier" },
+        css = { "prettier" },
+        go = { "goimports", "gofumpt" },
+        html = { "prettier" },
+        javascript = { "prettier" },
+        javascriptreact = { "prettier" },
+        json = { "prettier" },
+        jsonc = { "prettier" },
         lua = { "stylua" },
+        markdown = { "prettier", "markdownlint-cli2", "markdown-toc" },
+        ["markdown.mdx"] = { "prettier", "markdownlint-cli2", "markdown-toc" },
+        php = { "php_cs_fixer" },
         sh = { "shfmt" },
+        hcl = { "packer_fmt" },
+        terraform = { "terraform_fmt" },
+        tf = { "terraform_fmt" },
+        ["terraform-vars"] = { "terraform_fmt" },
+        typescript = { "prettier" },
+        typescriptreact = { "prettier" },
+        yaml = { "prettier" },
+        ["yaml.ansible"] = { "prettier" },
       },
       ---@type table<string, conform.FormatterConfigOverride | fun(bufnr: integer): nil | conform.FormatterConfigOverride>
       formatters = {
         injected = { options = { ignore_errors = true } },
+        ["markdown-toc"] = {
+          condition = function(_, ctx)
+            for _, line in
+              ipairs(vim.api.nvim_buf_get_lines(ctx.buf, 0, -1, false))
+            do
+              ---@diagnostic disable-next-line: undefined-field
+              if line:find("<!%-%- toc %-%->") then
+                return true
+              end
+              ---@diagnostic disable-next-line: missing-return
+            end
+          end,
+        },
+        ["markdownlint-cli2"] = {
+          condition = function(_, ctx)
+            local diag = vim.tbl_filter(function(d)
+              return d.source == "markdownlint"
+            end, vim.diagnostic.get(ctx.buf))
+
+            return #diag > 0
+          end,
+        },
       },
     },
     lazy = true,

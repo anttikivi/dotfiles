@@ -5,7 +5,14 @@ return {
     "mfussenegger/nvim-lint",
     opts = {
       events = { "BufWritePost", "BufReadPost", "InsertLeave" },
-      linters_by_ft = { lua = { "selene" } },
+      linters_by_ft = {
+        dockerfile = { "hadolint" },
+        lua = { "selene" },
+        markdown = { "markdownlint-cli2" },
+        php = { "phpcs" },
+        terraform = { "terraform_validate" },
+        tf = { "terraform_validate" },
+      },
       ---@type table<string, table>
       linters = {
         selene = {

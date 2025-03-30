@@ -165,7 +165,7 @@ return {
       local auto_select = true
 
       return {
-        auto_brackets = {},
+        auto_brackets = { "python" },
         completion = {
           completeopt = "menu,menuone,noinsert"
             .. (auto_select and "" or ",noselect"),

@@ -8,3 +8,5 @@ ssh/config
 ssh/*.pub
 *.egg-info/
 *.py[cod]
+
+nvim/lua/config/license.lua

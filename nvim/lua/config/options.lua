@@ -3,7 +3,8 @@ vim.g.maplocalleader = " "
 vim.g.netrw_banner = false
 vim.g.netrw_list_hide = "^\\.DS_Store$"
 
-vim.g.custom_statusline = true
+---@type CmpEngine
+vim.g.cmp_engine = "blink"
 
 ---@type Colorscheme
 vim.g.colorscheme = vim.env.COLOR_SCHEME --[[@as Colorscheme]]
@@ -14,11 +15,20 @@ vim.g.colorscheme_dark_variant = vim.env.COLOR_SCHEME_DARK_VARIANT --[[@as Color
 ---@type ColorschemeLightVariant
 vim.g.colorscheme_light_variant = vim.env.COLOR_SCHEME_LIGHT_VARIANT --[[@as ColorschemeLightVariant]]
 
----@type CmpEngine
-vim.g.cmp_engine = "blink"
+---@type boolean
+vim.g.custom_statusline = true
+
+---@type boolean
+vim.g.eslint_auto_format = false
 
 ---@type Finder
 vim.g.finder = "telescope"
+
+---@type "intelephense" | "phpactor"
+vim.g.php_lsp = "intelephense"
+
+---@type "bacon-ls" | "rust-analyzer"
+vim.g.rust_diagnostics = "bacon-ls"
 
 -- Root directory detection
 -- Each entry can be:
