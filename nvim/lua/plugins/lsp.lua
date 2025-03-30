@@ -287,5 +287,6 @@ return {
         handlers = { setup },
       })
     end,
+    event = "LazyFile",
   },
 }

@@ -15,6 +15,8 @@ return {
       },
     },
     main = "nvim-treesitter.configs",
+    lazy = vim.fn.argc(-1) == 0,
+    event = { "LazyFile", "VeryLazy" },
     build = ":TSUpdate",
     cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
   },
