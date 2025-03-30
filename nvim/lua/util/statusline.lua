@@ -1,3 +1,5 @@
+local icons = require("config.icons")
+
 local M = {}
 
 function M.get()
@@ -13,6 +15,12 @@ function M.get()
   )
   table.insert(line, "%{luaeval('require(\"util.statusline\").branch()')}")
   table.insert(line, "%*")
+
+  -- Diagnostics symbols
+  table.insert(
+    line,
+    "%{%luaeval('require(\"util.statusline\").diagnostics()')%}"
+  )
 
   -- File type
   table.insert(line, "%{%luaeval('require(\"util.statusline\").ft_icon()')%}")
@@ -69,6 +77,50 @@ function M._update_git_branch()
   M._git_buf = buf
 end
 
+function M.diagnostics()
+  local count = vim.diagnostic.count(0)
+  local error_count = count[vim.diagnostic.severity.ERROR] or 0
+  local warning_count = count[vim.diagnostic.severity.WARN] or 0
+  local info_count = count[vim.diagnostic.severity.INFO] or 0
+  local hint_count = count[vim.diagnostic.severity.HINT] or 0
+
+  local parts = {}
+
+  if error_count > 0 then
+    table.insert(
+      parts,
+      "%#StatusLineErrors#" .. icons.diagnostics.error .. error_count
+    )
+  end
+
+  if warning_count > 0 then
+    table.insert(
+      parts,
+      "%#StatusLineWarnings#" .. icons.diagnostics.warn .. warning_count
+    )
+  end
+
+  if info_count > 0 then
+    table.insert(
+      parts,
+      "%#StatusLineInfo#" .. icons.diagnostics.info .. info_count
+    )
+  end
+
+  if hint_count > 0 then
+    table.insert(
+      parts,
+      "%#StatusLineHint#" .. icons.diagnostics.hint .. hint_count
+    )
+  end
+
+  if #parts == 0 then
+    return ""
+  end
+
+  return " " .. table.concat(parts, " ")
+end
+
 function M.ft_icon()
   local ok, devicons = pcall(require, "nvim-web-devicons")
   if not ok then
@@ -101,6 +153,11 @@ function M._set_highlights()
       { bg = palette.blue, fg = palette.mantle }
     )
   end
+
+  vim.api.nvim_set_hl(0, "StatusLineErrors", { link = "DiagnosticError" })
+  vim.api.nvim_set_hl(0, "StatusLineWarnings", { link = "DiagnosticWarn" })
+  vim.api.nvim_set_hl(0, "StatusLineInfo", { link = "DiagnosticInfo" })
+  vim.api.nvim_set_hl(0, "StatusLineHint", { link = "DiagnosticHint" })
 
   vim.cmd("redrawstatus!")
 end
