@@ -73,7 +73,7 @@ function M._update_git_branch()
 
   -- Include the trailing space in the branch so there is no extra space when
   -- the branch is empty.
-  M._git_branch = " " .. branch .. " "
+  M._git_branch = icons.statusline.branch .. branch .. " "
   M._git_buf = buf
 end
 

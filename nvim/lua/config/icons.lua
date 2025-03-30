@@ -47,4 +47,7 @@ return {
     Value = " ",
     Variable = "󰀫 ",
   },
+  statusline = {
+    branch = " ",
+  },
 }
