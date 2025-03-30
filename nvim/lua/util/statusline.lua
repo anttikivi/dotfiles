@@ -7,6 +7,10 @@ function M.get()
 
   -- The highlight group and value for the current Git branch
   table.insert(line, "%#StatusLineGitBranch#")
+  table.insert(
+    line,
+    "%{luaeval('require(\"util.statusline\").branch_space()')}"
+  )
   table.insert(line, "%{luaeval('require(\"util.statusline\").branch()')}")
   table.insert(line, "%*")
 
@@ -30,6 +34,10 @@ M._git_buf = -1
 
 function M.branch()
   return M._git_branch
+end
+
+function M.branch_space()
+  return M._git_branch ~= "" and " " or ""
 end
 
 function M._update_git_branch()
