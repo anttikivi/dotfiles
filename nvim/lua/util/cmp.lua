@@ -1,3 +1,5 @@
+local LazyUtil = require("lazy.core.util")
+
 local M = {}
 
 ---@alias Action fun(): boolean?
@@ -92,6 +94,42 @@ function M.snippet_replace(snippet, fn)
     local n, name = m:match("^%${(%d+):(.+)}$")
     return n and fn({ n = n, text = name }) or m
   end) or snippet
+end
+
+function M.snippet_fix(snippet)
+  local texts = {} ---@type table<number, string>
+
+  return M.snippet_replace(snippet, function(placeholder)
+    texts[placeholder.n] = texts[placeholder.n]
+      or M.snippet_preview(placeholder.text)
+
+    return "${" .. placeholder.n .. ":" .. texts[placeholder.n] .. "}"
+  end)
+end
+
+function M.expand(snippet)
+  local session = vim.snippet.active() and vim.snippet._session or nil
+
+  local ok, err = pcall(vim.snippet.expand, snippet)
+  if not ok then
+    local fixed = M.snippet_fix(snippet)
+    ok = pcall(vim.snippet.expand, fixed)
+    local msg = ok
+        and "Failed to parse snippet,\nbut was able to fix it automatically."
+      or ("Failed to parse snippet.\n" .. err)
+
+    LazyUtil[ok and "warn" or "error"](
+      ([[%s
+```%s
+%s
+```]]):format(msg, vim.bo.filetype, snippet),
+      { title = "vim.snippet" }
+    )
+  end
+
+  if session then
+    vim.snippet._session = session
+  end
 end
 
 return M

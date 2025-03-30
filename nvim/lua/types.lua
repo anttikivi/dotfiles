@@ -12,6 +12,7 @@
 ---| '"latte"'
 
 ---@alias CmpEngine
+---| '"blink"'
 ---| '"nvim-cmp"'
 
 ---@alias Finder

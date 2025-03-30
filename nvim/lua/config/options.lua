@@ -15,7 +15,7 @@ vim.g.colorscheme_dark_variant = vim.env.COLOR_SCHEME_DARK_VARIANT --[[@as Color
 vim.g.colorscheme_light_variant = vim.env.COLOR_SCHEME_LIGHT_VARIANT --[[@as ColorschemeLightVariant]]
 
 ---@type CmpEngine
-vim.g.cmp_engine = "nvim-cmp"
+vim.g.cmp_engine = "blink"
 
 ---@type Finder
 vim.g.finder = "telescope"
