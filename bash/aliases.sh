@@ -56,8 +56,8 @@ alias td="tmux detach"
 alias tks="tmux kill-server"
 alias tls="tmux list-sessions"
 
-alias terraform="tofu"
-alias tf="tofu"
+# alias terraform="tofu"
+# alias tf="tofu"
 
 # terraform() {
 #   if [ -f "./.env" ]; then
