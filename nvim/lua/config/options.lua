@@ -3,6 +3,9 @@ vim.g.maplocalleader = " "
 vim.g.netrw_banner = false
 vim.g.netrw_list_hide = "^\\.DS_Store$"
 
+---@type boolean
+vim.g.ai_cmp = true
+
 ---@type CmpEngine
 vim.g.cmp_engine = "blink"
 

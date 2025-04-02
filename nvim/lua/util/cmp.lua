@@ -49,23 +49,13 @@ function M.confirm(opts)
     select = true,
     behavior = cmp.ConfirmBehavior.Insert,
   }, opts or {})
-
   return function(fallback)
     if cmp.core.view:visible() or vim.fn.pumvisible() == 1 then
-      -- Create undo.
-      if vim.api.nvim_get_mode().mode == "i" then
-        vim.api.nvim_feedkeys(
-          vim.api.nvim_replace_termcodes("<c-G>u", true, true, true),
-          "n",
-          false
-        )
-      end
-
+      require("util").create_undo()
       if cmp.confirm(opts) then
         return
       end
     end
-
     return fallback()
   end
 end
