@@ -24,8 +24,9 @@ return {
         },
         panel = { enabled = false },
         filetypes = {
-          markdown = true,
           help = true,
+          markdown = true,
+          yaml = true,
         },
       }
     end,
