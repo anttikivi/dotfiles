@@ -28,6 +28,8 @@ return {
           markdown = true,
           yaml = true,
         },
+        -- copilot_model = "claude-3.5-sonnet",
+        copilot_model = "gpt-4o-copilot",
       }
     end,
     build = ":Copilot auth",
