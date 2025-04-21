@@ -5,7 +5,7 @@ vim.g.netrw_list_hide = "^\\.DS_Store$"
 
 -- Use the completion engine for the AI suggestions.
 ---@type boolean
-vim.g.ai_cmp_enabled = true
+vim.g.ai_cmp_enabled = false
 
 ---@type boolean
 vim.g.ai_enabled = true
