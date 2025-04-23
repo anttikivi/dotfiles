@@ -8,7 +8,7 @@ vim.g.netrw_list_hide = "^\\.DS_Store$"
 vim.g.ai_cmp_enabled = false
 
 ---@type boolean
-vim.g.ai_enabled = true
+vim.g.ai_enabled = false
 
 -- Helper for determining the AI in the completion engine is actually enabled.
 ---@type boolean
