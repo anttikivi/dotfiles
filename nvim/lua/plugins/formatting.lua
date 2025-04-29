@@ -31,6 +31,7 @@ return {
       },
       formatters_by_ft = {
         astro = { "prettier" },
+        blade = { "blade-formatter" },
         css = { "prettier" },
         go = { "goimports", "gofumpt" },
         html = { "prettier" },
@@ -41,7 +42,7 @@ return {
         lua = { "stylua" },
         markdown = { "prettier", "markdownlint-cli2", "markdown-toc" },
         ["markdown.mdx"] = { "prettier", "markdownlint-cli2", "markdown-toc" },
-        php = { "php_cs_fixer" },
+        php = { "pint", "php_cs_fixer" },
         sh = { "shfmt" },
         hcl = { "packer_fmt" },
         terraform = { "terraform_fmt" },

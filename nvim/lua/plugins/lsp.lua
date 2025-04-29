@@ -8,6 +8,7 @@ local lsp_util = require("util.lsp")
 
 local tools = {
   "ansible-lint",
+  "blade-formatter",
   "codelldb",
   "goimports",
   "gofumpt",
@@ -16,6 +17,7 @@ local tools = {
   "markdown-toc",
   "phpcs",
   "php-cs-fixer",
+  "pint",
   "prettier",
   "selene",
   "stylua",
