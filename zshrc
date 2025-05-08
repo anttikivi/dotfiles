@@ -58,3 +58,6 @@ for file in ~/.zsh/*.zsh; do
   source "${file}"
 done
 unset file
+
+export PATH="/Users/anttikivi/.lando/bin:$PATH"; #landopath
+
