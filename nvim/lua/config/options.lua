@@ -50,9 +50,11 @@ vim.g.root_spec = { "lsp", { ".git", "lua" }, "cwd" }
 
 -- See: https://neovim.io/doc/user/options.html or :help options.
 
-vim.schedule(function()
-  vim.opt.clipboard = vim.env.SSH_TTY and "" or "unnamedplus"
-end)
+-- vim.schedule(function()
+--   vim.opt.clipboard = vim.env.SSH_TTY and "" or "unnamedplus"
+-- end)
+
+vim.opt.clipboard = "unnamedplus"
 
 vim.opt.colorcolumn = "80"
 vim.opt.completeopt = "menu,menuone,noselect"
