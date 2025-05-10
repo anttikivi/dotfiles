@@ -20,4 +20,13 @@ return {
       },
     },
   },
+  {
+    "rose-pine/neovim",
+    name = "rose-pine",
+    enabled = vim.g.colorscheme == "rose-pine",
+    opts = {
+      variant = "auto",
+      dark_variant = vim.g.colorscheme_dark_variant,
+    },
+  },
 }
