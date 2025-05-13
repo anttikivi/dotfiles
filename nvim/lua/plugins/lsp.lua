@@ -30,7 +30,7 @@ end
 
 return {
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     ---@param opts MasonSettings
     config = function(_, opts)
       require("mason").setup(opts)
@@ -57,12 +57,17 @@ return {
     end,
     build = ":MasonUpdate",
     cmd = "Mason",
+    version = "^1.0.0", -- TODO: Update the LSP config.
   },
   {
     "neovim/nvim-lspconfig",
     dependencies = {
-      "williamboman/mason.nvim",
-      { "williamboman/mason-lspconfig.nvim", config = function() end },
+      "mason-org/mason.nvim",
+      {
+        "mason-org/mason-lspconfig.nvim",
+        config = function() end,
+        version = "^1.0.0", -- TODO: Update the LSP config.
+      },
     },
     opts = function()
       ---@class PluginLspOpts
