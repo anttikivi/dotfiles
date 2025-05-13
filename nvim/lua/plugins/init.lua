@@ -17,7 +17,7 @@ return {
       bigfile = { enabled = true },
       indent = { enabled = true },
       lazygit = {
-        enabled = true,
+        enabled = vim.g.lazygit_enabled,
       },
       quickfile = { enabled = true },
     },

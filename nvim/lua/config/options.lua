@@ -35,6 +35,9 @@ vim.g.eslint_auto_format = false
 ---@type Finder
 vim.g.finder = "telescope"
 
+---@type boolean
+vim.g.lazygit_enabled = false
+
 ---@type "intelephense" | "phpactor"
 vim.g.php_lsp = "intelephense"
 

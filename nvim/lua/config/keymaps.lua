@@ -69,7 +69,7 @@ vim.keymap.set(
 )
 
 -- Git commands
-if vim.fn.executable("lazygit") == 1 then
+if vim.g.lazygit_enabled and vim.fn.executable("lazygit") == 1 then
   vim.keymap.set("n", "<leader>gg", function()
     ---@diagnostic disable-next-line: missing-fields
     Snacks.lazygit({ cwd = require("util.root").git() })
