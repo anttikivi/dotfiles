@@ -130,6 +130,16 @@ return {
     enabled = vim.g.finder == "telescope",
     opts = function()
       local actions = require("telescope.actions")
+      local telescopeConfig = require("telescope.config")
+
+      -- Clone the default config.
+      local vimgrep_arguments =
+        { unpack(telescopeConfig.values.vimgrep_arguments) }
+
+      -- Search in hidden files but exclude '.git' directory.
+      table.insert(vimgrep_arguments, "--hidden")
+      table.insert(vimgrep_arguments, "--glob")
+      table.insert(vimgrep_arguments, "!**/.git/*")
 
       return {
         defaults = {
@@ -138,9 +148,22 @@ return {
               ["<esc>"] = actions.close,
             },
           },
+          vimgrep_arguments = vimgrep_arguments,
         },
         extensions = {
           ["ui-select"] = require("telescope.themes").get_dropdown(),
+        },
+        pickers = {
+          find_files = {
+            -- Search in hidden files but exclude '.git'.
+            find_command = {
+              "rg",
+              "--files",
+              "--hidden",
+              "--glob",
+              "!**/.git/*",
+            },
+          },
         },
       }
     end,
