@@ -1,7 +1,10 @@
 return {
   {
     "stevearc/conform.nvim",
+    version = "^9.0.0",
     dependencies = { "williamboman/mason.nvim" },
+    lazy = true,
+    cmd = "ConformInfo",
     init = function()
       require("util.event").on_very_lazy(function()
         require("util.format").register({
@@ -80,8 +83,6 @@ return {
         },
       },
     },
-    lazy = true,
-    cmd = "ConformInfo",
     keys = {
       {
         "<leader>cF",

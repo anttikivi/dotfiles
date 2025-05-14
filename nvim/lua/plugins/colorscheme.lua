@@ -1,6 +1,7 @@
 return {
   {
     "f-person/auto-dark-mode.nvim",
+    commit = "c31de126963ffe9403901b4b0990dde0e6999cc6", -- TODO: Check sometimes for updates.
     opts = {
       update_interval = 1000, -- TODO: This value works on macOS.
     },
@@ -8,6 +9,7 @@ return {
   {
     "catppuccin/nvim",
     name = "catppuccin",
+    version = "^1.10.0",
     enabled = vim.g.colorscheme == "catppuccin",
     opts = {
       flavour = "auto",
@@ -23,6 +25,7 @@ return {
   {
     "rose-pine/neovim",
     name = "rose-pine",
+    version = "^3.0.2",
     enabled = vim.g.colorscheme == "rose-pine",
     opts = {
       variant = "auto",

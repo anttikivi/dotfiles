@@ -1,6 +1,12 @@
 return {
   {
     "nvim-treesitter/nvim-treesitter",
+    version = false, -- TODO: No recent releases.
+    main = "nvim-treesitter.configs",
+    lazy = vim.fn.argc(-1) == 0,
+    event = { "LazyFile", "VeryLazy" },
+    build = ":TSUpdate",
+    cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
     ---@module "nvim-treesitter"
     ---@type TSConfig
     ---@diagnostic disable-next-line: missing-fields
@@ -54,10 +60,5 @@ return {
         "zig",
       },
     },
-    main = "nvim-treesitter.configs",
-    lazy = vim.fn.argc(-1) == 0,
-    event = { "LazyFile", "VeryLazy" },
-    build = ":TSUpdate",
-    cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
   },
 }

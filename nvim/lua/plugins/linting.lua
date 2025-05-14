@@ -3,6 +3,8 @@ local LazyUtil = require("lazy.core.util")
 return {
   {
     "mfussenegger/nvim-lint",
+    version = false, -- TODO: No tags in the repository.
+    event = "LazyFile",
     opts = {
       events = { "BufWritePost", "BufReadPost", "InsertLeave" },
       linters_by_ft = {
@@ -98,6 +100,5 @@ return {
         callback = debounce(100, run_lint),
       })
     end,
-    event = "LazyFile",
   },
 }

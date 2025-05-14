@@ -1,6 +1,8 @@
 return {
   {
     "lewis6991/gitsigns.nvim",
+    version = "^1.0.2",
+    event = "LazyFile",
     opts = {
       signs = {
         add = { text = "▎" },
@@ -18,10 +20,10 @@ return {
         changedelete = { text = "▎" },
       },
     },
-    event = "LazyFile",
   },
   {
     "ThePrimeagen/harpoon",
+    branch = "harpoon2",
     dependencies = {
       { "nvim-lua/plenary.nvim" },
     },
@@ -72,12 +74,13 @@ return {
 
       return keys
     end,
-    branch = "harpoon2",
   },
   {
     "stevearc/oil.nvim",
+    version = "^2.15.0",
     dependencies = { { "echasnovski/mini.icons", opts = {} } },
     enabled = vim.g.file_explorer == "oil" or vim.g.file_explorer == "oil.nvim",
+    lazy = false,
     ---@module "oil"
     ---@type oil.SetupOpts
     opts = {
@@ -109,13 +112,13 @@ return {
         end,
       },
     },
-    lazy = false,
     keys = {
       { "-", "<cmd>Oil<CR>", mode = { "n" }, desc = "Open parent directory" },
     },
   },
   {
     "nvim-telescope/telescope.nvim",
+    version = false, -- TODO: Tag 0.1.8 is too old.
     dependencies = {
       { "nvim-lua/plenary.nvim" },
       {
@@ -186,8 +189,9 @@ return {
   },
   {
     "folke/todo-comments.nvim",
-    opts = {},
+    version = "^1.4.0",
     event = "LazyFile",
     cmd = { "TodoTrouble", "TodoTelescope" },
+    opts = {},
   },
 }

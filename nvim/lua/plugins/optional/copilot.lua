@@ -1,6 +1,7 @@
 return {
   {
     "zbirenbaum/copilot.lua",
+    version = false, -- TODO: No tags.
     opts = function()
       require("util.cmp").actions.ai_accept = function()
         if require("copilot.suggestion").is_visible() then

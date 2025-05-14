@@ -4,6 +4,9 @@ local icons = require("config.icons")
 return {
   {
     "saghen/blink.cmp",
+    version = "^1.3.0",
+    build = "cargo build --release",
+    event = "InsertEnter",
     dependencies = {
       "rafamadriz/friendly-snippets",
     },
@@ -141,7 +144,5 @@ return {
 
       require("blink.cmp").setup(opts)
     end,
-    build = "cargo build --release",
-    event = "InsertEnter",
   },
 }

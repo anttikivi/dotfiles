@@ -4,6 +4,8 @@ local icons = require("config.icons")
 return {
   {
     "hrsh7th/nvim-cmp",
+    version = false, -- TODO: Strange versioning.
+    event = "InsertEnter",
     dependencies = {
       "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-nvim-lsp",
@@ -147,6 +149,5 @@ return {
         end
       end)
     end,
-    event = "InsertEnter",
   },
 }

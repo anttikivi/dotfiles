@@ -31,6 +31,9 @@ end
 return {
   {
     "mason-org/mason.nvim",
+    version = "^1.11.0", -- TODO: Update to v2.0.0.
+    build = ":MasonUpdate",
+    cmd = "Mason",
     ---@param opts MasonSettings
     config = function(_, opts)
       require("mason").setup(opts)
@@ -55,18 +58,17 @@ return {
         end
       end)
     end,
-    build = ":MasonUpdate",
-    cmd = "Mason",
-    version = "^1.0.0", -- TODO: Update the LSP config.
   },
   {
     "neovim/nvim-lspconfig",
+    version = "^2.1.0",
+    event = "LazyFile",
     dependencies = {
       "mason-org/mason.nvim",
       {
         "mason-org/mason-lspconfig.nvim",
+        version = "^1.32.0", -- TODO: Update to v2.0.0.
         config = function() end,
-        version = "^1.0.0", -- TODO: Update the LSP config.
       },
     },
     opts = function()
@@ -713,6 +715,5 @@ return {
         handlers = { setup },
       })
     end,
-    event = "LazyFile",
   },
 }

@@ -13,14 +13,15 @@ return {
   },
   {
     "folke/lazydev.nvim",
+    version = "^1.9.0",
+    cmd = "LazyDev",
+    ft = "lua",
     opts = {
       library = {
         { path = "${3rd}/luv/library", words = { "vim%.uv" } },
         { path = "snacks.nvim", words = { "Snacks" } },
       },
     },
-    cmd = "LazyDev",
-    ft = "lua",
   },
   {
     "echasnovski/mini.pairs",
