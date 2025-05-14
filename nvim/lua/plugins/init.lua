@@ -2,7 +2,9 @@ return {
   { "nvim-lua/plenary.nvim", lazy = true },
   {
     "folke/snacks.nvim",
+    version = "^2.22.0",
     priority = 1000,
+    lazy = false,
     init = function()
       vim.api.nvim_create_autocmd("User", {
         pattern = "VeryLazy",
@@ -21,6 +23,5 @@ return {
       },
       quickfile = { enabled = true },
     },
-    lazy = false,
   },
 }
