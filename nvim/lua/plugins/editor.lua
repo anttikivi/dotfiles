@@ -78,7 +78,6 @@ return {
   {
     "stevearc/oil.nvim",
     version = "^2.15.0",
-    dependencies = { { "echasnovski/mini.icons", opts = {} } },
     enabled = vim.g.file_explorer == "oil" or vim.g.file_explorer == "oil.nvim",
     lazy = false,
     ---@module "oil"
