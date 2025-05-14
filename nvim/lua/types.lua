@@ -19,5 +19,10 @@
 ---| '"blink"'
 ---| '"nvim-cmp"'
 
+---@alias FileExplorer
+---| '"netrw"'
+---| '"oil"'
+---| '"oil.nvim"'
+
 ---@alias Finder
 ---| '"telescope"'

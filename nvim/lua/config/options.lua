@@ -35,6 +35,9 @@ vim.g.eslint_auto_format = false
 ---@type Finder
 vim.g.finder = "telescope"
 
+---@type FileExplorer
+vim.g.file_explorer = "oil.nvim"
+
 ---@type boolean
 vim.g.lazygit_enabled = false
 

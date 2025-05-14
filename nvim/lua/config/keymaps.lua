@@ -13,12 +13,14 @@ vim.keymap.set(
 )
 
 -- Go to the file explorer.
-vim.keymap.set(
-  "n",
-  "<leader>e",
-  vim.cmd.Ex,
-  { desc = "Resume to file explorer" }
-)
+if vim.g.file_explorer == "netrw" then
+  vim.keymap.set(
+    "n",
+    "<leader>e",
+    vim.cmd.Ex,
+    { desc = "Resume to file explorer" }
+  )
+end
 
 -- Clear highlights on search and stop snippets.
 vim.keymap.set({ "i", "n", "s" }, "<esc>", function()
