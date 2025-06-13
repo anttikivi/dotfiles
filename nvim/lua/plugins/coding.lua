@@ -8,8 +8,12 @@ return {
     import = "plugins.cmp.nvim_cmp",
   },
   {
-    enabled = vim.g.ai_enabled,
+    enabled = vim.g.ai_enabled and vim.g.ai_engine == "copilot",
     import = "plugins.optional.copilot",
+  },
+  {
+    enabled = vim.g.ai_enabled and vim.g.ai_engine == "supermaven",
+    import = "plugins.optional.supermaven",
   },
   {
     "folke/lazydev.nvim",

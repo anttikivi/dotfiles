@@ -1,5 +1,9 @@
 ---@meta
 
+---@alias AiEngine
+---| '"copilot"'
+---| '"supermaven"'
+
 ---@alias Colorscheme
 ---| '"catppuccin"'
 ---| '"rose-pine"'

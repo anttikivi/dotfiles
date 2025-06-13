@@ -5,17 +5,20 @@ vim.g.netrw_list_hide = "^\\.DS_Store$"
 
 -- Use the completion engine for the AI suggestions.
 ---@type boolean
-vim.g.ai_cmp_enabled = false
+vim.g.ai_cmp_enabled = true
 
 ---@type boolean
-vim.g.ai_enabled = false
+vim.g.ai_enabled = true
+
+---@type AiEngine
+vim.g.ai_engine = "supermaven"
 
 -- Helper for determining the AI in the completion engine is actually enabled.
 ---@type boolean
 vim.g.ai_cmp = vim.g.ai_cmp_enabled and vim.g.ai_enabled
 
 ---@type CmpEngine
-vim.g.cmp_engine = "blink"
+vim.g.cmp_engine = "nvim-cmp"
 
 ---@type Colorscheme
 vim.g.colorscheme = vim.env.COLOR_SCHEME --[[@as Colorscheme]]
