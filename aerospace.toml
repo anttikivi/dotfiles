@@ -5,6 +5,14 @@ enable-normalization-opposite-orientation-for-nested-containers = true
 
 accordion-padding = 0
 
+[gaps]
+inner.horizontal = 8
+inner.vertical = 8
+outer.left = 8
+outer.bottom = 8
+outer.top = 8
+outer.right = 8
+
 [mode.main.binding]
 # alt-enter = 'exec-and-forget open -n /System/Applications/Utilities/Terminal.app'
 # alt-enter = 'exec-and-forget open -n /Applications/kitty.app'
@@ -67,7 +75,22 @@ ctrl-shift-l = 'move-workspace-to-monitor --wrap-around next'
 
 alt-shift-c = 'reload-config'
 
+alt-shift-comma = "mode service"
 alt-r = 'mode resize'
+
+[mode.service.binding]
+esc = ['reload-config', 'mode main']
+r = ['flatten-workspace-tree', 'mode main'] # reset layout
+f = [
+  'layout floating tiling',
+  'mode main',
+] # Toggle between floating and tiling layout
+backspace = ['close-all-windows-but-current', 'mode main']
+
+alt-shift-h = ['join-with left', 'mode main']
+alt-shift-j = ['join-with down', 'mode main']
+alt-shift-k = ['join-with up', 'mode main']
+alt-shift-l = ['join-with right', 'mode main']
 
 [mode.resize.binding]
 h = 'resize width -50'
