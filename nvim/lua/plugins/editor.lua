@@ -183,6 +183,7 @@ return {
       return {
         { "<leader>ff", builtin.find_files, desc = "Find files" },
         { "<leader>sg", builtin.live_grep, desc = "Grep" },
+        { "<leader>sr", "<cmd>Telescope resume<cr>", desc = "Resume" },
       }
     end,
   },
