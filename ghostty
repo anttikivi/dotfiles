@@ -1,7 +1,7 @@
 config-file = ~/.config/ghostty/theme
 # To check the different features: https://fontdrop.info/
 font-feature = -aalt
-font-feature = -calt
+font-feature = +calt
 font-feature = +case
 font-feature = -cv01
 font-feature = -cv02
@@ -34,7 +34,7 @@ font-feature = -ss19
 font-feature = -ss20
 font-feature = -subs
 font-feature = -sups
-font-feature = +zero
+font-feature = -zero
 font-size = 13
 font-thicken = false
 adjust-cell-height = 20%
