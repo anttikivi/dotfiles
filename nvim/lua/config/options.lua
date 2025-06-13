@@ -39,7 +39,7 @@ vim.g.eslint_auto_format = false
 vim.g.finder = "telescope"
 
 ---@type FileExplorer
-vim.g.file_explorer = "oil.nvim"
+vim.g.file_explorer = "netrw"
 
 ---@type boolean
 vim.g.lazygit_enabled = false
