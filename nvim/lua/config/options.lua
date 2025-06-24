@@ -47,6 +47,9 @@ vim.g.lazygit_enabled = false
 ---@type "intelephense" | "phpactor"
 vim.g.php_lsp = "intelephense"
 
+---@type boolean
+vim.g.prettier_needs_config = false
+
 ---@type "bacon-ls" | "rust-analyzer"
 vim.g.rust_diagnostics = "bacon-ls"
 
