@@ -142,6 +142,22 @@ return {
           -- Toggle keymaps
           Snacks.toggle.indent():map("<leader>ug")
           Snacks.toggle.inlay_hints():map("<leader>uh")
+
+          local supermaven = require("supermaven-nvim.api")
+
+          Snacks.toggle({
+            name = "Supermaven",
+            get = function()
+              return supermaven.is_running()
+            end,
+            set = function(state)
+              if state then
+                supermaven.stop()
+              else
+                supermaven.stop()
+              end
+            end,
+          }):map("<leader>us")
         end,
       })
     end,
