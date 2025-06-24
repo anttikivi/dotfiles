@@ -7,6 +7,7 @@
 ---@alias Colorscheme
 ---| '"catppuccin"'
 ---| '"rose-pine"'
+---| '"tokyonight"'
 
 ---@alias ColorschemeDarkVariant
 ---| '"frappe"'
@@ -14,10 +15,13 @@
 ---| '"mocha"'
 ---| '"main"'
 ---| '"moon"'
+---| '"storm"'
+---| '"night"'
 
 ---@alias ColorschemeLightVariant
 ---| '"latte"'
 ---| '"dawn"'
+---| '"day"'
 
 ---@alias CmpEngine
 ---| '"blink"'

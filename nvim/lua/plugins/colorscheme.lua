@@ -32,4 +32,15 @@ return {
       dark_variant = vim.g.colorscheme_dark_variant,
     },
   },
+  {
+    "folke/tokyonight.nvim",
+    lazy = true,
+    enabled = vim.g.colorscheme == "tokyonight",
+    opts = function()
+      return {
+        style = vim.g.colorscheme_dark_variant,
+        light_style = vim.g.colorscheme_light_variant,
+      }
+    end,
+  },
 }
