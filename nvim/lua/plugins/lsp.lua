@@ -169,6 +169,7 @@ return {
           gopls = {
             settings = {
               gopls = {
+                env = { GOFLAGS = "-tags=tool" },
                 gofumpt = true,
                 codelenses = {
                   gc_details = false,
