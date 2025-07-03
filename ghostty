@@ -42,6 +42,9 @@ cursor-invert-fg-bg = true
 cursor-style = block
 mouse-hide-while-typing = true
 
+background-opacity = 0.9
+background-blur = true
+
 keybind = super+shift+comma=reload_config
 keybind = super+d=new_split:right
 keybind = super+shift+d=new_split:down

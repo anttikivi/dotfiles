@@ -17,6 +17,7 @@ return {
         dark = vim.g.colorscheme_dark_variant,
         light = vim.g.colorscheme_light_variant,
       },
+      transparent_background = true,
       integrations = {
         blink_cmp = vim.g.cmp_engine == "blink",
       },

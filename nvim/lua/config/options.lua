@@ -81,6 +81,7 @@ vim.opt.linebreak = true
 vim.opt.list = true
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.opt.number = true
+vim.opt.pumblend = 10
 vim.opt.relativenumber = true
 vim.opt.scrolloff = 4
 vim.opt.shiftround = true
