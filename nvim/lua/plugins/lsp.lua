@@ -169,7 +169,7 @@ return {
           gopls = {
             settings = {
               gopls = {
-                env = { GOFLAGS = "-tags=tool" },
+                env = { GOFLAGS = "-tags=script" },
                 gofumpt = true,
                 codelenses = {
                   gc_details = false,
