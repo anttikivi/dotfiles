@@ -17,18 +17,18 @@ for index in {1..9}; do
 done
 unset index
 
-alias ls="ls --color=auto"
-alias l="ls -lh"
-alias la="ls -lAh"
-alias ll="ls -lAhF"
-alias lls="ls -lAhFtr"
-alias lc="ls -CF"
+# alias ls="ls --color=auto"
+# alias l="ls -lh"
+# alias la="ls -lAh"
+# alias ll="ls -lAhF"
+# alias lls="ls -lAhFtr"
+# alias lc="ls -CF"
 
 # alias cp="cp -i"
 # alias mv="mv -i"
 # alias rm="rm -i"
-alias md="mkdir -p"
-alias rd="rmdir"
+# alias md="mkdir -p"
+# alias rd="rmdir"
 
 alias grep="grep --color"
 
