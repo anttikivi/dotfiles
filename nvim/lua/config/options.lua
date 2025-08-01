@@ -85,8 +85,8 @@ vim.opt.pumblend = 10
 vim.opt.relativenumber = true
 vim.opt.scrolloff = 4
 vim.opt.shiftround = true
-vim.opt.shiftwidth = 2
-vim.opt.showbreak = "+++ "
+vim.opt.shiftwidth = 0
+vim.opt.showbreak = "> "
 vim.opt.sidescrolloff = 8
 vim.opt.signcolumn = "yes"
 vim.opt.smartcase = true
@@ -99,7 +99,7 @@ if vim.g.custom_statusline then
   vim.opt.statusline = require("util.statusline").get()
 end
 
-vim.opt.tabstop = 2
+-- vim.opt.tabstop = 2
 vim.opt.termguicolors = true
 vim.opt.timeoutlen = 1000 -- currently the default value
 vim.opt.title = true
