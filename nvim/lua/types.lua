@@ -33,4 +33,5 @@
 ---| '"oil.nvim"'
 
 ---@alias Finder
+---| '"snacks"'
 ---| '"telescope"'
