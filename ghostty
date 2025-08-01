@@ -1,40 +1,7 @@
 config-file = ~/.config/ghostty/theme
-# To check the different features: https://fontdrop.info/
-font-feature = -aalt
-font-feature = +calt
-font-feature = +case
-font-feature = -cv01
-font-feature = -cv02
-font-feature = -cv03
-font-feature = -cv04
-font-feature = -cv05
-font-feature = -cv06
-font-feature = -cv07
-font-feature = -cv08
-font-feature = -cv09
-font-feature = -cv10
-font-feature = -cv11
-font-feature = -cv12
-font-feature = -cv13
-font-feature = -cv14
-font-feature = -cv15
-font-feature = -cv16
-font-feature = -cv17
-font-feature = -cv18
-font-feature = -cv19
-font-feature = -cv20
-font-feature = -cv99
-font-feature = -frac
-font-feature = -locl
-font-feature = -ordn
-font-feature = -sinf
-font-feature = -ss01
-font-feature = -ss02
-font-feature = -ss19
-font-feature = -ss20
-font-feature = -subs
-font-feature = -sups
-font-feature = -zero
+font-family = "Google Sans Code"
+font-feature = -calt
+# font-feature = -calt, -liga, -dlig
 font-size = 13
 font-thicken = false
 adjust-cell-height = 20%
@@ -42,8 +9,8 @@ cursor-invert-fg-bg = true
 cursor-style = block
 mouse-hide-while-typing = true
 
-background-opacity = 0.9
-background-blur = true
+# background-opacity = 0.9
+# background-blur = true
 
 keybind = super+shift+comma=reload_config
 keybind = super+d=new_split:right
