@@ -1,15 +1,6 @@
 # shellcheck shell=bash
 
-fpath+=("${HOME}/.zfunctions")
-
 fpath=("${LOCAL_DIR}/lib/python3.11/site-packages/argcomplete/bash_completion.d" "${fpath[@]}")
-
-autoload -U promptinit
-promptinit
-
-# zstyle ':prompt:purus:prompt:success' color green
-
-prompt purus
 
 autoload -U +X compinit
 compinit
