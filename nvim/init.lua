@@ -1,49 +1,56 @@
-if vim.loader then
-  vim.loader.enable()
-end
-
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-  local out = vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "--branch=stable",
-    lazyrepo,
-    lazypath,
-  })
-  if vim.v.shell_error ~= 0 then
-    vim.api.nvim_echo({
-      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-      { out, "WarningMsg" },
-      { "\nPress any key to exit..." },
-    }, true, {})
-    vim.fn.getchar()
-    os.exit(1)
-  end
-end
-vim.opt.rtp:prepend(lazypath)
+local config = require("config")
 
 require("config.options")
 require("config.autocmds")
 require("config.keymaps")
 
-require("filetypes")
+local function colorscheme_plugin()
+    if config.colorscheme == "catppuccin" then
+        return { src = "https://github.com/catppuccin/nvim" }
+    end
+end
 
-require("util.event").setup()
-require("util.format").setup()
-require("util.root").setup()
-
-require("lazy").setup({
-  spec = {
-    { import = "plugins" },
-  },
-  install = { colorscheme = { "habamax" } },
-  checker = { enabled = true, notify = false },
-  change_detection = { enabled = true, notify = false },
+vim.pack.add({
+    colorscheme_plugin(),
+    { src = "https://github.com/f-person/auto-dark-mode.nvim" },
+    { src = "https://github.com/folke/lazydev.nvim" },
+    { src = "https://github.com/lewis6991/gitsigns.nvim.git" },
+    { src = "https://github.com/mason-org/mason.nvim" },
+    -- TODO: Update tree-sitter to the 'main' branch.
+    { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = 'master', },
+    { src = "https://github.com/stevearc/oil.nvim" },
 })
 
-vim.cmd.colorscheme(vim.g.colorscheme)
+require("lsp")
+require("treesitter")
 
-require("util.statusline").setup()
+if config.file_explorer == "oil" then
+    require("oil").setup({
+        default_file_explorer = true,
+        lsp_file_methods = {
+            enabled = true,
+            timeout_ms = 2000,
+        },
+        watch_for_changes = true,
+        view_options = {
+            show_hidden = true,
+            is_always_hidden = function(name)
+                return name == ".." or name == ".DS_Store"
+            end,
+        },
+    })
+end
+
+require("auto-dark-mode").setup({ update_interval = 1000 })
+
+if config.colorscheme == "catppuccin" then
+    require("catppuccin").setup({
+        flavour = "auto",
+        background = {
+            dark = config.colorscheme_dark_variant --[[@as CtpFlavor]],
+            light = config.colorscheme_light_variant --[[@as CtpFlavor]],
+        },
+    })
+end
+
+vim.cmd.colorscheme(config.colorscheme)

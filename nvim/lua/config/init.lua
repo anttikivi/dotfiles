@@ -10,7 +10,7 @@ local M = {
     colorscheme_light_variant = vim.env.COLOR_SCHEME_LIGHT_VARIANT,
 
     ---@type "default" | "netrw" | "oil"
-    file_explorer = "netrw",
+    file_explorer = "oil",
 }
 
 -- Why I do this? I don't know.
