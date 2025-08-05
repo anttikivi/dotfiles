@@ -6,7 +6,7 @@ require("config.keymaps")
 
 local function colorscheme_plugin()
     if config.colorscheme == "catppuccin" then
-        return { src = "https://github.com/catppuccin/nvim" }
+        return { src = "https://github.com/catppuccin/nvim", name = "catppuccin" }
     end
 end
 
