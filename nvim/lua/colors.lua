@@ -24,5 +24,4 @@ function M.init()
     vim.cmd.colorscheme(config.colorscheme)
 end
 
-
 return M

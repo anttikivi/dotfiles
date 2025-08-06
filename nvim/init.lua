@@ -11,12 +11,11 @@ vim.pack.add({
     { src = "https://github.com/folke/lazydev.nvim" },
     { src = "https://github.com/lewis6991/gitsigns.nvim.git" },
     { src = "https://github.com/mason-org/mason.nvim" },
-    -- TODO: Update tree-sitter to the 'main' branch.
-    { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = 'master', },
+    { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
     { src = "https://github.com/stevearc/oil.nvim" },
 })
 
-require("lsp")
+require("lsp").init()
 require("treesitter")
 
 if config.file_explorer == "oil" then
