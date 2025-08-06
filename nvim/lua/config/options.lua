@@ -5,6 +5,7 @@ vim.g.netrw_list_hide = "^\\.DS_Store$"
 
 vim.opt.clipboard = "unnamedplus"
 vim.opt.colorcolumn = "80"
+vim.opt.completeopt = "menu,menuone,noselect,popup"
 vim.opt.expandtab = true
 vim.opt.guicursor = ""
 vim.opt.linebreak = true

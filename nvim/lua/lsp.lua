@@ -20,7 +20,7 @@ function M.init()
         end, 100)
     end)
 
-    mason_registry.refresh(vim.schedule_wrap(function(success, updated_registries)
+    mason_registry.refresh(vim.schedule_wrap(function()
         if #vim.api.nvim_list_uis() ~= 0 then -- not in headless mode
             require("util.mason").install_servers()
 
@@ -30,7 +30,7 @@ function M.init()
                     vim.notify(("[mason] installing %s"):format(tool))
                     pkg:install(
                         {},
-                        vim.schedule_wrap(function(success, err)
+                        vim.schedule_wrap(function(success)
                             if success then
                                 vim.notify(("[mason] %s was successfully installed"):format(tool))
                             else
@@ -53,6 +53,11 @@ function M.init()
 
     lsp_util.on_attach(function(_, buffer)
         vim.keymap.set("n", "grd", vim.lsp.buf.definition, { buffer = buffer })
+    end)
+    lsp_util.on_attach(function(client, buffer)
+        if client:supports_method('textDocument/completion') then
+            vim.lsp.completion.enable(true, client.id, buffer, {autotrigger = true})
+        end
     end)
 end
 
