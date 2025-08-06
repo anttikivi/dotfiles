@@ -1,3 +1,4 @@
+local lsp_util = require("util.lsp")
 local mason_registry = require("mason-registry")
 
 local ensure_installed = {
@@ -34,7 +35,8 @@ function M.init()
                                 vim.notify(("[mason] %s was successfully installed"):format(tool))
                             else
                                 vim.notify(
-                                    ("[mason] failed to install %s. Installation logs are available in :Mason and :MasonLog"):format(
+                                    ("[mason] failed to install %s. Installation logs are available in :Mason and :MasonLog")
+                                    :format(
                                         tool
                                     ),
                                     vim.log.levels.ERROR
@@ -48,6 +50,10 @@ function M.init()
     end))
 
     vim.lsp.enable(require("util.lsp").server_names())
+
+    lsp_util.on_attach(function(_, buffer)
+        vim.keymap.set("n", "grd", vim.lsp.buf.definition, { buffer = buffer })
+    end)
 end
 
 return M
