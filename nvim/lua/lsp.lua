@@ -73,6 +73,11 @@ function M.init()
             vim.lsp.inlay_hint.enable(true, { bufnr = buffer })
         end
     end)
+
+    vim.diagnostic.config({
+        virtual_text = true,
+        -- virtual_lines = true
+    })
 end
 
 return M
