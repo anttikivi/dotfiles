@@ -52,11 +52,25 @@ function M.init()
     vim.lsp.enable(require("util.lsp").server_names())
 
     lsp_util.on_attach(function(_, buffer)
+        -- Neovim now provides some default mappings so I don't need to add my
+        -- own:
+        -- "grn": vim.lsp.buf.rename()
+        -- "gra": vim.lsp.buf.code_action()
+        -- "grr": vim.lsp.buf.references()
+        -- "gri": vim.lsp.buf.implementation()
+        -- "grt": vim.lsp.buf.type_definition()
+        -- "gO": vim.lsp.buf.document_symbol()
+        -- CTRL-S: vim.lsp.buf.signature_help()
         vim.keymap.set("n", "grd", vim.lsp.buf.definition, { buffer = buffer })
     end)
     lsp_util.on_attach(function(client, buffer)
         if client:supports_method('textDocument/completion') then
             vim.lsp.completion.enable(true, client.id, buffer, {autotrigger = true})
+        end
+    end)
+    lsp_util.on_attach(function(client, buffer)
+        if client:supports_method("textDocument/inlayHint") then
+            vim.lsp.inlay_hint.enable(true, { bufnr = buffer })
         end
     end)
 end

@@ -1,20 +1,18 @@
 local M = {}
 
 -- Register a function to be run with an autocommand when a language server attaches to a buffer.
----@param f fun(client: vim.lsp.Client, buf: integer)
+---@param fn fun(client: vim.lsp.Client, buf: integer)
 ---@param name? string
-function M.on_attach(f, name)
-  return vim.api.nvim_create_autocmd("LspAttach", {
-    callback = function(args)
-      local buffer = args.buf ---@type integer
-      local client = vim.lsp.get_client_by_id(args.data.client_id)
-      if client and (not name or client.name == name) then
-        -- TODO: Modify if the function passed as a parameter should return a
-        -- value.
-        f(client, buffer)
-      end
-    end,
-  })
+function M.on_attach(fn, name)
+    return vim.api.nvim_create_autocmd("LspAttach", {
+        callback = function(args)
+            local buffer = args.buf ---@type integer
+            local client = vim.lsp.get_client_by_id(args.data.client_id)
+            if client and (not name or client.name == name) then
+                fn(client, buffer)
+            end
+        end,
+    })
 end
 
 -- Really stupid cache but I guess it works for my needs.
