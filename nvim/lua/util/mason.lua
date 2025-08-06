@@ -57,20 +57,8 @@ local function resolve_package(server_name)
     end)
 end
 
----@return string[]
-local function server_names()
-    local ret = {}
-    for name, type in vim.fs.dir(vim.fn.stdpath("config") .. "/lsp") do
-        if type == "file" and name:sub(-4) == ".lua" then
-            ret[#ret + 1] = name:gsub("%.lua$", "")
-        end
-    end
-
-    return ret
-end
-
 function M.install_servers()
-    for _, server_name in ipairs(server_names()) do
+    for _, server_name in ipairs(require("util.lsp").server_names()) do
         local pkg_name, version = Package.Parse(server_name)
         resolve_package(pkg_name)
             :if_present(

@@ -11,6 +11,14 @@ local M = {}
 function M.init()
     require("mason").setup()
 
+    mason_registry:on("package:install:success", function()
+        vim.defer_fn(function()
+            vim.api.nvim_exec_autocmds("FileType", {
+                buffer = vim.api.nvim_get_current_buf(),
+            })
+        end, 100)
+    end)
+
     mason_registry.refresh(vim.schedule_wrap(function(success, updated_registries)
         if #vim.api.nvim_list_uis() ~= 0 then -- not in headless mode
             require("util.mason").install_servers()
@@ -38,6 +46,8 @@ function M.init()
             end
         end
     end))
+
+    vim.lsp.enable(require("util.lsp").server_names())
 end
 
 return M
