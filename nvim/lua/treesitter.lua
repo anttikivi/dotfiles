@@ -4,7 +4,6 @@ local languages = {
     "lua",
 }
 
--- TODO: Move to the main branch.
 require("nvim-treesitter").install(languages)
 
 vim.api.nvim_create_autocmd("FileType", {

@@ -35,4 +35,10 @@ if config.file_explorer == "oil" then
     })
 end
 
+require("lazydev").setup({
+    library = {
+        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+    },
+})
+
 colors.init()
