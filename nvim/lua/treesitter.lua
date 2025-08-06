@@ -5,7 +5,7 @@ local languages = {
     "luadoc",
     "luap",
     "vim",
-        "vimdoc",
+    "vimdoc",
 }
 
 require("nvim-treesitter").install(languages)

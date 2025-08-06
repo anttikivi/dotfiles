@@ -1,4 +1,15 @@
+---@class util.lsp
 local M = {}
+
+---@class util.lsp.Filter: vim.lsp.get_clients.Filter
+---@field filter? fun(client: vim.lsp.Client): boolean
+
+---@param filter? util.lsp.Filter
+---@return vim.lsp.Client[]
+function M.get_clients(filter)
+    local clients = vim.lsp.get_clients(filter)
+    return filter and filter.filter and vim.tbl_filter(filter.filter, clients) or clients
+end
 
 -- Register a function to be run with an autocommand when a language server attaches to a buffer.
 ---@param fn fun(client: vim.lsp.Client, buf: integer)

@@ -1,5 +1,8 @@
 ---@class Config
 local M = {
+    ---@type boolean
+    autoformat = true,
+
     ---@type "catppuccin" | "rose-pine" | "tokyonight"
     colorscheme = vim.env.COLOR_SCHEME,
 
@@ -11,6 +14,9 @@ local M = {
 
     ---@type "default" | "netrw" | "oil"
     file_explorer = "oil",
+
+    ---@type number
+    formatting_timeout_ms = 3000,
 }
 
 -- Why I do this? I don't know.

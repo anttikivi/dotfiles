@@ -30,7 +30,7 @@ local function install(pkg, version)
     vim.notify(("[mason] installing %s"):format(name))
     return pkg:install(
         { version = version },
-        vim.schedule_wrap(function(success, err)
+        vim.schedule_wrap(function(success)
             if success then
                 vim.notify(("[mason] %s was successfully installed"):format(name))
             else

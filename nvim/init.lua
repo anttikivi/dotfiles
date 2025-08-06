@@ -12,12 +12,14 @@ vim.pack.add({
     { src = "https://github.com/mason-org/mason.nvim" },
     { src = "https://github.com/nvim-lua/plenary.nvim" },
     { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
+    { src = "https://github.com/stevearc/conform.nvim" },
     { src = "https://github.com/stevearc/oil.nvim" },
     { src = "https://github.com/ThePrimeagen/harpoon", version = "harpoon2" },
 })
 
-require("lsp").init()
+require("lsp").setup()
 require("treesitter")
+require("formatting").setup()
 
 if config.file_explorer == "oil" then
     require("oil").setup({
@@ -42,11 +44,17 @@ harpoon:setup({
         save_on_toggle = true,
     },
 })
-vim.keymap.set("n", "<C-h>", function() harpoon:list():add() end)
-vim.keymap.set("n", "<leader>h", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+vim.keymap.set("n", "<C-h>", function()
+    harpoon:list():add()
+end)
+vim.keymap.set("n", "<leader>h", function()
+    harpoon.ui:toggle_quick_menu(harpoon:list())
+end)
 local ordinal = { "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth" }
 for i, v in ipairs(ordinal) do
-    vim.keymap.set("n", "<leader>" .. i, function() harpoon:list():select(i) end, { desc = string.format("Switch to the %s harpooned file", v) })
+    vim.keymap.set("n", "<leader>" .. i, function()
+        harpoon:list():select(i)
+    end, { desc = string.format("Switch to the %s harpooned file", v) })
 end
 
 colors.init()
