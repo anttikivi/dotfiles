@@ -9,6 +9,7 @@ vim.opt.colorcolumn = "80"
 vim.opt.completeopt = "menu,menuone,noselect,popup"
 vim.opt.expandtab = true
 vim.opt.guicursor = ""
+vim.opt.ignorecase = true
 vim.opt.linebreak = true
 vim.opt.list = true
 vim.opt.number = true
@@ -16,6 +17,7 @@ vim.opt.relativenumber = true
 vim.opt.shiftwidth = 4
 vim.opt.showbreak = "> "
 vim.opt.signcolumn = "yes"
+vim.opt.smartcase = true
 vim.opt.smartindent = true
 
 if require("config").enable_statusline then
