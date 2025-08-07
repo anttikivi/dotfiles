@@ -1,23 +1,24 @@
 local colors = require("colors")
 local config = require("config")
+local picker = require("picker")
 
 require("config.options")
 require("config.autocmds")
 require("config.keymaps")
 
-vim.pack.add({
-    colors.colorscheme_plugin_spec(),
-    { src = "https://github.com/f-person/auto-dark-mode.nvim" },
+local pack_specs = {
     { src = "https://github.com/lewis6991/gitsigns.nvim.git" },
     { src = "https://github.com/mason-org/mason.nvim" },
     { src = "https://github.com/nvim-lua/plenary.nvim" },
-    { src = "https://github.com/nvim-telescope/telescope.nvim" },
-    { src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim" },
     { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
     { src = "https://github.com/stevearc/conform.nvim" },
     { src = "https://github.com/stevearc/oil.nvim" },
     { src = "https://github.com/ThePrimeagen/harpoon", version = "harpoon2" },
-})
+}
+vim.list_extend(pack_specs, colors.pack_spec())
+vim.list_extend(pack_specs, picker.pack_spec())
+
+vim.pack.add(pack_specs)
 
 require("lsp").setup()
 require("treesitter")
@@ -40,25 +41,7 @@ if config.file_explorer == "oil" then
     })
 end
 
-local actions = require("telescope.actions")
-require("telescope").setup({
-    defaults = {
-        mappings = {
-            i = {
-                ["<esc>"] = actions.close,
-            },
-        },
-    },
-})
-if not pcall(require("telescope").load_extension, "fzf") then
-    vim.notify("Failed to load fzf extension for telescope", vim.log.levels.WARN)
-end
-
-local builtin = require("telescope.builtin")
-vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Telescope find files" })
-vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Telescope live grep" })
-vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
-vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
+picker.setup()
 
 local harpoon = require("harpoon")
 harpoon:setup({

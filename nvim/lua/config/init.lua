@@ -17,6 +17,9 @@ local M = {
 
     ---@type number
     formatting_timeout_ms = 3000,
+
+    ---@type "telescope"
+    picker = "telescope",
 }
 
 -- Why I do this? I don't know.

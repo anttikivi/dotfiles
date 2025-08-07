@@ -2,12 +2,19 @@ local config = require("config")
 
 local M = {}
 
-function M.colorscheme_plugin_spec()
+function M.pack_spec()
+    local ret = {
+        { src = "https://github.com/f-person/auto-dark-mode.nvim" },
+    }
     if config.colorscheme == "catppuccin" then
-        return { src = "https://github.com/catppuccin/nvim", name = "catppuccin" }
+        ret[#ret + 1] = { src = "https://github.com/catppuccin/nvim", name = "catppuccin" }
     elseif config.colorscheme == "tokyonight" then
-        return { src = "https://github.com/folke/tokyonight.nvim" }
+        ret[#ret + 1] = { src = "https://github.com/folke/tokyonight.nvim" }
+    else
+        vim.notify(("Invalid color scheme %q"):format(config.colorscheme), vim.log.levels.ERROR)
     end
+
+    return ret
 end
 
 function M.init()
