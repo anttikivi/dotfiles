@@ -109,7 +109,7 @@ function M.diagnostics()
         return ""
     end
 
-    return " " .. table.concat(parts, " ")
+    return " " .. table.concat(parts, " ") .. "%*"
 end
 
 function M.ft_icon()
