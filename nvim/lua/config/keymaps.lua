@@ -11,6 +11,15 @@ elseif config.file_explorer == "oil" then
     vim.keymap.set("n", "-", "<cmd>Oil<CR>", { desc = "Resume to file explorer" })
 end
 
+-- Clear highlights on search and stop snippets.
+vim.keymap.set({ "i", "n", "s" }, "<esc>", function()
+    vim.cmd("noh")
+    if vim.snippet then
+        vim.snippet.stop()
+    end
+    return "<esc>"
+end, { expr = true, desc = "Clear highlights and stop snippet" })
+
 -- Better indenting.
 vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
