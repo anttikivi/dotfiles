@@ -6,9 +6,19 @@ local Package = require("mason-core.package")
 local M = {}
 
 local ensure_installed = {
+    "ansible-lint",
+    "blade-formatter",
+    "goimports",
+    "gofumpt",
+    "markdownlint-cli2",
+    "markdown-toc",
+    "phpcs",
+    "php-cs-fixer",
+    "pint",
     "prettier",
     "selene",
     "stylua",
+    "tflint",
 }
 
 ---@class Filter: vim.lsp.get_clients.Filter

@@ -81,7 +81,99 @@ function M.resolve(buf)
     end, M.formatters)
 end
 
+local prettier_supported = {
+    "astro",
+    "css",
+    "graphql",
+    "handlebars",
+    "html",
+    "javascript",
+    "javascriptreact",
+    "json",
+    "jsonc",
+    "less",
+    "markdown",
+    "markdown.mdx",
+    "scss",
+    "typescript",
+    "typescriptreact",
+    "vue",
+    "yaml",
+    "yaml.ansible",
+}
+
+---@alias ConformCtx {buf: number, filename: string, dirname: string}
+
+--- Checks if a Prettier config file exists for the given context
+---@param ctx ConformCtx
+local function has_prettier_config(ctx)
+    vim.fn.system({ "prettier", "--find-config-path", ctx.filename })
+
+    return vim.v.shell_error == 0
+end
+
+--- Checks if a parser can be inferred for the given context:
+--- * If the filetype is in the supported list, return true
+--- * Otherwise, check if a parser can be inferred
+---@param ctx ConformCtx
+local function has_prettier_parser(ctx)
+    local ft = vim.bo[ctx.buf].filetype --[[@as string]]
+    if vim.tbl_contains(prettier_supported, ft) then
+        return true
+    end
+
+    local ret = vim.fn.system({ "prettier", "--file-info", ctx.filename })
+
+    ---@type boolean, string?
+    local ok, parser = pcall(function()
+        return vim.fn.json_decode(ret).inferredParser
+    end)
+
+    return ok and parser and parser ~= vim.NIL
+end
+
+has_prettier_config = require("util").memoize(has_prettier_config)
+has_prettier_parser = require("util").memoize(has_prettier_parser)
+
 function M.setup()
+    local formatters_by_ft = {
+        lua = { "stylua" },
+    }
+    local formatters = {
+        injected = { options = { ignore_errors = true } },
+        ["markdown-toc"] = {
+            condition = function(_, ctx)
+                for _, line in ipairs(vim.api.nvim_buf_get_lines(ctx.buf, 0, -1, false)) do
+                    ---@diagnostic disable-next-line: undefined-field
+                    if line:find("<!%-%- toc %-%->") then
+                        return true
+                    end
+                    ---@diagnostic disable-next-line: missing-return
+                end
+            end,
+        },
+        ["markdownlint-cli2"] = {
+            condition = function(_, ctx)
+                local diag = vim.tbl_filter(function(d)
+                    return d.source == "markdownlint"
+                end, vim.diagnostic.get(ctx.buf))
+
+                return #diag > 0
+            end,
+        },
+        prettier = {
+            condition = function(_, ctx)
+                return has_prettier_parser(ctx) and (config.prettier_needs_config ~= true or has_prettier_config(ctx))
+            end,
+            prepend_args = { "--prose-wrap", "always" },
+        },
+    }
+
+    for _, ft in ipairs(prettier_supported) do
+        formatters_by_ft[ft] = formatters_by_ft[ft] or {}
+        table.insert(formatters_by_ft[ft], "prettier")
+    end
+
     require("conform").setup({
         default_format_opts = {
             timeout_ms = config.formatting_timeout_ms,
@@ -89,9 +181,8 @@ function M.setup()
             quiet = false,
             lsp_format = "fallback",
         },
-        formatters_by_ft = {
-            lua = { "stylua" },
-        },
+        formatters_by_ft = formatters_by_ft,
+        formatters = formatters,
     })
 
     M.register({

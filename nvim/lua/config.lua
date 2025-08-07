@@ -79,6 +79,9 @@ local M = {
 
     ---@type "telescope"
     picker = "telescope",
+
+    ---@type boolean
+    prettier_needs_config = false,
 }
 
 -- Why I do this? I don't know.
