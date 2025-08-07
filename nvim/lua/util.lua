@@ -17,10 +17,15 @@ function M.is_win()
     return vim.uv.os_uname().sysname:find("Windows") ~= nil
 end
 
----@return string
+---@return string?
 function M.norm(path)
     if path:sub(1, 1) == "~" then
         local home = vim.uv.os_homedir()
+        if home == nil then
+            vim.notify("Failed to get the user's home directory", vim.log.levels.ERROR)
+            return nil
+        end
+
         if home:sub(-1) == "\\" or home:sub(-1) == "/" then
             home = home:sub(1, -2)
         end

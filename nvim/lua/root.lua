@@ -1,6 +1,6 @@
 local util = require("util")
 
----@class util.root
+---@class root
 ---@overload fun(): string
 local M = setmetatable({}, {
     __call = function(m, ...)
@@ -35,7 +35,7 @@ function M.detectors.lsp(buf)
     end
 
     local roots = {} ---@type string[]
-    local clients = require("util.lsp").get_clients({ bufnr = buf })
+    local clients = require("lsp").get_clients({ bufnr = buf })
     clients = vim.tbl_filter(function(client)
         return not vim.tbl_contains(vim.g.root_lsp_ignore or {}, client.name)
     end, clients)
@@ -55,7 +55,7 @@ function M.detectors.lsp(buf)
     return vim.tbl_filter(function(path)
         path = util.norm(path)
 
-        return path and bufpath:find(path, 1, true) == 1
+        return path and bufpath:find(path, 1, true) == 1 or false
     end, roots)
 end
 

@@ -9,7 +9,7 @@ local linters_by_ft = {
 local linters = {
     selene = {
         condition = function()
-            local root = require("util.root").get({ normalize = true })
+            local root = require("root").get({ normalize = true })
             if root ~= vim.uv.cwd() then
                 return false
             end

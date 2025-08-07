@@ -21,7 +21,7 @@ vim.list_extend(pack_specs, picker.pack_spec())
 
 vim.pack.add(pack_specs)
 
-require("util.root").setup()
+require("root").setup()
 require("lsp").setup()
 require("linting").setup()
 require("treesitter")

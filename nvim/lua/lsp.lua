@@ -1,6 +1,7 @@
+local _ = require("mason-core.functional")
 local config = require("config")
-local lsp_util = require("util.lsp")
 local mason_registry = require("mason-registry")
+local Package = require("mason-core.package")
 
 local M = {}
 
@@ -9,6 +10,116 @@ local ensure_installed = {
     "selene",
     "stylua",
 }
+
+---@class Filter: vim.lsp.get_clients.Filter
+---@field filter? fun(client: vim.lsp.Client): boolean
+
+local cached_mason_specs = _.lazy(mason_registry.get_all_package_specs)
+mason_registry:on("update:success", function()
+    cached_mason_specs = _.lazy(mason_registry.get_all_package_specs)
+end)
+
+local function get_mason_map()
+    ---@type table<string, string>
+    local package_to_lspconfig = {}
+    for _, pkg_spec in ipairs(cached_mason_specs()) do
+        local lspconfig = vim.tbl_get(pkg_spec, "neovim", "lspconfig")
+        if lspconfig then
+            package_to_lspconfig[pkg_spec.name] = lspconfig
+        end
+    end
+
+    return {
+        package_to_lspconfig = package_to_lspconfig,
+        lspconfig_to_package = _.invert(package_to_lspconfig),
+    }
+end
+
+local function resolve_package(server_name)
+    local Optional = require("mason-core.optional")
+    local server_mapping = get_mason_map()
+
+    return Optional.of_nilable(server_mapping.lspconfig_to_package[server_name]):map(function(package_name)
+        local ok, pkg = pcall(mason_registry.get_package, package_name)
+        if ok then
+            return pkg
+        end
+    end)
+end
+
+local function install(pkg, version)
+    local name = get_mason_map().package_to_lspconfig[pkg.name]
+    vim.notify(("[mason] installing %s"):format(name))
+    return pkg:install(
+        { version = version },
+        vim.schedule_wrap(function(success)
+            if success then
+                vim.notify(("[mason] %s was successfully installed"):format(name))
+            else
+                vim.notify(
+                    ("[mason] failed to install %s. Installation logs are available in :Mason and :MasonLog"):format(
+                        name
+                    ),
+                    vim.log.levels.ERROR
+                )
+            end
+        end)
+    )
+end
+
+local function install_servers()
+    for _, server_name in ipairs(M.server_names()) do
+        local pkg_name, version = Package.Parse(server_name)
+        resolve_package(pkg_name)
+            :if_present(
+                ---@param pkg Package
+                function(pkg)
+                    if not pkg:is_installed() and not pkg:is_installing() then
+                        install(pkg, version)
+                    end
+                end
+            )
+            :if_not_present(function()
+                vim.notify(("[mason] server %q is not a valid entry"):format(pkg_name), vim.log.levels.WARN)
+            end)
+    end
+end
+
+-- Register a function to be run with an autocommand when a language server attaches to a buffer.
+---@param fn fun(client: vim.lsp.Client, buf: integer)
+---@param name? string
+local function on_attach(fn, name)
+    return vim.api.nvim_create_autocmd("LspAttach", {
+        callback = function(args)
+            local buffer = args.buf ---@type integer
+            local client = vim.lsp.get_client_by_id(args.data.client_id)
+            if client and (not name or client.name == name) then
+                fn(client, buffer)
+            end
+        end,
+    })
+end
+
+---@param filter? Filter
+---@return vim.lsp.Client[]
+function M.get_clients(filter)
+    local clients = vim.lsp.get_clients(filter)
+    return filter and filter.filter and vim.tbl_filter(filter.filter, clients) or clients
+end
+
+---@return string[]
+local function get_server_names()
+    local ret = {}
+    for name, type in vim.fs.dir(vim.fn.stdpath("config") .. "/lsp") do
+        if type == "file" and name:sub(-4) == ".lua" then
+            ret[#ret + 1] = name:gsub("%.lua$", "")
+        end
+    end
+
+    return ret
+end
+
+M.server_names = require("util").memoize(get_server_names)
 
 function M.setup()
     require("mason").setup()
@@ -23,7 +134,7 @@ function M.setup()
 
     mason_registry.refresh(vim.schedule_wrap(function()
         if #vim.api.nvim_list_uis() ~= 0 then -- not in headless mode
-            require("util.mason").install_servers()
+            install_servers()
 
             for _, tool in ipairs(ensure_installed) do
                 local pkg = mason_registry.get_package(tool)
@@ -49,7 +160,7 @@ function M.setup()
         end
     end))
 
-    vim.lsp.enable(lsp_util.server_names())
+    vim.lsp.enable(M.server_names())
 
     require("formatting").register({
         name = "LSP",
@@ -59,7 +170,7 @@ function M.setup()
             vim.lsp.buf.format({ timeout_ms = config.formatting_timeout_ms, bufnr = buf })
         end,
         sources = function(buf)
-            local clients = lsp_util.get_clients({ bufnr = buf })
+            local clients = M.get_clients({ bufnr = buf })
             ---@param client vim.lsp.Client
             local ret = vim.tbl_filter(function(client)
                 return client:supports_method("textDocument/formatting")
@@ -72,7 +183,7 @@ function M.setup()
         end,
     })
 
-    lsp_util.on_attach(function(_, buffer)
+    on_attach(function(_, buffer)
         -- Neovim now provides some default mappings so I don't need to add my
         -- own:
         -- "grn": vim.lsp.buf.rename()
@@ -84,12 +195,12 @@ function M.setup()
         -- CTRL-S: vim.lsp.buf.signature_help()
         vim.keymap.set("n", "grd", vim.lsp.buf.definition, { buffer = buffer })
     end)
-    lsp_util.on_attach(function(client, buffer)
+    on_attach(function(client, buffer)
         if client:supports_method("textDocument/completion") then
             vim.lsp.completion.enable(true, client.id, buffer, { autotrigger = true })
         end
     end)
-    lsp_util.on_attach(function(client, buffer)
+    on_attach(function(client, buffer)
         if client:supports_method("textDocument/inlayHint") then
             vim.lsp.inlay_hint.enable(true, { bufnr = buffer })
         end
