@@ -2,13 +2,13 @@ local config = require("config")
 local lsp_util = require("util.lsp")
 local mason_registry = require("mason-registry")
 
+local M = {}
+
 local ensure_installed = {
     "prettier",
     "selene",
     "stylua",
 }
-
-local M = {}
 
 function M.setup()
     require("mason").setup()

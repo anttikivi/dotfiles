@@ -9,6 +9,7 @@ require("config.keymaps")
 local pack_specs = {
     { src = "https://github.com/lewis6991/gitsigns.nvim.git" },
     { src = "https://github.com/mason-org/mason.nvim" },
+    { src = "https://github.com/mfussenegger/nvim-lint" },
     { src = "https://github.com/nvim-lua/plenary.nvim" },
     { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
     { src = "https://github.com/stevearc/conform.nvim" },
@@ -20,7 +21,9 @@ vim.list_extend(pack_specs, picker.pack_spec())
 
 vim.pack.add(pack_specs)
 
+require("util.root").setup()
 require("lsp").setup()
+require("linting").setup()
 require("treesitter")
 require("formatting").setup()
 

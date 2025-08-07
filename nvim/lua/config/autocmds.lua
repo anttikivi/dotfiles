@@ -1,17 +1,15 @@
-local function augroup(name)
-    return vim.api.nvim_create_augroup("anttikivi_" .. name, { clear = true })
-end
+local util = require("util")
 
 -- Highlight on yank.
 vim.api.nvim_create_autocmd("TextYankPost", {
-    group = augroup("highlight_yank"),
+    group = util.augroup("highlight_yank"),
     callback = function()
         vim.hl.on_yank()
     end,
 })
 
 vim.api.nvim_create_autocmd("LspProgress", {
-    group = augroup("lsp_progress"),
+    group = util.augroup("lsp_progress"),
     ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
     callback = function(ev)
         local spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
@@ -25,7 +23,7 @@ vim.api.nvim_create_autocmd("LspProgress", {
 })
 
 vim.api.nvim_create_autocmd("PackChanged", {
-    group = augroup("telescope_fzf_build"),
+    group = util.augroup("telescope_fzf_build"),
     callback = function(ev)
         if ev.data.spec.name ~= "telescope-fzf-native.nvim" then
             return
