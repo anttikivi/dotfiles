@@ -2,9 +2,9 @@ local colors = require("colors")
 local config = require("config")
 local picker = require("picker")
 
-require("config.options")
-require("config.autocmds")
-require("config.keymaps")
+require("options")
+require("autocmds")
+require("keymaps")
 
 local pack_specs = {
     { src = "https://github.com/lewis6991/gitsigns.nvim.git" },
