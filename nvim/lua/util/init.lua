@@ -26,4 +26,22 @@ function M.try(fn, opts)
     return ok and result or nil
 end
 
+local cache = {} ---@type table<(fun()), table<string, any>>
+
+---@generic T: fun()
+---@param fn T
+---@return T
+function M.memoize(fn)
+    return function(...)
+        local key = vim.inspect({ ... })
+        cache[fn] = cache[fn] or {}
+
+        if cache[fn][key] == nil then
+            cache[fn][key] = fn(...)
+        end
+
+        return cache[fn][key]
+    end
+end
+
 return M

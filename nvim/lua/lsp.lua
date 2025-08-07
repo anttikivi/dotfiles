@@ -49,7 +49,7 @@ function M.setup()
         end
     end))
 
-    vim.lsp.enable(require("util.lsp").server_names())
+    vim.lsp.enable(lsp_util.server_names())
 
     require("formatting").register({
         name = "LSP",
