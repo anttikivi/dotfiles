@@ -66,3 +66,7 @@ for i, v in ipairs(ordinal) do
 end
 
 colors.init()
+
+if config.enable_statusline then
+    require("statusline").setup()
+end

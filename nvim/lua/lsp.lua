@@ -206,10 +206,25 @@ function M.setup()
         end
     end)
 
-    vim.diagnostic.config({
+    ---@type vim.diagnostic.Opts
+    local diagnostic_config = {
+        signs = {
+            text = config.enable_icons and {
+                [vim.diagnostic.severity.ERROR] = config.icons.diagnostics.error,
+                [vim.diagnostic.severity.WARN] = config.icons.diagnostics.warn,
+                [vim.diagnostic.severity.INFO] = config.icons.diagnostics.info,
+                [vim.diagnostic.severity.HINT] = config.icons.diagnostics.hint,
+            } or {
+                [vim.diagnostic.severity.ERROR] = "E",
+                [vim.diagnostic.severity.WARN] = "W",
+                [vim.diagnostic.severity.INFO] = "I",
+                [vim.diagnostic.severity.HINT] = "H",
+            },
+        },
         virtual_text = true,
-        -- virtual_lines = true
-    })
+    }
+
+    vim.diagnostic.config(diagnostic_config)
 end
 
 return M

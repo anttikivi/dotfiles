@@ -15,7 +15,7 @@ vim.api.nvim_create_autocmd("LspProgress", {
         local spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
         vim.notify(
             -- TODO: This is not an optimal solution but kinda nice for now.
-            ev.data.params.value.kind == "end" and " "
+            ev.data.params.value.kind == "end" and " Workspace loaded"
                 or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1] .. " " .. vim.lsp.status(),
             vim.log.levels.INFO
         )

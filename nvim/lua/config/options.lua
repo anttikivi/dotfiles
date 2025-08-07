@@ -16,6 +16,11 @@ vim.opt.shiftwidth = 4
 vim.opt.showbreak = "> "
 vim.opt.signcolumn = "yes"
 vim.opt.smartindent = true
+
+if require("config").enable_statusline then
+    vim.opt.statusline = require("statusline").get()
+end
+
 vim.opt.tabstop = 4
 vim.opt.termguicolors = true
 vim.opt.title = true
