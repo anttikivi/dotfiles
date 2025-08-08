@@ -137,30 +137,20 @@ has_prettier_parser = require("util").memoize(has_prettier_parser)
 
 function M.setup()
     local formatters_by_ft = {
+        bash = { "shfmt" },
+        blade = { "blade-formatter" },
+        go = { "goimports", "gofumpt" },
         lua = { "stylua" },
+        php = { "pint", "php_cs_fixer" },
+        rust = { "rustfmt" },
+        sh = { "shfmt" },
+        terraform = { "terraform_fmt" },
+        tf = { "terraform_fmt" },
+        ["terraform-vars"] = { "terraform_fmt" },
+        zig = { "zigfmt" },
     }
     local formatters = {
         injected = { options = { ignore_errors = true } },
-        ["markdown-toc"] = {
-            condition = function(_, ctx)
-                for _, line in ipairs(vim.api.nvim_buf_get_lines(ctx.buf, 0, -1, false)) do
-                    ---@diagnostic disable-next-line: undefined-field
-                    if line:find("<!%-%- toc %-%->") then
-                        return true
-                    end
-                    ---@diagnostic disable-next-line: missing-return
-                end
-            end,
-        },
-        ["markdownlint-cli2"] = {
-            condition = function(_, ctx)
-                local diag = vim.tbl_filter(function(d)
-                    return d.source == "markdownlint"
-                end, vim.diagnostic.get(ctx.buf))
-
-                return #diag > 0
-            end,
-        },
         prettier = {
             condition = function(_, ctx)
                 return has_prettier_parser(ctx) and (config.prettier_needs_config ~= true or has_prettier_config(ctx))

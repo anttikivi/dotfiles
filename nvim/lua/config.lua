@@ -18,7 +18,7 @@ local M = {
     ---@type boolean
     enable_statusline = true,
 
-    ---@type "default" | "netrw" | "oil"
+    ---@type "netrw" | "oil"
     file_explorer = "oil",
 
     ---@type number
@@ -83,10 +83,5 @@ local M = {
     ---@type boolean
     prettier_needs_config = false,
 }
-
--- Why I do this? I don't know.
-if M.file_explorer == "default" then
-    M.file_explorer = "netrw"
-end
 
 return M
