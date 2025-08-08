@@ -3,7 +3,7 @@ local M = {
     ---@type boolean
     autoformat = true,
 
-    ---@type "native" | "nvim-cmp"
+    ---@type "blink" | "native" | "nvim-cmp"
     cmp = "nvim-cmp",
 
     ---@type "catppuccin" | "rose-pine" | "tokyonight"

@@ -95,6 +95,10 @@ end
 function M.pack_spec()
     if config.cmp == "native" then
         return {}
+    elseif config.cmp == "blink" then
+        return {
+            { src = "https://github.com/saghen/blink.cmp", version = vim.version.range("^1.6.0") },
+        }
     elseif config.cmp == "nvim-cmp" then
         return {
             { src = "https://github.com/hrsh7th/nvim-cmp" },
@@ -116,6 +120,49 @@ function M.setup()
                 vim.lsp.completion.enable(true, client.id, buffer, { autotrigger = true })
             end
         end)
+    elseif config.cmp == "blink" then
+        local blink = require("blink.cmp")
+        blink.setup({
+            snippets = {
+                expand = function(snippet)
+                    return expand(snippet)
+                end,
+            },
+            completion = {
+                accept = {
+                    -- experimental auto-brackets support
+                    auto_brackets = {
+                        enabled = false,
+                    },
+                },
+                menu = {
+                    draw = {
+                        treesitter = { "lsp" },
+                    },
+                },
+                documentation = {
+                    auto_show = true,
+                    auto_show_delay_ms = 200,
+                },
+                ghost_text = {
+                    enabled = false,
+                },
+            },
+            keymap = { preset = "default" },
+            sources = {
+                default = { "lazydev", "lsp", "path", "snippets", "buffer" },
+                providers = {
+                    lazydev = {
+                        name = "LazyDev",
+                        module = "lazydev.integrations.blink",
+                        score_offset = 100, -- show at a higher priority than lsp
+                    },
+                },
+            },
+            cmdline = {
+                enabled = false,
+            },
+        })
     elseif config.cmp == "nvim-cmp" then
         local cmp = require("cmp")
         local defaults = require("cmp.config.default")()
@@ -136,6 +183,7 @@ function M.setup()
                 ["<C-f>"] = cmp.mapping.scroll_docs(4),
                 ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
                 ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+                ["<C-e>"] = cmp.mapping.abort(),
                 ["<C-Space>"] = cmp.mapping.complete(),
                 ["<C-y>"] = confirm({ select = true }),
             }),
@@ -154,6 +202,7 @@ function M.setup()
         end
 
         local parse = require("cmp.utils.snippet").parse
+        ---@diagnostic disable-next-line: duplicate-set-field
         require("cmp.utils.snippet").parse = function(input)
             local ok, ret = pcall(parse, input)
             if ok then
