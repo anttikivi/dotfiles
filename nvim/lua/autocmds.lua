@@ -8,10 +8,17 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     end,
 })
 
+local last_lsp_progress = 0
+
 vim.api.nvim_create_autocmd("LspProgress", {
     group = util.augroup("lsp_progress"),
     ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
     callback = function(ev)
+        local now = vim.uv.now()
+        if ev.data.params.value.kind ~= "end" and (now - last_lsp_progress) < 100 then
+            return
+        end
+        last_lsp_progress = now
         local spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
         vim.notify(
             -- TODO: This is not an optimal solution but kinda nice for now.
