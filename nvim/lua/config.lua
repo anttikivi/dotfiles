@@ -3,6 +3,9 @@ local M = {
     ---@type boolean
     autoformat = true,
 
+    ---@type "native" | "nvim-cmp"
+    cmp = "nvim-cmp",
+
     ---@type "catppuccin" | "rose-pine" | "tokyonight"
     colorscheme = vim.env.COLOR_SCHEME,
 

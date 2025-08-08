@@ -95,21 +95,6 @@ local function install_servers()
     end
 end
 
--- Register a function to be run with an autocommand when a language server attaches to a buffer.
----@param fn fun(client: vim.lsp.Client, buf: integer)
----@param name? string
-local function on_attach(fn, name)
-    return vim.api.nvim_create_autocmd("LspAttach", {
-        callback = function(args)
-            local buffer = args.buf ---@type integer
-            local client = vim.lsp.get_client_by_id(args.data.client_id)
-            if client and (not name or client.name == name) then
-                fn(client, buffer)
-            end
-        end,
-    })
-end
-
 ---@param filter? Filter
 ---@return vim.lsp.Client[]
 function M.get_clients(filter)
@@ -127,6 +112,21 @@ function M.get_typescript_server_path(root_dir)
         end
     end
     return ""
+end
+
+-- Register a function to be run with an autocommand when a language server attaches to a buffer.
+---@param fn fun(client: vim.lsp.Client, buf: integer)
+---@param name? string
+function M.on_attach(fn, name)
+    return vim.api.nvim_create_autocmd("LspAttach", {
+        callback = function(args)
+            local buffer = args.buf ---@type integer
+            local client = vim.lsp.get_client_by_id(args.data.client_id)
+            if client and (not name or client.name == name) then
+                fn(client, buffer)
+            end
+        end,
+    })
 end
 
 ---@return string[]
@@ -205,7 +205,7 @@ function M.setup()
         end,
     })
 
-    on_attach(function(_, buffer)
+    M.on_attach(function(_, buffer)
         -- Neovim now provides some default mappings so I don't need to add my
         -- own:
         -- "grn": vim.lsp.buf.rename()
@@ -217,12 +217,7 @@ function M.setup()
         -- CTRL-S: vim.lsp.buf.signature_help()
         vim.keymap.set("n", "grd", vim.lsp.buf.definition, { buffer = buffer })
     end)
-    on_attach(function(client, buffer)
-        if client:supports_method("textDocument/completion") then
-            vim.lsp.completion.enable(true, client.id, buffer, { autotrigger = true })
-        end
-    end)
-    on_attach(function(client, buffer)
+    M.on_attach(function(client, buffer)
         if client:supports_method("textDocument/inlayHint") then
             vim.lsp.inlay_hint.enable(true, { bufnr = buffer })
         end
