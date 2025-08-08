@@ -8,6 +8,7 @@ require("autocmds")
 require("keymaps")
 
 local pack_specs = {
+    { src = "https://github.com/folke/lazydev.nvim" },
     { src = "https://github.com/lewis6991/gitsigns.nvim.git" },
     { src = "https://github.com/mason-org/mason.nvim" },
     { src = "https://github.com/mfussenegger/nvim-lint" },
@@ -69,6 +70,12 @@ for i, v in ipairs(ordinal) do
         harpoon:list():select(i)
     end, { desc = string.format("Switch to the %s harpooned file", v) })
 end
+
+require("lazydev").setup({
+    library = {
+        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+    },
+})
 
 colors.init()
 
