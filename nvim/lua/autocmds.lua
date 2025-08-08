@@ -78,3 +78,15 @@ vim.api.nvim_create_autocmd("PackChanged", {
         end
     end,
 })
+
+vim.api.nvim_create_autocmd("PackChanged", {
+    group = util.augroup("treesitter_update"),
+    callback = function(ev)
+        if ev.data.spec.name ~= "nvim-treesitter" then
+            return
+        end
+        if ev.data.kind == "install" or ev.data.kind == "update" then
+            vim.cmd("TSUpdate")
+        end
+    end,
+})
