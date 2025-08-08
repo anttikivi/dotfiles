@@ -23,6 +23,18 @@ vim.api.nvim_create_autocmd("LspProgress", {
 })
 
 vim.api.nvim_create_autocmd("PackChanged", {
+    group = util.augroup("mason_update"),
+    callback = function(ev)
+        if ev.data.spec.name ~= "mason.nvim" then
+            return
+        end
+        if ev.data.kind == "install" or ev.data.kind == "update" then
+            vim.cmd("MasonUpdate")
+        end
+    end,
+})
+
+vim.api.nvim_create_autocmd("PackChanged", {
     group = util.augroup("telescope_fzf_build"),
     callback = function(ev)
         if ev.data.spec.name ~= "telescope-fzf-native.nvim" then
