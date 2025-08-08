@@ -82,3 +82,5 @@ colors.init()
 if config.enable_statusline then
     require("statusline").setup()
 end
+
+require("plugins").setup()
