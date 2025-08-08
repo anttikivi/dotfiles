@@ -46,6 +46,8 @@ end
 
 picker.setup()
 
+require("gitsigns").setup()
+
 local harpoon = require("harpoon")
 harpoon:setup({
     settings = {
