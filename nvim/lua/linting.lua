@@ -3,7 +3,15 @@ local util = require("util")
 local M = {}
 
 local linters_by_ft = {
+    bash = { "shellcheck", "bash" },
+    c = { "clangtidy" },
+    cpp = { "clangtidy" },
     lua = { "selene" },
+    markdown = { "markdownlint-cli2" },
+    php = { "phpcs" },
+    sh = { "shellcheck" },
+    terraform = { "terraform_validate" },
+    ["yaml.ansible"] = { "ansible_lint" },
 }
 ---@type table<string, table>
 local linters = {
