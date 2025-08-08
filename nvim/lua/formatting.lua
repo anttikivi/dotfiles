@@ -3,6 +3,8 @@ local util = require("util")
 
 local M = {}
 
+---@module "conform"
+
 ---@class Formatter
 ---@field name string
 ---@field primary? boolean
@@ -49,6 +51,39 @@ function M.format(opts)
     if not done and opts and opts.force then
         vim.notify("No formatter available", vim.log.levels.WARN)
     end
+end
+
+---@param buf? number
+function M.info(buf)
+    buf = buf or vim.api.nvim_get_current_buf()
+    local gaf = vim.g.autoformat == nil or vim.g.autoformat
+    local baf = vim.b[buf].autoformat
+    local enabled = M.enabled(buf)
+    local lines = {
+        "# Status",
+        ("- [%s] global **%s**"):format(gaf and "x" or " ", gaf and "enabled" or "disabled"),
+        ("- [%s] buffer **%s**"):format(
+            enabled and "x" or " ",
+            baf == nil and "inherit" or baf and "enabled" or "disabled"
+        ),
+    }
+    local have = false
+
+    for _, formatter in ipairs(M.resolve(buf)) do
+        if #formatter.resolved > 0 then
+            have = true
+            lines[#lines + 1] = "\n# " .. formatter.name .. (formatter.active and " ***(active)***" or "")
+            for _, line in ipairs(formatter.resolved) do
+                lines[#lines + 1] = ("- [%s] **%s**"):format(formatter.active and "x" or " ", line)
+            end
+        end
+    end
+
+    if not have then
+        lines[#lines + 1] = "\n***No formatters available for this buffer.***"
+    end
+
+    vim.notify(table.concat(lines, "\n"), enabled and vim.log.levels.INFO or vim.log.levels.WARN)
 end
 
 M.formatters = {} ---@type Formatter[]
@@ -200,6 +235,9 @@ function M.setup()
     vim.api.nvim_create_user_command("Format", function()
         M.format({ force = true })
     end, { desc = "Format selection or buffer" })
+    vim.api.nvim_create_user_command("FormatInfo", function()
+        M.info()
+    end, { desc = "Show info about the formatters for the current buffer" })
 end
 
 return M
