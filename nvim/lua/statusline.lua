@@ -87,6 +87,7 @@ function M.diagnostics()
             [vim.diagnostic.severity.INFO] = "I",
             [vim.diagnostic.severity.HINT] = "H",
         }
+
     local parts = {}
 
     if error_count > 0 then
@@ -169,6 +170,11 @@ function M.setup()
             M._set_highlights()
         end,
     })
+
+    if config.enable_statusline then
+        vim.opt.statusline = M.get()
+    end
+
     vim.schedule(M._update_git_branch)
     M._set_highlights()
 end
