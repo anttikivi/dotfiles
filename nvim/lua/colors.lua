@@ -27,6 +27,30 @@ function M.init()
                 dark = config.colorscheme_dark_variant --[[@as CtpFlavor]],
                 light = config.colorscheme_light_variant --[[@as CtpFlavor]],
             },
+            integrations = {
+                blink_cmp = config.cmp == "blink" and {
+                    style = "bordered",
+                } or false,
+                cmp = config.cmp == "nvim-cmp",
+                gitsigns = true,
+                harpoon = true,
+                markdown = true,
+                mason = true,
+                native_lsp = {
+                    enabled = true,
+                    underlines = {
+                        errors = { "undercurl" },
+                        hints = { "undercurl" },
+                        warnings = { "undercurl" },
+                        information = { "undercurl" },
+                    },
+                },
+                semantic_tokens = true,
+                telescope = {
+                    enabled = config.picker == "telescope",
+                },
+                treesitter = true,
+            },
         })
     elseif config.colorscheme == "tokyonight" then
         require("tokyonight").setup({
