@@ -17,7 +17,7 @@ local function confirm(opts)
         behavior = cmp.ConfirmBehavior.Insert,
     }, opts or {})
     return function(fallback)
-        if cmp.core.view:visible() or vim.fn.pumvisible() == 1 then
+        if cmp.visible then
             util.create_undo()
             if cmp.confirm(opts) then
                 return
