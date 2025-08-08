@@ -49,6 +49,14 @@ function M._update_git_branch()
         return
     end
 
+    local head = vim.b.gitsigns_head
+    if head and head ~= "" then
+        local icon = config.enable_icons and config.icons.statusline.branch or "/ "
+        M._git_branch = icon .. head .. " "
+        M._git_buf = buf
+        return
+    end
+
     local branch = vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null")
 
     if vim.v.shell_error ~= 0 then
