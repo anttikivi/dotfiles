@@ -7,13 +7,13 @@ local M = {
     cmp = "nvim-cmp",
 
     ---@type "catppuccin" | "rose-pine" | "tokyonight"
-    colorscheme = vim.env.COLOR_SCHEME,
+    colorscheme = vim.env.COLOR_SCHEME or "tokyonight",
 
     ---@type "frappe" | "macchiato" | "mocha" | "main" | "moon" | "storm" | "night"
-    colorscheme_dark_variant = vim.env.COLOR_SCHEME_DARK_VARIANT,
+    colorscheme_dark_variant = vim.env.COLOR_SCHEME_DARK_VARIANT or "night",
 
     ---@type "latte" | "dawn" | "day"
-    colorscheme_light_variant = vim.env.COLOR_SCHEME_LIGHT_VARIANT,
+    colorscheme_light_variant = vim.env.COLOR_SCHEME_LIGHT_VARIANT or "day",
 
     ---@type boolean
     enable_icons = false,
@@ -26,6 +26,7 @@ local M = {
 
     ---@type number
     formatting_timeout_ms = 3000,
+
     icons = {
         diagnostics = {
             error = "󰅚 ",

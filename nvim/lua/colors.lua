@@ -10,6 +10,8 @@ function M.pack_spec()
         ret[#ret + 1] = { src = "https://github.com/catppuccin/nvim", name = "catppuccin" }
     elseif config.colorscheme == "tokyonight" then
         ret[#ret + 1] = { src = "https://github.com/folke/tokyonight.nvim" }
+    elseif config.colorscheme == "rose-pine" then
+        ret[#ret + 1] = { src = "https://github.com/rose-pine/neovim", name = "rose-pine" }
     else
         vim.notify(("Invalid color scheme %q"):format(config.colorscheme), vim.log.levels.ERROR)
     end
@@ -18,7 +20,7 @@ function M.pack_spec()
 end
 
 function M.init()
-    require("auto-dark-mode").setup({ update_interval = 1000 })
+    require("auto-dark-mode").setup({ update_interval = 5000 })
 
     if config.colorscheme == "catppuccin" then
         require("catppuccin").setup({
@@ -57,6 +59,8 @@ function M.init()
             style = config.colorscheme_dark_variant,
             light_style = config.colorscheme_light_variant,
         })
+    elseif config.colorscheme == "rose-pine" then
+        require("rose-pine").setup({})
     end
 
     vim.cmd.colorscheme(config.colorscheme)
