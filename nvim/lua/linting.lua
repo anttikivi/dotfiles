@@ -10,7 +10,7 @@ local linters_by_ft = {
     markdown = { "markdownlint-cli2" },
     php = { "phpcs" },
     sh = { "shellcheck" },
-    terraform = { "terraform_validate" },
+    terraform = { "terraform_validate", "tflint" },
     ["yaml.ansible"] = { "ansible_lint" },
 }
 ---@type table<string, table>
