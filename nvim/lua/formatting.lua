@@ -53,6 +53,23 @@ function M.format(opts)
     end
 end
 
+function M.formatexpr()
+    local use_conform = false
+    ---@type vim.pack.PlugData[]
+    local plugins = vim.pack.get()
+    for _, p in ipairs(plugins) do
+        if p.spec.name == "conform.nvim" and p.active then
+            use_conform = true
+        end
+    end
+
+    if use_conform then
+        return require("conform").formatexpr()
+    end
+
+    return vim.lsp.formatexpr({ timeout_ms = config.formatting_timeout_ms })
+end
+
 ---@param buf? number
 function M.info(buf)
     buf = buf or vim.api.nvim_get_current_buf()

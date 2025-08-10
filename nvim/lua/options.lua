@@ -8,6 +8,7 @@ vim.opt.clipboard = "unnamedplus"
 vim.opt.colorcolumn = "80"
 vim.opt.completeopt = "menu,menuone,noselect,popup"
 vim.opt.expandtab = true
+vim.opt.formatexpr = "v:lua.require'formatting'.formatexpr()"
 vim.opt.guicursor = ""
 vim.opt.ignorecase = true
 vim.opt.linebreak = true
