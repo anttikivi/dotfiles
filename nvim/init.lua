@@ -1,3 +1,7 @@
+if vim.loader and vim.loader.enable then
+    vim.loader.enable()
+end
+
 local cmps = require("cmps")
 local colors = require("colors")
 local config = require("config")
