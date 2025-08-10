@@ -2,7 +2,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.g.netrw_banner = false
 vim.g.netrw_list_hide = "^\\.DS_Store$"
-vim.g.root_spec = { "lsp", { ".git", "lua" }, "cwd" }
+vim.g.root_spec = { "lsp", { ".git" }, "cwd" }
 
 vim.opt.clipboard = "unnamedplus"
 vim.opt.colorcolumn = "80"

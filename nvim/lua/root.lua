@@ -16,7 +16,7 @@ local M = setmetatable({}, {
 ---@alias RootSpec string | string[] | RootFn
 
 ---@type RootSpec[]
-M.spec = { "lsp", { ".git", "lua" }, "cwd" }
+M.spec = { "lsp", { ".git" }, "cwd" }
 
 ---@type table<number, string>
 M.cache = {}
