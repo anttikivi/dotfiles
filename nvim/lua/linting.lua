@@ -44,16 +44,13 @@ local function debounce(ms, fn)
     end
 end
 
-local function run_lint()
+local function try_lint()
     local lint = require("lint")
 
-    local names = lint._resolve_linter_by_ft(vim.bo.filetype)
-    names = vim.list_extend({}, names)
-
+    local names = vim.list_extend({}, lint.linters_by_ft[vim.bo.filetype] or {})
     if #names == 0 then
         vim.list_extend(names, lint.linters_by_ft["_"] or {})
     end
-
     vim.list_extend(names, lint.linters_by_ft["*"] or {})
 
     local ctx = { filename = vim.api.nvim_buf_get_name(0) }
@@ -91,9 +88,9 @@ function M.setup()
 
     lint.linters_by_ft = linters_by_ft
 
-    vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
+    vim.api.nvim_create_autocmd({ "BufWritePost" }, {
         group = util.augroup("lint"),
-        callback = debounce(100, run_lint),
+        callback = debounce(100, try_lint),
     })
 end
 
