@@ -1,3 +1,6 @@
+-- TODO: Switch to this when there is better support for the new Tree-sitter
+-- plugin version.
+
 local languages = {
     "astro",
     "bash",
