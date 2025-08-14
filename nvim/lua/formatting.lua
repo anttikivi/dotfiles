@@ -196,10 +196,13 @@ function M.setup()
         php = { "pint", "php_cs_fixer" },
         rust = { "rustfmt" },
         sh = { "shfmt" },
+        shtml = { "superhtml" },
         terraform = { "terraform_fmt" },
         tf = { "terraform_fmt" },
         ["terraform-vars"] = { "terraform_fmt" },
         zig = { "zigfmt" },
+        ziggy = { "ziggy" },
+        ziggy_schema = { "ziggy_schema" },
     }
     local formatters = {
         injected = { options = { ignore_errors = true } },
@@ -208,6 +211,24 @@ function M.setup()
                 return has_prettier_parser(ctx) and (config.prettier_needs_config ~= true or has_prettier_config(ctx))
             end,
             prepend_args = { "--prose-wrap", "always" },
+        },
+        superhtml = {
+            inherit = false,
+            command = "superhtml",
+            stdin = true,
+            args = { "fmt", "--stdin-super" },
+        },
+        ziggy = {
+            inherit = false,
+            command = "ziggy",
+            stdin = true,
+            args = { "fmt", "--stdin" },
+        },
+        ziggy_schema = {
+            inherit = false,
+            command = "ziggy",
+            stdin = true,
+            args = { "fmt", "--stdin-schema" },
         },
     }
 

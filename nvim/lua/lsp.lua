@@ -21,6 +21,12 @@ local ensure_installed = {
     "tflint",
 }
 
+local skip_install = {
+    "superhtml",
+    "ziggy",
+    "ziggy_schema",
+}
+
 ---@class Filter: vim.lsp.get_clients.Filter
 ---@field filter? fun(client: vim.lsp.Client): boolean
 
@@ -77,21 +83,35 @@ local function install(pkg, version)
     )
 end
 
+---@param name string
+---@return boolean
+local function should_skip_install(name)
+    for _, skip in ipairs(skip_install) do
+        if skip == name then
+            return true
+        end
+    end
+
+    return false
+end
+
 local function install_servers()
     for _, server_name in ipairs(M.server_names()) do
-        local pkg_name, version = Package.Parse(server_name)
-        resolve_package(pkg_name)
-            :if_present(
-                ---@param pkg Package
-                function(pkg)
-                    if not pkg:is_installed() and not pkg:is_installing() then
-                        install(pkg, version)
+        if not should_skip_install(server_name) then
+            local pkg_name, version = Package.Parse(server_name)
+            resolve_package(pkg_name)
+                :if_present(
+                    ---@param pkg Package
+                    function(pkg)
+                        if not pkg:is_installed() and not pkg:is_installing() then
+                            install(pkg, version)
+                        end
                     end
-                end
-            )
-            :if_not_present(function()
-                vim.notify(("[mason] server %q is not a valid entry"):format(pkg_name), vim.log.levels.WARN)
-            end)
+                )
+                :if_not_present(function()
+                    vim.notify(("[mason] server %q is not a valid entry"):format(pkg_name), vim.log.levels.WARN)
+                end)
+        end
     end
 end
 
