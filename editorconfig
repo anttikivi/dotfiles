@@ -12,6 +12,9 @@ max_line_length = off
 [{.gitmodules,Makefile,go.mod,go.sum,*.go}]
 indent_style = tab
 
+[*.{alloy,alloy.j2}]
+indent_style = tab
+
 # [{*.c,*.zig}]
 # max_line_length = 100
 
@@ -20,5 +23,11 @@ max_line_length = 120
 
 [*.py]
 max_line_length = 79
+
+[*.tf]
+indent_size = 2
+
+[*.{conf,conf.j2,yml,yaml,yml.j2,yaml.j2}]
+indent_size = 2
 
 # vi: ft=editorconfig

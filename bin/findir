@@ -4,7 +4,7 @@ ignore_pattern="$(sed -e 's#^#^#' "${XDG_CONFIG_HOME}/findir-ignores" | tr '\n' 
 # shellcheck disable=SC2046
 selected=$(find $(eval echo "$(xargs <"${XDG_CONFIG_HOME}/findir")") -mindepth 1 -maxdepth 1 -type d | grep -vE "${ignore_pattern}" | fzf)
 if [ -z "${selected}" ]; then
-  pwd
+    pwd
 else
-  echo "${selected}"
+    echo "${selected}"
 fi

@@ -13,7 +13,7 @@ path=("${GOBIN}" "${path[@]}")
 path=("${LOCAL_OPT_DIR}/nvim/bin" "${path[@]}")
 path=("${XDG_CONFIG_HOME}/composer/vendor/bin" "${path[@]}")
 path=("/Applications/Ghostty.app/Contents/MacOS" "${path[@]}")
-path=("${HOME}/.local/zig15" "${path[@]}")
+path=("${HOME}/.local/opt/zig/bin" "${path[@]}")
 
 if [ -e "${HOME}/.cargo/env" ]; then
   # shellcheck disable=SC1091

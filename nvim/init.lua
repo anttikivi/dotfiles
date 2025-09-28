@@ -88,3 +88,9 @@ if config.enable_statusline then
 end
 
 require("plugins").setup()
+
+vim.filetype.add({
+    extension = {
+        njk = "html",
+    },
+})

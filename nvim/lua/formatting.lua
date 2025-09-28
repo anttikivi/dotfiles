@@ -141,11 +141,13 @@ local prettier_supported = {
     "html",
     "javascript",
     "javascriptreact",
+    "jinja",
     "json",
     "jsonc",
     "less",
     "markdown",
     "markdown.mdx",
+    "nginx",
     "scss",
     "typescript",
     "typescriptreact",
@@ -189,6 +191,7 @@ has_prettier_parser = require("util").memoize(has_prettier_parser)
 
 function M.setup()
     local formatters_by_ft = {
+        alloy = { "alloy" },
         bash = { "shfmt" },
         blade = { "blade-formatter" },
         go = { "goimports", "gofumpt" },
@@ -206,6 +209,13 @@ function M.setup()
     }
     local formatters = {
         injected = { options = { ignore_errors = true } },
+        alloy = {
+            command = "alloy",
+            args = { "fmt" },
+            condition = function(_, ctx)
+                return vim.bo[ctx.buf].filetype == "alloy"
+            end,
+        },
         prettier = {
             condition = function(_, ctx)
                 return has_prettier_parser(ctx) and (config.prettier_needs_config ~= true or has_prettier_config(ctx))
