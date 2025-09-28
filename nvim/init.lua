@@ -13,6 +13,7 @@ require("keymaps")
 
 local pack_specs = {
     { src = "https://github.com/folke/lazydev.nvim" },
+    { src = "https://github.com/grafana/vim-alloy" },
     { src = "https://github.com/lewis6991/gitsigns.nvim.git" },
     { src = "https://github.com/mason-org/mason.nvim" },
     { src = "https://github.com/mfussenegger/nvim-lint" },
