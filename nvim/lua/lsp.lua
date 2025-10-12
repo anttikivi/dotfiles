@@ -8,6 +8,7 @@ local M = {}
 local ensure_installed = {
     "ansible-lint",
     "blade-formatter",
+    "clang-format",
     "goimports",
     "gofumpt",
     "markdownlint-cli2",

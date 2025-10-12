@@ -194,6 +194,8 @@ function M.setup()
         alloy = { "alloy" },
         bash = { "shfmt" },
         blade = { "blade-formatter" },
+        c = { "clang-format" },
+        cpp = { "clang-format" },
         go = { "goimports", "gofumpt" },
         lua = { "stylua" },
         -- php = { "pint", "php_cs_fixer" },
