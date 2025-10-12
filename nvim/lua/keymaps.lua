@@ -35,6 +35,25 @@ vim.keymap.set("n", "<leader>uh", function()
         vim.notify("Enabled inlay hints", vim.log.levels.INFO)
     end
 end)
+vim.keymap.set("n", "<leader>us", function()
+    if not config.ai_enabled then
+        vim.notify("AI completions are not enabled", vim.log.levels.WARN)
+        return
+    end
+
+    if config.ai_engine == "supermaven" then
+        local supermaven = require("supermaven-nvim.api")
+        if supermaven.is_running() then
+            supermaven.stop()
+            vim.notify("Stopped Supermaven", vim.log.levels.INFO)
+        else
+            supermaven.start()
+            vim.notify("Started Supermaven", vim.log.levels.INFO)
+        end
+    else
+        vim.notify(("Invalid value for `config.ai_engine`: %q"):format(config.ai_engine), vim.log.levels.ERROR)
+    end
+end)
 
 -- Paste without overwriting the clipboard.
 vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Paste without overwriting the clipboard" })
