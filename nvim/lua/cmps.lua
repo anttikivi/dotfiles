@@ -5,6 +5,24 @@ local util = require("util")
 
 local M = {}
 
+---@alias Action fun(): boolean?
+---@type table<string, Action>
+M.actions = {
+    snippet_forward = function()
+        if vim.snippet.active({ direction = 1 }) then
+            vim.schedule(function()
+                vim.snippet.jump(1)
+            end)
+            return true
+        end
+    end,
+    snippet_stop = function()
+        if vim.snippet then
+            vim.snippet.stop()
+        end
+    end,
+}
+
 -- This is a better implementation of `cmp.confirm`:
 --  * check if the completion menu is visible without waiting for running sources
 --  * create an undo point before confirming
@@ -24,6 +42,22 @@ local function cmp_confirm(opts)
             end
         end
         return fallback()
+    end
+end
+
+---@param actions string[]
+---@param fallback? string | fun()
+local function cmp_map(actions, fallback)
+    return function()
+        for _, name in ipairs(actions) do
+            if M.actions[name] then
+                if M.actions[name]() then
+                    return true
+                end
+            end
+        end
+
+        return type(fallback) == "function" and fallback() or fallback
     end
 end
 
@@ -49,6 +83,21 @@ function M.pack_spec()
 end
 
 function M.setup()
+    if config.ai_enabled then
+        if config.ai_engine == "supermaven" then
+            M.actions.ai_accept = function()
+                local suggestion = require("supermaven-nvim.completion_preview")
+                if suggestion.has_suggestion() then
+                    util.create_undo()
+                    vim.schedule(function()
+                        suggestion.on_accept_suggestion()
+                    end)
+                    return true
+                end
+            end
+        end
+    end
+
     if config.cmp == "native" then
         require("lsp").on_attach(function(client, buffer)
             if client:supports_method("textDocument/completion") then
@@ -56,6 +105,8 @@ function M.setup()
             end
         end)
     elseif config.cmp == "blink" then
+        -- TODO: Add Supermaven to blink setup.
+
         local blink = require("blink.cmp")
         blink.setup({
             completion = {
@@ -98,6 +149,23 @@ function M.setup()
         local defaults = require("cmp.config.default")()
 
         local auto_select = true
+        local keymap = {
+            ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+            ["<C-f>"] = cmp.mapping.scroll_docs(4),
+            ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+            ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+            ["<C-e>"] = cmp.mapping.abort(),
+            ["<C-Space>"] = cmp.mapping.complete(),
+            ["<C-y>"] = cmp_confirm({ select = true }),
+        }
+        if config.ai_enabled then
+            if config.ai_engine == "supermaven" then
+                keymap["<tab>"] = function(fallback)
+                    return cmp_map({ "snippet_forward", "ai_accept" }, fallback)()
+                end
+            end
+        end
+
         local opts = {
             snippet = {
                 expand = function(args)
@@ -108,15 +176,7 @@ function M.setup()
                 completeopt = "menu,menuone,noinsert" .. (auto_select and "" or ",noselect"),
             },
             preselect = auto_select and cmp.PreselectMode.Item or cmp.PreselectMode.None,
-            mapping = cmp.mapping.preset.insert({
-                ["<C-b>"] = cmp.mapping.scroll_docs(-4),
-                ["<C-f>"] = cmp.mapping.scroll_docs(4),
-                ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-                ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-                ["<C-e>"] = cmp.mapping.abort(),
-                ["<C-Space>"] = cmp.mapping.complete(),
-                ["<C-y>"] = cmp_confirm({ select = true }),
-            }),
+            mapping = cmp.mapping.preset.insert(keymap),
             sources = cmp.config.sources({
                 { name = "lazydev" },
                 { name = "nvim_lsp" },
@@ -126,6 +186,16 @@ function M.setup()
             }),
             sorting = defaults.sorting,
         }
+
+        if config.ai_enabled then
+            if config.ai_engine == "supermaven" then
+                table.insert(opts.sources, 1, {
+                    name = "supermaven",
+                    group_index = 1,
+                    priority = 100,
+                })
+            end
+        end
 
         cmp.setup(opts)
 

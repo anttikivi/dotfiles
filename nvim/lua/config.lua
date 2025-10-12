@@ -1,6 +1,12 @@
 ---@class Config
 local M = {
     ---@type boolean
+    ai_enabled = true,
+
+    ---@type "supermaven"
+    ai_engine = "supermaven",
+
+    ---@type boolean
     autoformat = true,
 
     ---@type "blink" | "native" | "nvim-cmp"

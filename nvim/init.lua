@@ -2,6 +2,7 @@ if vim.loader and vim.loader.enable then
     vim.loader.enable()
 end
 
+local ai = require("ai")
 local cmps = require("cmps")
 local colors = require("colors")
 local config = require("config")
@@ -23,6 +24,7 @@ local pack_specs = {
     { src = "https://github.com/stevearc/oil.nvim" },
     { src = "https://github.com/ThePrimeagen/harpoon", version = "harpoon2" },
 }
+vim.list_extend(pack_specs, ai.pack_spec())
 vim.list_extend(pack_specs, cmps.pack_spec())
 vim.list_extend(pack_specs, colors.pack_spec())
 vim.list_extend(pack_specs, picker.pack_spec())
@@ -30,6 +32,7 @@ vim.list_extend(pack_specs, picker.pack_spec())
 vim.pack.add(pack_specs)
 
 require("root").setup()
+ai.setup()
 cmps.setup()
 require("lsp").setup()
 require("linting").setup()
