@@ -54,6 +54,15 @@ vim.keymap.set("n", "<leader>us", function()
         vim.notify(("Invalid value for `config.ai_engine`: %q"):format(config.ai_engine), vim.log.levels.ERROR)
     end
 end)
+vim.keymap.set("n", "<leader>uw", function()
+    local state = vim.wo.wrap
+    vim.wo.wrap = not state
+    if state then
+        vim.notify("Disabled line wrapping", vim.log.levels.INFO)
+    else
+        vim.notify("Enabled line wrapping", vim.log.levels.INFO)
+    end
+end)
 
 -- Paste without overwriting the clipboard.
 vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Paste without overwriting the clipboard" })
