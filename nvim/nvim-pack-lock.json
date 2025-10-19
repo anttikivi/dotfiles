@@ -42,7 +42,7 @@
       "src": "https://github.com/mason-org/mason.nvim"
     },
     "nvim-cmp": {
-      "rev": "b5311ab",
+      "rev": "a7bcf1d",
       "src": "https://github.com/hrsh7th/nvim-cmp"
     },
     "nvim-lint": {
@@ -50,12 +50,12 @@
       "src": "https://github.com/mfussenegger/nvim-lint"
     },
     "nvim-treesitter": {
-      "rev": "de003000",
+      "rev": "71bf1665",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter",
       "version": "'main'"
     },
     "oil.nvim": {
-      "rev": "919e155",
+      "rev": "7194872",
       "src": "https://github.com/stevearc/oil.nvim"
     },
     "plenary.nvim": {
