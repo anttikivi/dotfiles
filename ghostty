@@ -1,4 +1,5 @@
-config-file = ~/.config/ghostty/theme
+# config-file = ~/.config/ghostty/theme
+theme = dark:/Users/anttikivi/Projects/lucid.nvim/extras/ghostty/lucid-dark,light:/Users/anttikivi/Projects/lucid.nvim/extras/ghostty/lucid-light
 font-family = "Google Sans Code"
 font-feature = -calt
 # font-feature = -calt, -liga, -dlig

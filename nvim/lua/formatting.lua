@@ -223,7 +223,13 @@ function M.setup()
             condition = function(_, ctx)
                 return has_prettier_parser(ctx) and (config.prettier_needs_config ~= true or has_prettier_config(ctx))
             end,
-            prepend_args = { "--prose-wrap", "always" },
+            prepend_args = function(_, ctx)
+                if not has_prettier_config(ctx) then
+                    return { "--prose-wrap", "always", "--print-width", "80" }
+                end
+
+                return {}
+            end,
         },
         superhtml = {
             inherit = false,

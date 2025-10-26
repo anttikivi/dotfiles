@@ -8,6 +8,8 @@ function M.pack_spec()
     }
     if config.colorscheme == "catppuccin" then
         ret[#ret + 1] = { src = "https://github.com/catppuccin/nvim", name = "catppuccin" }
+    elseif config.colorscheme == "lucid" then
+        -- ret[#ret + 1] = { src = "file:///Users/anttikivi/Projects/lucid.nvim" }
     elseif config.colorscheme == "tokyonight" then
         ret[#ret + 1] = { src = "https://github.com/folke/tokyonight.nvim" }
     elseif config.colorscheme == "rose-pine" then
@@ -55,6 +57,7 @@ function M.init()
             },
         })
     elseif config.colorscheme == "tokyonight" then
+        ---@diagnostic disable-next-line: missing-fields
         require("tokyonight").setup({
             style = config.colorscheme_dark_variant,
             light_style = config.colorscheme_light_variant,

@@ -96,5 +96,7 @@ require("plugins").setup()
 vim.filetype.add({
     extension = {
         njk = "html",
+        tf = "opentofu",
+        tfvars = "opentofu-vars",
     },
 })
