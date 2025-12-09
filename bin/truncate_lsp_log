@@ -1,0 +1,13 @@
+#!/bin/sh
+
+LOG="${HOME}/.local/state/nvim/lsp.log"
+MAX_SIZE_MB=100
+
+if [ -f "${LOG}" ]; then
+    size_mb=$(du -m "${LOG}" | cut -f1)
+
+    if [ "${size_mb}" -gt "${MAX_SIZE_MB}" ]; then
+        /usr/bin/truncate -s 0 "${LOG}"
+        echo "[$(date)] truncated Neovim LSP client log at ${LOG}"
+    fi
+fi
