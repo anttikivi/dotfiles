@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export GO_VERSION="1.24.0"
+export GO_VERSION="1.25.0"
 # Defines the release channel for Neovim to use. The possible values are:
 # "stable", "dev"
 export NVIM_CHANNEL="dev"
