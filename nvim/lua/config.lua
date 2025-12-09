@@ -14,6 +14,7 @@ local M = {
 
     ---@type "catppuccin" | "lucid" | "rose-pine" | "tokyonight"
     colorscheme = "lucid", -- vim.env.COLOR_SCHEME or "tokyonight",
+    -- colorscheme = vim.env.COLOR_SCHEME or "tokyonight",
 
     ---@type "frappe" | "macchiato" | "mocha" | "main" | "moon" | "storm" | "night"
     colorscheme_dark_variant = vim.env.COLOR_SCHEME_DARK_VARIANT or "night",

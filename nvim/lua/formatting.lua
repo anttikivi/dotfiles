@@ -152,6 +152,7 @@ local prettier_supported = {
     "typescript",
     "typescriptreact",
     "vue",
+    -- "xml",
     "yaml",
     "yaml.ansible",
 }
@@ -225,29 +226,17 @@ function M.setup()
             end,
             prepend_args = function(_, ctx)
                 if not has_prettier_config(ctx) then
-                    return { "--prose-wrap", "always", "--print-width", "80" }
+                    local ft = vim.bo[ctx.buf].filetype --[[@as string]]
+
+                    if ft == "yaml" then
+                        return { "--print-width", "120" }
+                    end
+
+                    return { "--tab-width", "4", "--prose-wrap", "always", "--print-width", "80" }
                 end
 
                 return {}
             end,
-        },
-        superhtml = {
-            inherit = false,
-            command = "superhtml",
-            stdin = true,
-            args = { "fmt", "--stdin-super" },
-        },
-        ziggy = {
-            inherit = false,
-            command = "ziggy",
-            stdin = true,
-            args = { "fmt", "--stdin" },
-        },
-        ziggy_schema = {
-            inherit = false,
-            command = "ziggy",
-            stdin = true,
-            args = { "fmt", "--stdin-schema" },
         },
     }
 

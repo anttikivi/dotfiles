@@ -204,6 +204,7 @@ function M.setup()
     end))
 
     vim.lsp.enable(M.server_names())
+    -- vim.lsp.set_log_level("warn")
 
     require("formatting").register({
         name = "LSP",
