@@ -2,3 +2,4 @@
 aws/config
 ssh/config
 ssh/*.pub
+node_modules/

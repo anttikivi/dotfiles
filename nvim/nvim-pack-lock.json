@@ -4,12 +4,16 @@
       "rev": "e300259",
       "src": "https://github.com/f-person/auto-dark-mode.nvim"
     },
+    "catppuccin": {
+      "rev": "193e123",
+      "src": "https://github.com/catppuccin/nvim"
+    },
     "cmp-buffer": {
       "rev": "b74fab3",
       "src": "https://github.com/hrsh7th/cmp-buffer"
     },
     "cmp-nvim-lsp": {
-      "rev": "bd5a7d6",
+      "rev": "cbc7b02",
       "src": "https://github.com/hrsh7th/cmp-nvim-lsp"
     },
     "cmp-path": {
@@ -17,41 +21,41 @@
       "src": "https://github.com/hrsh7th/cmp-path"
     },
     "conform.nvim": {
-      "rev": "9fd3d5e",
+      "rev": "ffe26e8",
       "src": "https://github.com/stevearc/conform.nvim"
     },
     "gitsigns.nvim": {
-      "rev": "20ad441",
+      "rev": "5813e48",
       "src": "https://github.com/lewis6991/gitsigns.nvim.git"
     },
     "harpoon": {
-      "rev": "ed1f853",
+      "rev": "87b1a35",
       "src": "https://github.com/ThePrimeagen/harpoon",
       "version": "'harpoon2'"
     },
     "lazydev.nvim": {
-      "rev": "e28ce52",
+      "rev": "5231c62",
       "src": "https://github.com/folke/lazydev.nvim"
     },
     "mason.nvim": {
-      "rev": "ad7146a",
+      "rev": "57e5a8a",
       "src": "https://github.com/mason-org/mason.nvim"
     },
     "nvim-cmp": {
-      "rev": "a7bcf1d",
+      "rev": "d97d85e",
       "src": "https://github.com/hrsh7th/nvim-cmp"
     },
     "nvim-lint": {
-      "rev": "9da1fb9",
+      "rev": "ebe5359",
       "src": "https://github.com/mfussenegger/nvim-lint"
     },
     "nvim-treesitter": {
-      "rev": "30c466ad",
+      "rev": "f47f549f",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter",
       "version": "'main'"
     },
     "oil.nvim": {
-      "rev": "7e1cd77",
+      "rev": "cbcb3f9",
       "src": "https://github.com/stevearc/oil.nvim"
     },
     "plenary.nvim": {
@@ -63,11 +67,11 @@
       "src": "https://github.com/supermaven-inc/supermaven-nvim"
     },
     "telescope-fzf-native.nvim": {
-      "rev": "1f08ed6",
+      "rev": "6fea601",
       "src": "https://github.com/nvim-telescope/telescope-fzf-native.nvim"
     },
     "telescope.nvim": {
-      "rev": "b4da76b",
+      "rev": "e69b434",
       "src": "https://github.com/nvim-telescope/telescope.nvim"
     },
     "vim-alloy": {
