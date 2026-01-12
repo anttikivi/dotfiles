@@ -11,10 +11,6 @@ _update_vcs_info() {
 add-zsh-hook precmd _update_vcs_info
 add-zsh-hook chpwd _update_vcs_info
 
-# precmd() {
-#     async_job vcs _vcs_info_async
-# }
-
 if [[ -n ${SSH_CONNECTION}${SSH_CLIENT}${SSH_TTY} ]]; then
     PROMPT_HOST='%F{blue}%n@%m%f '
 else
