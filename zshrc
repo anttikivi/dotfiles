@@ -2,8 +2,13 @@
 # https://zsh.sourceforge.io/Doc/Release/Options.html
 setopt AUTO_CD
 setopt AUTO_PUSHD
+
+unsetopt MENU_COMPLETE
+setopt AUTO_MENU
+
 setopt BAD_PATTERN
 setopt EXTENDED_GLOB
+
 setopt HIST_EXPIRE_DUPS_FIRST
 setopt HIST_IGNORE_SPACE
 
@@ -18,18 +23,17 @@ else
     compinit -d "${dumpfile}"
 fi
 
+zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:][:lower:]}' 'r:|=*' 'l:|=* r:|=*'
+# NOTE: This version is truly case insensitive. However, I prefer to only match
+# upper case with upper case:
+# zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'r:|=*' 'l:|=* r:|=*'
+
 export MANPAGER="nvim +Man!"
 export HISTSIZE=32768
 export SAVEHIST=$HISTSIZE
 
 eval "$(fnm env --use-on-cd --shell zsh)"
 eval "$(fnm completions --shell zsh)"
-
-alias td="tmux detach"
-alias tks="tmux kill-server"
-alias tls="tmux list-sessions"
-alias vi="nvim"
-alias vim="nvim"
 
 if [[ -f "${GCLOUD_SDK_DIR}/completion.zsh.inc" ]]; then
     source "${GCLOUD_SDK_DIR}/completion.zsh.inc"
@@ -40,7 +44,6 @@ if [[ ${OSTYPE} == darwin* ]] && [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
 fi
 
 option_files=("keybindings" "prompt")
-
 for filename in "${option_files[@]}"; do
     file="${HOME}/src/personal/dotfiles/zsh/${filename}.zsh"
     if [[ -f "${file}" ]]; then
@@ -49,6 +52,17 @@ for filename in "${option_files[@]}"; do
         print -u2 -- "warning: Zsh option file at \"${file}\" does not exist"
     fi
 done
-unset file filename
+unset file filename option_files
+
+option_files=("alias")
+for filename in "${option_files[@]}"; do
+    file="${HOME}/src/personal/dotfiles/sh/${filename}.sh"
+    if [[ -f "${file}" ]]; then
+        source "${file}"
+    else
+        print -u2 -- "warning: sh option file at \"${file}\" does not exist"
+    fi
+done
+unset file filename option_files
 
 # vi: ft=zsh
