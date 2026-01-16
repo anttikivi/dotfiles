@@ -8,4 +8,6 @@ zle -N down-line-or-beginning-search
 
 bindkey "^[[B" down-line-or-beginning-search
 
-bindkey -s "^F" "tmux-sessionizer\n"
+if [[ "${ENABLE_TMUX}" == true ]]; then
+    bindkey -s "^F" "tmux-sessionizer\n"
+fi
