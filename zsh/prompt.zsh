@@ -17,7 +17,7 @@ _git_dirty_check() {
         return
     fi
 
-    command git ls-files --others --exclude-standard --error-unmatch . &>/dev/null
+    command git ls-files --others --exclude-standard &>/dev/null
     if (( $? == 1 )); then
         GIT_DIRTY='%F{magenta}*%f'
     fi
