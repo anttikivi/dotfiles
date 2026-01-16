@@ -32,6 +32,10 @@ export MANPAGER="nvim +Man!"
 export HISTSIZE=32768
 export SAVEHIST=$HISTSIZE
 
+eval "$(zoxide init zsh)"
+
+source <(COMPLETE=zsh jj)
+
 eval "$(fnm env --use-on-cd --shell zsh)"
 eval "$(fnm completions --shell zsh)"
 
