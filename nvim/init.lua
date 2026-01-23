@@ -5,6 +5,7 @@ require("keymaps")
 
 require("pack").setup()
 
+require("lsp").setup()
 
 if config.file_explorer == "oil" then
     require("oil").setup({
