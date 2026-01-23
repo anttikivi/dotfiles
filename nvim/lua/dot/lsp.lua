@@ -7,7 +7,13 @@ local M = {}
 ---@type table<string, dot.lsp.Config>
 local servers = {}
 
-function M.setup() end
+function M.setup()
+    for name, server in pairs(servers) do
+        vim.lsp.config(name, server)
+    end
+
+    vim.lsp.enable(M.get_server_names())
+end
 
 M.get_server_names = util.memoize(function()
     return util.keys(servers)
