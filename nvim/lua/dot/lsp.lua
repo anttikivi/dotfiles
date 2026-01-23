@@ -1,15 +1,31 @@
 local M = {}
 
----@return string[]
-local function _get_server_names()
-    local ret = {}
-    for name, type in vim.fs.dir(vim.fn.stdpath("config") .. "/lsp") do
-        if type == "file" and name:sub(-4) == ".lua" then
-            ret[#ret + 1] = name:gsub("%.lua$", "")
+---@class dot.lsp.Config : vim.lsp.ClientConfig
+
+---@type table<string, dot.lsp.Config>
+M._servers = {}
+
+---@param name string
+---@param server dot.lsp.Config
+function M.register_server(name, server)
+    vim.notify(("register: %s"):format(name))
+    local found = false
+
+    for k in pairs(M._servers) do
+        if k == name then
+            found = true
+            break
         end
     end
 
-    return ret
+    if not found then
+        M._servers[name] = server
+    end
+end
+
+---@return string[]
+local function _get_server_names()
+    return require("dot.util").keys(M._servers)
 end
 
 M.get_server_names = require("dot.util").memoize(_get_server_names)

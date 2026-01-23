@@ -1,6 +1,17 @@
 ---@class dot.util
 local M = {}
 
+---@param t table<string, any>
+function M.keys(t)
+    local result = {}
+
+    for k in pairs(t) do
+        result[#result + 1] = k
+    end
+
+    return result
+end
+
 local cache = {} ---@type table<(fun()), table<string, any>>
 
 ---@generic T: fun()

@@ -2,17 +2,52 @@ local lsp = require("dot.lsp")
 
 local M = {}
 
-M.ensure_installed = {
-    "selene",
-    "stylua",
-}
+M._ensure_installed = {}
 
-M.skip_install = {}
+---@param pkg string
+function M.ensure_installed(pkg)
+    local found = false
+
+    for _, p in ipairs(M._ensure_installed) do
+        if p == pkg then
+            found = true
+            break
+        end
+    end
+
+    if not found then
+        M._ensure_installed[#M._ensure_installed + 1] = pkg
+    end
+end
+
+M._cached_mason_specs = nil
+
+function M.get_mason_map()
+    local _ = require("mason-core.functional")
+
+    M._cached_mason_specs = _.lazy(require("mason-registry").get_all_package_specs)
+
+    ---@type table<string, string>
+    local package_to_lspconfig = {}
+    for _, pkg_spec in ipairs(M._cached_mason_specs()) do
+        local lspconfig = vim.tbl_get(pkg_spec, "neovim", "lspconfig")
+        if lspconfig then
+            package_to_lspconfig[pkg_spec.name] = lspconfig
+        end
+    end
+
+    return {
+        package_to_lspconfig = package_to_lspconfig,
+        lspconfig_to_package = _.invert(package_to_lspconfig),
+    }
+end
+
+M._skip_install = {}
 
 ---@param name string
 ---@return boolean
-function M.skip_install(name)
-    for _, skip in ipairs(M.skip_install) do
+function M.should_skip_install(name)
+    for _, skip in ipairs(M._skip_install) do
         if skip == name then
             return true
         end
@@ -21,18 +56,49 @@ function M.skip_install(name)
     return false
 end
 
+function M.resolve_package(server_name)
+    return require("mason-core.optional")
+        .of_nilable(M.get_mason_map().lspconfig_to_package[server_name])
+        :map(function(package_name)
+            local ok, pkg = pcall(require("mason-registry").get_package, package_name)
+            if ok then
+                return pkg
+            end
+        end)
+end
+
+function M.install(pkg, version)
+    local name = M.get_mason_map().package_to_lspconfig[pkg.name]
+    vim.notify(("[mason] installing %s"):format(name))
+    return pkg:install(
+        { version = version },
+        vim.schedule_wrap(function(success)
+            if success then
+                vim.notify(("[mason] %s was successfully installed"):format(name))
+            else
+                vim.notify(
+                    ("[mason] failed to install %s. Installation logs are available in :Mason and :MasonLog"):format(
+                        name
+                    ),
+                    vim.log.levels.ERROR
+                )
+            end
+        end)
+    )
+end
+
 function M.install_servers()
     local Package = require("mason-core.package")
 
     for _, server_name in ipairs(lsp.get_server_names()) do
-        if not M.skip_install(server_name) then
+        if not M.should_skip_install(server_name) then
             local pkg_name, version = Package.Parse(server_name)
-            resolve_package(pkg_name)
+            M.resolve_package(pkg_name)
                 :if_present(
                     ---@param pkg Package
                     function(pkg)
                         if not pkg:is_installed() and not pkg:is_installing() then
-                            install(pkg, version)
+                            M.install(pkg, version)
                         end
                     end
                 )
@@ -54,6 +120,10 @@ function M.setup()
 
     local mason_registry = require("mason-registry")
 
+    mason_registry:on("update:success", function()
+        M._cached_mason_specs = require("mason-core.functional").lazy(mason_registry.get_all_package_specs)
+    end)
+
     mason_registry:on("package:install:success", function()
         vim.defer_fn(function()
             vim.api.nvim_exec_autocmds("FileType", {
@@ -66,7 +136,7 @@ function M.setup()
         if #vim.api.nvim_list_uis() ~= 0 then -- not in headless mode
             M.install_servers()
 
-            for _, tool in ipairs(M.ensure_installed) do
+            for _, tool in ipairs(M._ensure_installed) do
                 local pkg = mason_registry.get_package(tool)
                 if not pkg:is_installed() and not pkg:is_installing() then
                     vim.notify(("[mason] installing %s"):format(tool))
