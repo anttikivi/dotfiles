@@ -1,3 +1,5 @@
+local config = require("config")
+
 local M = {}
 
 local start = vim.health.start or vim.health.report_start
@@ -26,6 +28,14 @@ function M.check()
                 tostring(vim.version())
             )
         )
+    end
+
+    if config.file_explorer == "netrw" then
+        ok("file_explorer: netrw")
+    elseif config.file_explorer == "oil" then
+        ok("file_explorer: oil.nvim")
+    else
+        error(string.format("invalid file_explorer: '%s'", config.file_explorer))
     end
 end
 
