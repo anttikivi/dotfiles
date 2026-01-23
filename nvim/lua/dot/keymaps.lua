@@ -1,4 +1,4 @@
-local config = require("config")
+local config = require("dot.config")
 
 -- Make up and down take line wrapping into account.
 vim.keymap.set({ "n", "o", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })

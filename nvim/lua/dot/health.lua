@@ -1,4 +1,4 @@
-local config = require("config")
+local config = require("dot.config")
 
 local M = {}
 
@@ -7,7 +7,7 @@ local ok = vim.health.ok or vim.health.report_ok
 local error = vim.health.error or vim.health.report_error
 
 function M.check()
-    start("dotfiles")
+    start("dot")
 
     if not vim.version.cmp then
         error(
