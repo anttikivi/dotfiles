@@ -3,11 +3,8 @@ local config = require("config")
 require("options")
 require("keymaps")
 
-local pack_specs = {
-    { src = "https://github.com/stevearc/oil.nvim", version = vim.version.range("2.15.0") },
-}
+require("pack").setup()
 
-vim.pack.add(pack_specs)
 
 if config.file_explorer == "oil" then
     require("oil").setup({
