@@ -1,35 +1,32 @@
 local lsp = require("dot.lsp")
+local util = require("dot.util")
 
 local M = {}
 
-M._ensure_installed = {}
+local cached_mason_specs = nil
+local ensure_installed = {}
+local skip_install = {}
 
----@param pkg string
-function M.ensure_installed(pkg)
-    local found = false
-
-    for _, p in ipairs(M._ensure_installed) do
-        if p == pkg then
-            found = true
-            break
+---@param name string
+---@return boolean
+local function should_skip_install(name)
+    for _, skip in ipairs(skip_install) do
+        if skip == name then
+            return true
         end
     end
 
-    if not found then
-        M._ensure_installed[#M._ensure_installed + 1] = pkg
-    end
+    return false
 end
 
-M._cached_mason_specs = nil
-
-function M.get_mason_map()
+local get_mason_map = util.memoize(function()
     local _ = require("mason-core.functional")
 
-    M._cached_mason_specs = _.lazy(require("mason-registry").get_all_package_specs)
+    cached_mason_specs = _.lazy(require("mason-registry").get_all_package_specs)
 
     ---@type table<string, string>
     local package_to_lspconfig = {}
-    for _, pkg_spec in ipairs(M._cached_mason_specs()) do
+    for _, pkg_spec in ipairs(cached_mason_specs()) do
         local lspconfig = vim.tbl_get(pkg_spec, "neovim", "lspconfig")
         if lspconfig then
             package_to_lspconfig[pkg_spec.name] = lspconfig
@@ -40,25 +37,11 @@ function M.get_mason_map()
         package_to_lspconfig = package_to_lspconfig,
         lspconfig_to_package = _.invert(package_to_lspconfig),
     }
-end
+end)
 
-M._skip_install = {}
-
----@param name string
----@return boolean
-function M.should_skip_install(name)
-    for _, skip in ipairs(M._skip_install) do
-        if skip == name then
-            return true
-        end
-    end
-
-    return false
-end
-
-function M.resolve_package(server_name)
+local function resolve_package(server_name)
     return require("mason-core.optional")
-        .of_nilable(M.get_mason_map().lspconfig_to_package[server_name])
+        .of_nilable(get_mason_map().lspconfig_to_package[server_name])
         :map(function(package_name)
             local ok, pkg = pcall(require("mason-registry").get_package, package_name)
             if ok then
@@ -67,8 +50,8 @@ function M.resolve_package(server_name)
         end)
 end
 
-function M.install(pkg, version)
-    local name = M.get_mason_map().package_to_lspconfig[pkg.name]
+local function install(pkg, version)
+    local name = get_mason_map().package_to_lspconfig[pkg.name]
     vim.notify(("[mason] installing %s"):format(name))
     return pkg:install(
         { version = version },
@@ -87,18 +70,18 @@ function M.install(pkg, version)
     )
 end
 
-function M.install_servers()
+local function install_servers()
     local Package = require("mason-core.package")
 
     for _, server_name in ipairs(lsp.get_server_names()) do
-        if not M.should_skip_install(server_name) then
+        if not should_skip_install(server_name) then
             local pkg_name, version = Package.Parse(server_name)
-            M.resolve_package(pkg_name)
+            resolve_package(pkg_name)
                 :if_present(
                     ---@param pkg Package
                     function(pkg)
                         if not pkg:is_installed() and not pkg:is_installing() then
-                            M.install(pkg, version)
+                            install(pkg, version)
                         end
                     end
                 )
@@ -109,19 +92,13 @@ function M.install_servers()
     end
 end
 
-function M.pack_specs()
-    return {
-        { src = "https://github.com/mason-org/mason.nvim", version = vim.version.range("2.2.1") },
-    }
-end
-
 function M.setup()
     require("mason").setup()
 
     local mason_registry = require("mason-registry")
 
     mason_registry:on("update:success", function()
-        M._cached_mason_specs = require("mason-core.functional").lazy(mason_registry.get_all_package_specs)
+        cached_mason_specs = require("mason-core.functional").lazy(mason_registry.get_all_package_specs)
     end)
 
     mason_registry:on("package:install:success", function()
@@ -134,9 +111,9 @@ function M.setup()
 
     mason_registry.refresh(vim.schedule_wrap(function()
         if #vim.api.nvim_list_uis() ~= 0 then -- not in headless mode
-            M.install_servers()
+            install_servers()
 
-            for _, tool in ipairs(M._ensure_installed) do
+            for _, tool in ipairs(ensure_installed) do
                 local pkg = mason_registry.get_package(tool)
                 if not pkg:is_installed() and not pkg:is_installing() then
                     vim.notify(("[mason] installing %s"):format(tool))
@@ -159,6 +136,29 @@ function M.setup()
             end
         end
     end))
+end
+
+function M.pack_specs()
+    return {
+        { src = "https://github.com/mason-org/mason.nvim", version = vim.version.range("2.2.1") },
+    }
+end
+
+-- Register a package to be installed by Mason.
+---@param pkg string
+function M.ensure_installed(pkg)
+    local found = false
+
+    for _, p in ipairs(ensure_installed) do
+        if p == pkg then
+            found = true
+            break
+        end
+    end
+
+    if not found then
+        ensure_installed[#ensure_installed + 1] = pkg
+    end
 end
 
 return M

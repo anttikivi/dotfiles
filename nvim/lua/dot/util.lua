@@ -1,6 +1,8 @@
 ---@class dot.util
 local M = {}
 
+local cache = {} ---@type table<(fun()), table<string, any>>
+
 ---@param t table<string, any>
 function M.keys(t)
     local result = {}
@@ -11,8 +13,6 @@ function M.keys(t)
 
     return result
 end
-
-local cache = {} ---@type table<(fun()), table<string, any>>
 
 ---@generic T: fun()
 ---@param fn T

@@ -1,17 +1,24 @@
+local util = require("dot.util")
+
 local M = {}
 
 ---@class dot.lsp.Config : vim.lsp.ClientConfig
 
 ---@type table<string, dot.lsp.Config>
-M._servers = {}
+local servers = {}
+
+function M.setup() end
+
+M.get_server_names = util.memoize(function()
+    return util.keys(servers)
+end)
 
 ---@param name string
 ---@param server dot.lsp.Config
 function M.register_server(name, server)
-    vim.notify(("register: %s"):format(name))
     local found = false
 
-    for k in pairs(M._servers) do
+    for k in pairs(servers) do
         if k == name then
             found = true
             break
@@ -19,17 +26,8 @@ function M.register_server(name, server)
     end
 
     if not found then
-        M._servers[name] = server
+        servers[name] = server
     end
 end
-
----@return string[]
-local function _get_server_names()
-    return require("dot.util").keys(M._servers)
-end
-
-M.get_server_names = require("dot.util").memoize(_get_server_names)
-
-function M.setup() end
 
 return M
