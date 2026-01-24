@@ -13,6 +13,12 @@ function M.setup()
     end
 
     vim.lsp.enable(M.get_server_names())
+
+    require("lazydev").setup({
+        library = {
+            { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+        },
+    })
 end
 
 M.get_server_names = util.memoize(function()
@@ -34,6 +40,12 @@ function M.register_server(name, server)
     if not found then
         servers[name] = server
     end
+end
+
+function M.pack_specs()
+    return {
+        { src = "https://github.com/folke/lazydev.nvim", version = vim.version.range("1.10.0") },
+    }
 end
 
 return M
