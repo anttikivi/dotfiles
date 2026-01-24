@@ -2,6 +2,7 @@ require("dot.config.options")
 require("dot.config.keymaps")
 
 require("dot.pack").setup()
+require("dot.root").setup()
 require("dot.languages").setup()
 require("dot.cmp").setup()
 require("dot.mason").setup()

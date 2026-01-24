@@ -5,6 +5,9 @@ local M = {}
 
 ---@class dot.lsp.Config : vim.lsp.ClientConfig
 
+---@class Filter: vim.lsp.get_clients.Filter
+---@field filter? fun(client: vim.lsp.Client): boolean
+
 ---@type table<string, dot.lsp.Config>
 local servers = {}
 
@@ -70,6 +73,13 @@ function M.on_attach(fn, name)
             end
         end,
     })
+end
+
+---@param filter? Filter
+---@return vim.lsp.Client[]
+function M.get_clients(filter)
+    local clients = vim.lsp.get_clients(filter)
+    return filter and filter.filter and vim.tbl_filter(filter.filter, clients) or clients
 end
 
 M.get_server_names = util.memoize(function()

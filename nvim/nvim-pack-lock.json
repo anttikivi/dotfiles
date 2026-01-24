@@ -45,6 +45,10 @@
       "src": "https://github.com/hrsh7th/nvim-cmp",
       "version": "'da88697d7f45d16852c6b2769dc52387d1ddc45f'"
     },
+    "nvim-lint": {
+      "rev": "ca6ea12daf0a4d92dc24c5c9ae22a1f0418ade37",
+      "src": "https://github.com/mfussenegger/nvim-lint"
+    },
     "oil.nvim": {
       "rev": "975a77cce3c8cb742bc1b3629f4328f5ca977dad",
       "src": "https://github.com/stevearc/oil.nvim",
