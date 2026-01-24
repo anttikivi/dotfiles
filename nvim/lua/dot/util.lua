@@ -20,7 +20,6 @@ function M.create_undo()
     end
 end
 
-
 ---Check whether Neovim is currently running on Windows.
 ---@return boolean
 function M.is_win()

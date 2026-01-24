@@ -10,7 +10,7 @@ local M = {}
 ---@field formatters string[]?
 ---@field linters dot.Language.Linters?
 ---@field servers table<string, dot.lsp.Config>?
----@field treesitter string[]?
+---@field treesitter (string | string[])? Tree-sitter parsers for the language.
 
 ---@type table<string, dot.Language>
 local languages = {}
@@ -37,6 +37,7 @@ function M.setup()
     local mason = require("dot.mason")
     local lint = require("dot.lint")
     local lsp = require("dot.lsp")
+    local treesitter = require("dot.treesitter")
 
     for name, lang in pairs(languages) do
         if lang.ensure_installed ~= nil then
@@ -54,6 +55,8 @@ function M.setup()
                 lsp.register_server(server_name, server)
             end
         end
+
+        treesitter.register_language(name, lang)
     end
 end
 
