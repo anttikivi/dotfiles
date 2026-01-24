@@ -14,6 +14,8 @@ function M.setup()
     local path = vim.fn.stdpath("config") .. "/lua/dot/languages/"
     local files = vim.fn.globpath(path, "*.lua", false, true)
 
+    table.sort(files)
+
     for _, file in ipairs(files) do
         local name = vim.fn.fnamemodify(file, ":t:r")
         if name ~= "init" then
