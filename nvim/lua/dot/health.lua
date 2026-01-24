@@ -19,7 +19,10 @@ function M.check()
         return
     end
 
-    if vim.version.cmp(vim.version(), { 0, 12, 0 }) >= 0 then
+    -- if vim.version.cmp(vim.version(), { 0, 12, 0 }) >= 0 then
+    if
+        vim.version.cmp(vim.version(), vim.version.parse("0.12.0-dev") --[[@as vim.Version]]) >= 0
+    then
         ok(string.format("Neovim version is: '%s'", tostring(vim.version())))
     else
         error(
