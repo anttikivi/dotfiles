@@ -3,6 +3,7 @@ require("dot.config.keymaps")
 
 require("dot.pack").setup()
 require("dot.languages").setup()
+require("dot.cmp").setup()
 require("dot.mason").setup()
 require("dot.lsp").setup()
 require("dot.explorer").setup()

@@ -33,6 +33,14 @@ function M.check()
         )
     end
 
+    if config.cmp == "native" then
+        ok("cmp: native")
+    elseif config.cmp == "nvim-cmp" then
+        ok("cmp: nvim-cmp")
+    else
+        error(string.format("invalid cmp: '%s'", config.cmp))
+    end
+
     if config.file_explorer == "netrw" then
         ok("file_explorer: netrw")
     elseif config.file_explorer == "oil" then

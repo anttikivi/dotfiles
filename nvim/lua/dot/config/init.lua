@@ -1,5 +1,8 @@
 ---@class dot.Config
 local M = {
+    ---@type "native" | "nvim-cmp"
+    cmp = "nvim-cmp",
+
     ---@type boolean
     enable_icons = false,
 
