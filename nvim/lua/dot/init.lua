@@ -1,5 +1,5 @@
-require("dot.options")
-require("dot.keymaps")
+require("dot.config.options")
+require("dot.config.keymaps")
 
 require("dot.pack").setup()
 require("dot.languages").setup()
