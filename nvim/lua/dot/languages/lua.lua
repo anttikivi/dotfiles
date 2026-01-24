@@ -15,6 +15,18 @@ local root_markers2 = {
 ---@type dot.Language
 return {
     ensure_installed = { "selene", "stylua" },
+    filetypes = { "lua" },
+    linters = {
+        selene = {
+            condition = function()
+                local root = require("dot.root").get({ normalize = true })
+                if root ~= vim.uv.cwd() then
+                    return false
+                end
+                return vim.fs.find({ "selene.toml" }, { path = root, upward = true })[1]
+            end,
+        },
+    },
     servers = {
         lua_ls = {
             cmd = { "lua-language-server" },

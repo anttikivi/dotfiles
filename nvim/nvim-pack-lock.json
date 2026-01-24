@@ -47,7 +47,8 @@
     },
     "nvim-lint": {
       "rev": "ca6ea12daf0a4d92dc24c5c9ae22a1f0418ade37",
-      "src": "https://github.com/mfussenegger/nvim-lint"
+      "src": "https://github.com/mfussenegger/nvim-lint",
+      "version": "'ca6ea12daf0a4d92dc24c5c9ae22a1f0418ade37'"
     },
     "oil.nvim": {
       "rev": "975a77cce3c8cb742bc1b3629f4328f5ca977dad",
