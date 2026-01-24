@@ -1,4 +1,5 @@
 require("dot.config.options")
+require("dot.config.autocmds")
 require("dot.config.keymaps")
 
 require("dot.pack").setup()
