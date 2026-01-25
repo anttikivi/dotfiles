@@ -1,5 +1,5 @@
 ---@class dot.Config
-local M = {
+return {
     ---@type "native" | "nvim-cmp"
     cmp = "nvim-cmp",
 
@@ -62,5 +62,3 @@ local M = {
         },
     },
 }
-
-return M
