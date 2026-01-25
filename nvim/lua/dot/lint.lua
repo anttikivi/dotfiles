@@ -1,5 +1,3 @@
-local util = require("dot.util")
-
 local M = {}
 
 ---@class dot.Linter : lint.Linter
@@ -36,7 +34,8 @@ end
 local function try_lint()
     local lint = require("lint")
 
-    local names = vim.list_extend({}, lint.linters_by_ft[vim.bo.filetype] or {})
+    local names = lint._resolve_linter_by_ft(vim.bo.filetype)
+
     if #names == 0 then
         vim.list_extend(names, lint.linters_by_ft["_"] or {})
     end
@@ -46,7 +45,6 @@ local function try_lint()
     ctx.dirname = vim.fn.fnamemodify(ctx.filename, ":h")
     names = vim.tbl_filter(function(name)
         local linter = lint.linters[name] --[[@as dot.Linter]]
-
         if not linter then
             vim.notify("Linter not found: " .. name, vim.log.levels.WARN)
         end
@@ -55,7 +53,7 @@ local function try_lint()
     end, names)
 
     if #names > 0 then
-        lint.try_lint(names)
+        lint.try_lint(names, { cwd = require("dot.root").get() })
     end
 end
 

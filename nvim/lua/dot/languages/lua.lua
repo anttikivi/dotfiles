@@ -18,11 +18,10 @@ return {
     linters = {
         selene = {
             condition = function()
-                local root = require("dot.root").get({ normalize = true })
-                if root ~= vim.uv.cwd() then
-                    return false
-                end
-                return vim.fs.find({ "selene.toml" }, { path = root, upward = true })[1]
+                return vim.fs.find(
+                    { "selene.toml" },
+                    { path = require("dot.root").get({ normalize = true }), upward = true }
+                )[1]
             end,
         },
     },
