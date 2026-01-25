@@ -14,7 +14,7 @@ local root_markers2 = {
 
 ---@type dot.Language
 return {
-    ensure_installed = { "selene", "stylua" },
+    ensure_installed = { "stylua" },
     linters = {
         selene = {
             condition = function()

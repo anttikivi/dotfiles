@@ -6,6 +6,7 @@ local M = {}
 
 ---@class dot.Language
 ---@field ensure_installed string[]?
+---@field skip_install string[]? Names of linters and formatters that should not be automatically added to `ensure_installed`.
 ---@field filetypes (string | string[])? Optional file types to register the linters and formatters for. If not provided, the name of the language will be used.
 ---@field formatters string[]?
 ---@field linters dot.Language.Linters?
@@ -30,6 +31,40 @@ function M.setup()
                 languages[name] = module
             else
                 vim.notify(("[languages] failed to load %s: %s"):format(module_name, module), vim.log.levels.ERROR)
+            end
+        end
+    end
+
+    for _, lang in pairs(languages) do
+        if type(lang.linters) == "table" then
+            for k, linter in pairs(lang.linters) do
+                local name = type(k) == "number" and linter or k
+
+                local skip = false
+                if type(lang.skip_install) == "table" then
+                    for _, tool in ipairs(lang.skip_install) do
+                        if name == tool then
+                            skip = true
+                        end
+                    end
+                end
+
+                if not skip then
+                    if type(lang.ensure_installed) == "nil" then
+                        lang.ensure_installed = {}
+                    end
+
+                    local found = false
+                    for _, tool in ipairs(lang.ensure_installed) do
+                        if name == tool then
+                            found = true
+                        end
+                    end
+
+                    if not found then
+                        lang.ensure_installed[#lang.ensure_installed + 1] = name
+                    end
+                end
             end
         end
     end
