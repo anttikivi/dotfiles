@@ -85,7 +85,7 @@ end
 
 function M.pack_specs()
     return {
-        { src = "https://github.com/mfussenegger/nvim-lint", version = "ca6ea12daf0a4d92dc24c5c9ae22a1f0418ade37" },
+        { src = "https://github.com/anttikivi/nvim-lint", version = "386ca59429b0b033c45cff8efc0902445a1d6173" },
     }
 end
 
