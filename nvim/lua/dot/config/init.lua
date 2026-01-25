@@ -1,5 +1,8 @@
 ---@class dot.Config
 return {
+    ---@type boolean
+    autoformat = true,
+
     ---@type "native" | "nvim-cmp"
     cmp = "nvim-cmp",
 
@@ -8,6 +11,9 @@ return {
 
     ---@type "netrw" | "oil"
     file_explorer = "oil",
+
+    ---@type integer
+    formatting_timeout_ms = 3000,
     icons = {
         diagnostics = {
             error = "󰅚 ",

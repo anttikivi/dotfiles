@@ -1,3 +1,4 @@
+local config = require("dot.config")
 local util = require("dot.util")
 
 local M = {}
@@ -16,6 +17,27 @@ function M.setup()
     end
 
     vim.lsp.enable(M.get_server_names())
+
+    require("dot.format").register({
+        name = "LSP",
+        primary = true,
+        priority = 1,
+        format = function(buf)
+            vim.lsp.buf.format({ timeout_ms = config.formatting_timeout_ms, bufnr = buf })
+        end,
+        sources = function(buf)
+            local clients = M.get_clients({ bufnr = buf })
+            ---@param client vim.lsp.Client
+            local ret = vim.tbl_filter(function(client)
+                return client:supports_method("textDocument/formatting")
+                    or client:supports_method("textDocument/rangeFormatting")
+            end, clients)
+            ---@param client vim.lsp.Client
+            return vim.tbl_map(function(client)
+                return client.name
+            end, ret)
+        end,
+    })
 
     M.on_attach(function(_, buffer)
         -- Neovim now provides some default mappings so I don't need to add my

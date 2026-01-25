@@ -20,6 +20,11 @@
       "src": "https://github.com/hrsh7th/cmp-path",
       "version": "'c642487086dbd9a93160e1679a1327be111cbc25'"
     },
+    "conform.nvim": {
+      "rev": "3543d000dafbc41cc7761d860cfdb24e82154f75",
+      "src": "https://github.com/stevearc/conform.nvim",
+      "version": "9.1.0 - 9.1.0"
+    },
     "harpoon": {
       "rev": "87b1a3506211538f460786c23f98ec63ad9af4e5",
       "src": "https://github.com/ThePrimeagen/harpoon",

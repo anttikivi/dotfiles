@@ -29,8 +29,7 @@ return {
         lua_ls = {
             cmd = { "lua-language-server" },
             filetypes = { "lua" },
-            root_markers = vim.fn.has("nvim-0.11.3") == 1 and { root_markers1, root_markers2, { ".git" } }
-                or vim.list_extend(vim.list_extend(root_markers1, root_markers2), { ".git" }),
+            root_markers = { root_markers1, root_markers2, { ".git" } },
             settings = {
                 Lua = {
                     codeLens = { enable = true },
