@@ -4,11 +4,15 @@ local M = {}
 ---@field [integer] string
 ---@field [string] dot.Linter
 
+---@class dot.languages.Formatters
+---@field [integer] string
+---@field [string] dot.ConformFormatter
+
 ---@class dot.Language
 ---@field ensure_installed string[]?
 ---@field skip_install string[]? Names of linters and formatters that should not be automatically added to `ensure_installed`.
 ---@field filetypes (string | string[])? Optional file types to register the linters and formatters for. If not provided, the name of the language will be used.
----@field formatters string[]?
+---@field formatters dot.languages.Formatters?
 ---@field linters dot.Language.Linters?
 ---@field servers table<string, dot.lsp.Config>?
 ---@field treesitter (string | string[])? Tree-sitter parsers for the language.
@@ -69,6 +73,7 @@ function M.setup()
         end
     end
 
+    local format = require("dot.format")
     local mason = require("dot.mason")
     local lint = require("dot.lint")
     local lsp = require("dot.lsp")
@@ -79,6 +84,10 @@ function M.setup()
             for _, pkg in ipairs(lang.ensure_installed) do
                 mason.ensure_installed(pkg)
             end
+        end
+
+        if lang.formatters ~= nil then
+            format.register_language(name, lang)
         end
 
         if lang.linters ~= nil then
