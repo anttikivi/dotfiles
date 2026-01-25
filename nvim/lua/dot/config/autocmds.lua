@@ -29,19 +29,3 @@ vim.api.nvim_create_autocmd("LspProgress", {
         )
     end,
 })
-
--- Run required updates for plugins when they are updated.
-vim.api.nvim_create_autocmd("PackChanged", {
-    group = util.augroup("pack_changed"),
-    callback = function(ev)
-        if ev.data.spec.name == "mason.nvim" then
-            if ev.data.kind == "install" or ev.data.kind == "update" then
-                vim.cmd("MasonUpdate")
-            end
-        elseif ev.data.spec.name == "nvim-treesitter" then
-            if ev.data.kind == "install" or ev.data.kind == "update" then
-                vim.cmd("TSUpdate")
-            end
-        end
-    end,
-})
