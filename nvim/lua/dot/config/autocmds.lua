@@ -11,6 +11,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 local spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
 local last_lsp_progress = 0
 
+-- Show LSP progress.
 vim.api.nvim_create_autocmd("LspProgress", {
     group = util.augroup("lsp_progress"),
     ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
@@ -26,5 +27,21 @@ vim.api.nvim_create_autocmd("LspProgress", {
                 or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1] .. " " .. vim.lsp.status(),
             vim.log.levels.INFO
         )
+    end,
+})
+
+-- Run required updates for plugins when they are updated.
+vim.api.nvim_create_autocmd("PackChanged", {
+    group = util.augroup("pack_changed"),
+    callback = function(ev)
+        if ev.data.spec.name == "mason.nvim" then
+            if ev.data.kind == "install" or ev.data.kind == "update" then
+                vim.cmd("MasonUpdate")
+            end
+        elseif ev.data.spec.name == "nvim-treesitter" then
+            if ev.data.kind == "install" or ev.data.kind == "update" then
+                vim.cmd("TSUpdate")
+            end
+        end
     end,
 })
