@@ -1,4 +1,5 @@
 local config = require("dot.config")
+
 local M = {}
 
 function M.setup()
@@ -16,6 +17,7 @@ function M.setup()
                 [vim.diagnostic.severity.HINT] = "H",
             },
         },
+        virtual_lines = false,
         virtual_text = true,
     })
 end

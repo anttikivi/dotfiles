@@ -5,12 +5,12 @@ local M = {}
 
 local cached_mason_specs = nil
 local ensure_installed = {}
-local skip_install = {}
+local skip_server_install = {}
 
 ---@param name string
 ---@return boolean
 local function should_skip_install(name)
-    for _, skip in ipairs(skip_install) do
+    for _, skip in ipairs(skip_server_install) do
         if skip == name then
             return true
         end
@@ -144,20 +144,13 @@ function M.pack_specs()
     }
 end
 
--- Register a package to be installed by Mason.
----@param pkg string
-function M.ensure_installed(pkg)
-    local found = false
-
-    for _, p in ipairs(ensure_installed) do
-        if p == pkg then
-            found = true
-            break
+---Register packages to be installed by Mason.
+---@param pkgs string[]
+function M.ensure_installed(pkgs)
+    for _, pkg in ipairs(pkgs) do
+        if not util.contains(ensure_installed, pkg) then
+            ensure_installed[#ensure_installed + 1] = pkg
         end
-    end
-
-    if not found then
-        ensure_installed[#ensure_installed + 1] = pkg
     end
 end
 

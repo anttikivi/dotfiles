@@ -1,3 +1,5 @@
+local util = require("dot.util")
+
 local M = {}
 
 ---@class dot.Linter : lint.Linter
@@ -11,7 +13,7 @@ local M = {}
 local linters_by_ft = {}
 
 ---@type table<string, dot.Linter>
-local linters = {}
+local registered_linters = {}
 
 local function debounce(ms, fn)
     local timer = vim.uv.new_timer()
@@ -60,7 +62,7 @@ end
 function M.setup()
     local lint = require("lint")
 
-    for name, linter in pairs(linters) do
+    for name, linter in pairs(registered_linters) do
         if type(linter) == "table" and type(lint.linters[name]) == "table" then
             lint.linters[name] = vim.tbl_deep_extend("force", lint.linters[name] --[[@as table]], linter)
             if type(linter.prepend_args) == "table" then
@@ -81,40 +83,32 @@ function M.setup()
     })
 end
 
+---Registers given linter tools for the given filetypes.
+---@param filetypes string[]
+---@param linters string[]
+function M.register_filetypes(filetypes, linters)
+    for _, ft in ipairs(filetypes) do
+        local registered = linters_by_ft[ft] or {}
+        for _, linter in ipairs(linters) do
+            if not util.contains(linters_by_ft, linter) then
+                registered[#registered + 1] = linter
+            end
+        end
+        linters_by_ft[ft] = registered
+    end
+end
+
+---@param linters table<string, dot.Linter>
+function M.register_linters(linters)
+    for key, value in pairs(linters) do
+        registered_linters[key] = vim.tbl_deep_extend("force", registered_linters[key] or {}, value)
+    end
+end
+
 function M.pack_specs()
     return {
         { src = "https://github.com/anttikivi/nvim-lint", version = "386ca59429b0b033c45cff8efc0902445a1d6173" },
     }
-end
-
--- Register the linters for a language.
----@param name string The name of the language.
----@param lang dot.Language The language from which the linters are registered.
-function M.register_language(name, lang)
-    ---@type string[]
-    local filetypes = {}
-    if type(lang.filetypes) == "string" then
-        filetypes[#filetypes + 1] = lang.filetypes --[[@as string]]
-    elseif type(lang.filetypes) == "table" then
-        vim.list_extend(filetypes, lang.filetypes --[=[@as string[]]=])
-    else
-        filetypes[#filetypes + 1] = name
-    end
-
-    for _, ft in ipairs(filetypes) do
-        local ft_linters = linters_by_ft[ft] or {}
-        if type(lang.linters) == "table" then
-            for k, linter in pairs(lang.linters) do
-                if type(k) == "number" then
-                    ft_linters[#ft_linters + 1] = linter
-                elseif type(k) == "string" then
-                    ft_linters[#ft_linters + 1] = k
-                    linters[k] = vim.tbl_deep_extend("force", linters[k] or {}, linter)
-                end
-            end
-        end
-        linters_by_ft[ft] = ft_linters
-    end
 end
 
 return M

@@ -9,10 +9,10 @@ local M = {}
 ---@field filter? fun(client: vim.lsp.Client): boolean
 
 ---@type table<string, dot.lsp.Config>
-local servers = {}
+local registered_servers = {}
 
 function M.setup()
-    for name, server in pairs(servers) do
+    for name, server in pairs(registered_servers) do
         vim.lsp.config(name, server)
     end
 
@@ -87,23 +87,14 @@ function M.get_clients(filter)
 end
 
 M.get_server_names = util.memoize(function()
-    return util.keys(servers)
+    return util.keys(registered_servers)
 end)
 
----@param name string
----@param server dot.lsp.Config
-function M.register_server(name, server)
-    local found = false
-
-    for k in pairs(servers) do
-        if k == name then
-            found = true
-            break
-        end
-    end
-
-    if not found then
-        servers[name] = server
+---Register the given servers to the LSP config.
+---@param servers table<string, dot.lsp.Config>
+function M.register_servers(servers)
+    for key, value in pairs(servers) do
+        registered_servers[key] = vim.tbl_deep_extend("force", registered_servers[key] or {}, value)
     end
 end
 

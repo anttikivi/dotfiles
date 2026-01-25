@@ -15,16 +15,16 @@ local M = {}
 ---@type boolean
 vim.g.autoformat = config.autoformat
 
--- The top-level formatter definitions that are used in our own configuration.
--- This contains "conform" as one of the formatters.
+---The top-level formatter definitions that are used in our own configuration.
+---This contains "conform.nvim" as one of the formatters.
 ---@type dot.Formatter[]
-local formatters = {}
+local registered_formatters = {}
 
--- Formatters by filetype to be passed into Conform.
+---Formatters by filetype to be passed into Conform.
 ---@type table<string, string[]>
-local formatters_by_ft = {}
+local conform_formatters_by_ft = {}
 
--- Formatters that will be passed into conform.
+---Formatters that will be passed into Conform.
 ---@type table<string, dot.ConformFormatter | fun(bufnr: integer): dot.ConformFormatter?>
 local conform_formatters = {}
 
@@ -57,7 +57,7 @@ local function resolve(buf)
             active = active,
             resolved = sources,
         }, { __index = formatter })
-    end, formatters)
+    end, registered_formatters)
 end
 
 ---@param opts { force: boolean?, buf: number? }?
@@ -128,7 +128,7 @@ function M.setup()
             quiet = false,
             lsp_format = "fallback",
         },
-        formatters_by_ft = formatters_by_ft,
+        formatters_by_ft = conform_formatters_by_ft,
         formatters = conform_formatters,
     })
 
@@ -164,58 +164,53 @@ end
 
 ---@param formatter dot.Formatter
 function M.register(formatter)
-    formatters[#formatters + 1] = formatter
+    registered_formatters[#registered_formatters + 1] = formatter
 
-    table.sort(formatters, function(a, b)
+    table.sort(registered_formatters, function(a, b)
         return a.priority > b.priority
     end)
 end
 
----@param name string
----@param lang dot.Language
-function M.register_language(name, lang)
-    ---@type string[]
-    local filetypes = {}
-    if type(lang.filetypes) == "string" then
-        filetypes[#filetypes + 1] = lang.filetypes --[[@as string]]
-    elseif type(lang.filetypes) == "table" then
-        vim.list_extend(filetypes, lang.filetypes --[=[@as string[]]=])
-    else
-        filetypes[#filetypes + 1] = name
-    end
-
+---@param filetypes string[]
+---@param formatters string[]
+function M.register_conform_filetype(filetypes, formatters)
     for _, ft in ipairs(filetypes) do
-        local ft_formatters = formatters_by_ft[ft] or {}
-        if type(lang.formatters) == "table" then
-            for k, formatter in pairs(lang.formatters) do
-                if type(k) == "number" then
-                    ft_formatters[#ft_formatters + 1] = formatter
-                elseif type(k) == "string" then
-                    ft_formatters[#ft_formatters + 1] = k
-                    if type(conform_formatters[k]) == "function" then
-                        vim.notify(
-                            string.format(
-                                '[format] cannot override conform.nvim formatter "%s" defined as a function',
-                                k
-                            ),
-                            vim.log.levels.ERROR
-                        )
-                    else
-                        if type(formatter) == "function" then
-                            conform_formatters[k] = formatter
-                        else
-                            conform_formatters[k] = vim.tbl_deep_extend(
-                                "force",
-                                conform_formatters[k] --[[@as dot.ConformFormatter]]
-                                    or {},
-                                formatter
-                            )
-                        end
-                    end
-                end
+        local registered = conform_formatters_by_ft[ft] or {}
+        for _, f in ipairs(formatters) do
+            if not util.contains(registered, f) then
+                registered[#registered + 1] = f
             end
         end
-        formatters_by_ft[ft] = ft_formatters
+        conform_formatters_by_ft[ft] = registered
+    end
+end
+
+---@param formatters table<string, dot.ConformFormatter | fun(bufnr: integer): dot.ConformFormatter?>
+function M.register_conform_formatters(formatters)
+    for key, value in pairs(formatters) do
+        ---@type dot.ConformFormatter | fun(bufnr: integer): dot.ConformFormatter?
+        local formatter = conform_formatters[key] or {}
+        if not formatter then
+            formatter = value
+        elseif type(formatter) == "function" then
+            vim.notify(
+                string.format('[format] cannot override conform.nvim formatter "%s" defined as a function', key),
+                vim.log.levels.ERROR
+            )
+        elseif type(formatter) == "table" then
+            if type(value) == "function" then
+                vim.notify(
+                    string.format(
+                        '[format] cannot override conform.nvim formatter "%s" defined as a table by a function',
+                        key
+                    ),
+                    vim.log.levels.ERROR
+                )
+            else
+                formatter = vim.tbl_deep_extend("force", {}, formatter, value)
+            end
+        end
+        conform_formatters[key] = formatter
     end
 end
 

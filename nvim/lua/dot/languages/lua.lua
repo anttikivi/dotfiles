@@ -12,7 +12,7 @@ local root_markers2 = {
     "selene.yml",
 }
 
----@type dot.Language
+---@type dot.languages.Config
 return {
     formatters = { "stylua" },
     linters = {

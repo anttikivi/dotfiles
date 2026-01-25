@@ -1,18 +1,20 @@
+local util = require("dot.util")
+
 local M = {}
 
 ---@type string[]
-local filetypes = {}
+local registered_filetypes = {}
 
 ---@type string[]
-local parsers = {}
+local registered_parsers = {}
 
 function M.setup()
-    require("nvim-treesitter").install(parsers)
+    require("nvim-treesitter").install(registered_parsers)
 
     vim.api.nvim_create_autocmd("FileType", {
         -- TODO: Do I want to enable different tree-sitter features depending on
         -- the language?
-        pattern = filetypes,
+        pattern = registered_filetypes,
         callback = function()
             vim.treesitter.start()
             vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
@@ -29,56 +31,22 @@ function M.pack_specs()
     }
 end
 
--- Register the parsers and filetypes from the given language into Tree-sitter
--- configuration.
----@param name string The name of the language.
----@param lang dot.Language
-function M.register_language(name, lang)
-    ---@type string[]
-    local fts = {}
-    if type(lang.filetypes) == "string" then
-        fts = {
-            lang.filetypes --[[@as string]],
-        }
-    elseif type(lang.filetypes) == "table" then
-        fts = lang.filetypes --[=[@as string[]]=]
-    else
-        fts = { name }
-    end
-
-    for _, ft in ipairs(fts) do
-        local found = false
-        for _, f in ipairs(filetypes) do
-            if f == ft then
-                found = true
-            end
-        end
-
-        if not found then
-            filetypes[#filetypes + 1] = ft
+---Run Tree-sitter for the given filetypes.
+---@param filetypes string[]
+function M.register_filetypes(filetypes)
+    for _, ft in ipairs(filetypes) do
+        if not util.contains(registered_filetypes, ft) then
+            registered_filetypes[#registered_filetypes + 1] = ft
         end
     end
+end
 
-    ---@type string[]
-    local lang_parsers = {}
-    if type(lang.treesitter) == "string" then
-        lang_parsers = {
-            lang.treesitter --[[@as string]],
-        }
-    else
-        lang_parsers = lang.treesitter --[=[@as string[]]=]
-    end
-
-    for _, parser in ipairs(lang_parsers) do
-        local found = false
-        for _, p in ipairs(parsers) do
-            if p == parser then
-                found = true
-            end
-        end
-
-        if not found then
-            parsers[#parsers + 1] = parser
+---Register the given parsers to be installed with Tree-sitter.
+---@param parsers string[]
+function M.register_parsers(parsers)
+    for _, p in ipairs(parsers) do
+        if not util.contains(registered_parsers, p) then
+            registered_parsers[#registered_parsers + 1] = p
         end
     end
 end

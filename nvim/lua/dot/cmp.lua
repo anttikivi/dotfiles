@@ -3,10 +3,10 @@ local util = require("dot.util")
 
 local M = {}
 
--- This is a better implementation of `cmp.confirm`:
---  * check if the completion menu is visible without waiting for running sources
---  * create an undo point before confirming
--- This function is both faster and more reliable.
+---This is a better implementation of `cmp.confirm`:
+--- * check if the completion menu is visible without waiting for running sources
+--- * create an undo point before confirming
+---This function is both faster and more reliable.
 ---@param opts? { select: boolean, behavior: cmp.ConfirmBehavior }
 local function cmp_confirm(opts)
     local cmp = require("cmp")

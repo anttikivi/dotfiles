@@ -13,6 +13,23 @@ function M.augroup(name, opts)
     return vim.api.nvim_create_augroup("dot_" .. name, opts)
 end
 
+---@generic T
+---@param haystack T[]
+---@param needle T
+---@return boolean
+function M.contains(haystack, needle)
+    if type(haystack) == "nil" then
+        return false
+    end
+
+    for _, v in ipairs(haystack) do
+        if v == needle then
+            return true
+        end
+    end
+    return false
+end
+
 M.CREATE_UNDO = vim.api.nvim_replace_termcodes("<c-G>u", true, true, true)
 function M.create_undo()
     if vim.api.nvim_get_mode().mode == "i" then
