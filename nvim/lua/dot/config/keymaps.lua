@@ -26,5 +26,17 @@ end, { expr = true, desc = "Clear highlights and stop snippet" })
 vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
 
+-- Toggles
+vim.keymap.set("n", "<leader>uh", function()
+    -- TODO: This applies to the current buffer, should it be for all?
+    local state = vim.lsp.inlay_hint.is_enabled({ bufnr = 0 })
+    vim.lsp.inlay_hint.enable(not state, { bufnr = 0 })
+    if state then
+        vim.notify("Disabled inlay hints", vim.log.levels.INFO)
+    else
+        vim.notify("Enabled inlay hints", vim.log.levels.INFO)
+    end
+end)
+
 -- Delete without yanking.
 vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]], { desc = "Delete without yanking" })
