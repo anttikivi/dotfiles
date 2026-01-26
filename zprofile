@@ -6,14 +6,17 @@ fi
 
 path=(
     "${XDG_BIN_HOME}"
-    "${HOME}/.local/opt/go/bin"
-    "${HOME}/.local/opt/nvim/bin"
-    "${HOME}/.local/opt/zig/bin"
     "${HOME}/.cargo/bin"
     "${GOPATH}/bin"
     "${XDG_CONFIG_HOME}/composer/vendor/bin"
     $path
 )
+
+optionals=("go" "nvim" "zig" "zlint")
+for opt in "${optionals[@]}"; do
+    path=("${HOME}/.local/opt/${opt}/bin" $path)
+done
+unset opt optionals
 
 if [[ ${OSTYPE} == darwin* ]]; then
     path+=("/Applications/Ghostty.app/Contents/MacOS")

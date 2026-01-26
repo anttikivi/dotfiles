@@ -1,0 +1,27 @@
+theme = dark:/Users/anttikivi/Projects/lucid.nvim/extras/ghostty/lucid-dark,light:/Users/anttikivi/Projects/lucid.nvim/extras/ghostty/lucid-light
+font-family = "Berkeley Mono"
+font-feature = -calt
+adjust-cell-height = 20%
+cursor-invert-fg-bg = true
+cursor-style = block
+mouse-hide-while-typing = true
+
+# background-opacity = 0.9
+# background-blur = true
+
+keybind = super+shift+comma=reload_config
+keybind = super+d=new_split:right
+keybind = super+shift+d=new_split:down
+keybind = super+shift+h=goto_split:left
+keybind = super+shift+j=goto_split:down
+keybind = super+shift+k=goto_split:up
+keybind = super+shift+l=goto_split:right
+keybind = ctrl+super+h=resize_split:left,10
+keybind = ctrl+super+j=resize_split:down,10
+keybind = ctrl+super+k=resize_split:up,10
+keybind = ctrl+super+l=resize_split:right,10
+
+window-colorspace = display-p3
+focus-follows-mouse = false
+quit-after-last-window-closed = true
+shell-integration-features = no-cursor
