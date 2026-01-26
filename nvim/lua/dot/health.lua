@@ -48,6 +48,12 @@ function M.check()
     else
         error(string.format("invalid file_explorer: '%s'", config.file_explorer))
     end
+
+    if config.picker == "telescope" then
+        ok("file_explorer: telescope")
+    else
+        error(string.format("invalid picker: '%s'", config.picker))
+    end
 end
 
 return M

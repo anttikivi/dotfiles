@@ -67,4 +67,7 @@ return {
             branch = " ",
         },
     },
+
+    ---@type "telescope"
+    picker = "telescope",
 }

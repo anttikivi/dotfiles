@@ -1,3 +1,4 @@
+local config = require("dot.config")
 local util = require("dot.util")
 
 local M = {}
@@ -25,9 +26,12 @@ function M.setup()
         end
     end
 
+    if config.picker == "telescope" then
+        require("dot.picker").setup_telescope_fzf_autocmd()
+    end
+
     vim.pack.add(specs)
 
-    -- Run required updates for plugins when they are updated.
     vim.api.nvim_create_autocmd("PackChanged", {
         group = util.augroup("pack_changed"),
         callback = function(ev)
