@@ -9,6 +9,9 @@ return {
     ---@type boolean
     enable_icons = false,
 
+    ---@type boolean
+    enable_statusline = true,
+
     ---@type "netrw" | "oil"
     file_explorer = "oil",
 
