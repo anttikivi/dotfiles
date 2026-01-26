@@ -14,7 +14,7 @@ local root_markers2 = {
 
 ---@type dot.languages.Config
 return {
-    formatters = { "stylua" },
+    formatters = "stylua",
     linters = {
         selene = {
             condition = function()
@@ -28,7 +28,6 @@ return {
     servers = {
         lua_ls = {
             cmd = { "lua-language-server" },
-            filetypes = { "lua" },
             root_markers = { root_markers1, root_markers2, { ".git" } },
             on_init = function(client)
                 if client.workspace_folders then
@@ -80,5 +79,5 @@ return {
             },
         },
     },
-    treesitter = { "lua" },
+    treesitter = "lua",
 }

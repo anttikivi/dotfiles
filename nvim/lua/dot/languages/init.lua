@@ -10,13 +10,16 @@ local M = {}
 ---@field [integer] string
 ---@field [string] dot.ConformFormatter | fun(bufnr: integer): dot.ConformFormatter?
 
+---@class dot.languages.LspConfig : dot.lsp.Config
+---@field filetypes string[]?
+
 ---@class dot.languages.Config
 ---@field ensure_installed (string | string[])? Packages that should be installed by Mason in addition to the language servers, linters, and formatters.
 ---@field filetypes (string | string[])? Optional file types to register the linters and formatters for. If not provided, the name of the language will be used.
----@field formatters dot.languages.Formatters? Formatters for the language.
----@field linters dot.languages.Linters? Linters for the language.
----@field servers table<string, dot.lsp.Config>? Language servers for the language.
----@field skip_install string[]? Names of linters and formatters that should not be automatically installed.
+---@field formatters (string | dot.languages.Formatters)? Formatters for the language.
+---@field linters (string | dot.languages.Linters)? Linters for the language.
+---@field servers table<string, dot.languages.LspConfig>? Language servers for the language.
+---@field skip_install (string | string[])? Names of linters and formatters that should not be automatically installed.
 ---@field treesitter (string | string[])? Tree-sitter parsers for the language.
 
 ---@class (exact) dot.Language
@@ -47,9 +50,9 @@ local function normalize(name, config)
         }
     elseif type(config.ensure_installed) == "table" then
         ensure_installed = config.ensure_installed --[=[@as string[]]=]
-    elseif type(config.ensure_installed) ~= "nil" then
+    elseif config.ensure_installed ~= nil then
         vim.notify(
-            string.format("[language] ensure_installed in %s is neither string nor table", name),
+            string.format("[languages] ensure_installed in %s is neither string nor table", name),
             vim.log.levels.ERROR
         )
     end
@@ -66,28 +69,49 @@ local function normalize(name, config)
         filetypes = { name }
     end
 
+    ---@type string[]
+    local skip_install = {}
+    if type(config.skip_install) == "string" then
+        skip_install = {
+            config.skip_install --[[@as string]],
+        }
+    elseif type(config.skip_install) == "table" then
+        skip_install = config.skip_install --[=[@as string[]]=]
+    elseif config.skip_install ~= nil then
+        vim.notify(
+            string.format("[languages] skip_install of %s is neither string nor table", name),
+            vim.log.levels.ERROR
+        )
+    end
+
     ---@type table<string, dot.ConformFormatter | fun(bufnr: integer): dot.ConformFormatter?>
     local formatters = {}
 
     ---@type string[]
     local formatters_for_fts = {}
 
-    for key, value in pairs(config.formatters) do
-        if type(key) == "number" then
-            if not util.contains(formatters_for_fts, value) then
-                formatters_for_fts[#formatters_for_fts + 1] = value
-            end
-        elseif type(key) == "string" then
-            if not util.contains(formatters_for_fts, key) then
-                formatters_for_fts[#formatters_for_fts + 1] = key
-            end
+    if type(config.formatters) == "string" then
+        formatters_for_fts[#formatters_for_fts + 1] = config.formatters --[[@as string]]
+    elseif type(config.formatters) == "table" then
+        for key, value in
+            pairs(config.formatters --[[@as dot.languages.Formatters]])
+        do
+            if type(key) == "number" then
+                if not util.contains(formatters_for_fts, value) then
+                    formatters_for_fts[#formatters_for_fts + 1] = value
+                end
+            elseif type(key) == "string" then
+                if not util.contains(formatters_for_fts, key) then
+                    formatters_for_fts[#formatters_for_fts + 1] = key
+                end
 
-            formatters[key] = value
+                formatters[key] = value
+            end
         end
     end
 
     for _, value in ipairs(formatters_for_fts) do
-        if not util.contains(ensure_installed, value) and not util.contains(config.skip_install, value) then
+        if not util.contains(ensure_installed, value) and not util.contains(skip_install, value) then
             ensure_installed[#ensure_installed + 1] = value
         end
     end
@@ -98,23 +122,41 @@ local function normalize(name, config)
     ---@type string[]
     local linters_for_fts = {}
 
-    for key, value in pairs(config.linters) do
-        if type(key) == "number" then
-            if not util.contains(linters_for_fts, value) then
-                linters_for_fts[#linters_for_fts + 1] = value
-            end
-        elseif type(key) == "string" then
-            if not util.contains(linters_for_fts, key) then
-                linters_for_fts[#linters_for_fts + 1] = key
-            end
+    if type(config.linters) == "string" then
+        linters_for_fts[#linters_for_fts + 1] = config.linters --[[@as string]]
+    elseif type(config.formatters) == "table" then
+        for key, value in
+            pairs(config.linters --[[@as dot.languages.Linters]])
+        do
+            if type(key) == "number" then
+                if not util.contains(linters_for_fts, value) then
+                    linters_for_fts[#linters_for_fts + 1] = value
+                end
+            elseif type(key) == "string" then
+                if not util.contains(linters_for_fts, key) then
+                    linters_for_fts[#linters_for_fts + 1] = key
+                end
 
-            linters[key] = value
+                linters[key] = value
+            end
         end
     end
 
     for _, value in ipairs(linters_for_fts) do
-        if not util.contains(ensure_installed, value) and not util.contains(config.skip_install, value) then
+        if not util.contains(ensure_installed, value) and not util.contains(skip_install, value) then
             ensure_installed[#ensure_installed + 1] = value
+        end
+    end
+
+    ---@type table<string, dot.lsp.Config>
+    local servers = {}
+    if type(config.servers) == "table" then
+        for key, value in pairs(config.servers) do
+            local server = value
+            if server.filetypes == nil then
+                server.filetypes = filetypes
+            end
+            servers[key] = server
         end
     end
 
@@ -127,7 +169,10 @@ local function normalize(name, config)
     elseif type(config.treesitter) == "table" then
         treesitter = config.treesitter --[=[@as string[]]=]
     else
-        vim.notify(string.format("[language] treesitter in %s is neither string nor table", name), vim.log.levels.ERROR)
+        vim.notify(
+            string.format("[languages] treesitter in %s is neither string nor table", name),
+            vim.log.levels.ERROR
+        )
     end
 
     ---@type dot.Language
@@ -138,7 +183,7 @@ local function normalize(name, config)
         formatters_for_fts = formatters_for_fts,
         linters = linters,
         linters_for_fts = linters_for_fts,
-        servers = config.servers or {},
+        servers = servers,
         treesitter_parsers = treesitter,
     }
 end
