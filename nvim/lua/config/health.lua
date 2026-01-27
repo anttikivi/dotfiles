@@ -5,7 +5,7 @@ local ok = vim.health.ok or vim.health.report_ok
 local error = vim.health.error or vim.health.report_error
 
 function M.check()
-    start("dot")
+    start("config")
 
     if not vim.version.cmp then
         error(
