@@ -154,6 +154,132 @@ end)
 vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]], { desc = "Delete without yanking" })
 
 --------------------------------------------------------------------------------
+-- GENERAL UTILITIES -----------------------------------------------------------
+--------------------------------------------------------------------------------
+
+---Create an autocommand group.
+---@param name string
+---@param opts? vim.api.keyset.create_augroup
+---@return integer
+local function augroup(name, opts)
+    opts = opts ~= nil and opts or {}
+    opts.clear = opts.clear ~= nil and opts.clear or true
+    return vim.api.nvim_create_augroup("anttikivi_" .. name, opts)
+end
+
+---@type "idle" | "building" | "done" | "failed"
+local fzf_build_state = "idle"
+
+---Build the native fzf plugin for Telescope. This function ensures that only one event can run the build at a time.
+---@param path string
+---@return boolean
+local function build_telescope_fzf(path)
+    if fzf_build_state == "building" then
+        vim.notify("telescope-fzf-native.nvim build already in progress", vim.log.levels.INFO)
+        return false
+    elseif fzf_build_state == "done" then
+        return true
+    end
+
+    fzf_build_state = "building"
+
+    ---@type string[][]?
+    local build_cmd = nil
+
+    if vim.fn.executable("cmake") == 1 then
+        build_cmd = {
+            {
+                "cmake",
+                "-S.",
+                "-Bbuild",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_POLICY_VERSION_MINIMUM=3.5",
+            },
+            {
+                "cmake",
+                "--build",
+                "build",
+                "--config",
+                "Release",
+            },
+        }
+    elseif vim.fn.executable("make") == 1 then
+        build_cmd = {
+            { "make" },
+        }
+    else
+        vim.notify("cannot built telescope-fzf-native.nvim, no suitable tool", vim.log.levels.ERROR)
+        fzf_build_state = "failed"
+        return false
+    end
+
+    for _, cmd in ipairs(build_cmd) do
+        local obj = vim.system(cmd, { cwd = path }):wait()
+        if obj.code ~= 0 then
+            vim.notify("failed to build telescope-fzf-native.nvim with " .. cmd[1], vim.log.levels.ERROR)
+            vim.notify(obj.stderr, vim.log.levels.ERROR)
+            fzf_build_state = "failed"
+            return false
+        end
+    end
+
+    fzf_build_state = "done"
+    vim.notify("built telescope-fzf-native.nvim", vim.log.levels.INFO)
+
+    return true
+end
+
+local CREATE_UNDO = vim.api.nvim_replace_termcodes("<c-G>u", true, true, true)
+local function create_undo()
+    if vim.api.nvim_get_mode().mode == "i" then
+        vim.api.nvim_feedkeys(CREATE_UNDO, "n", false)
+    end
+end
+
+local function debounce(ms, fn)
+    local timer = vim.uv.new_timer()
+
+    return function(...)
+        local argv = { ... }
+
+        if timer == nil then
+            vim.notify("error running `debounce`, timer is nil", vim.log.levels.ERROR)
+            return
+        end
+
+        timer:start(ms, 0, function()
+            timer:stop()
+            vim.schedule_wrap(fn)(unpack(argv))
+        end)
+    end
+end
+
+---@generic R
+---@param fn fun(): R?
+---@param opts? string | { msg: string, on_error: fun(msg) }
+---@return R
+local function try(fn, opts)
+    opts = type(opts) == "string" and { msg = opts } or opts or {}
+    local msg = opts.msg
+    -- error handler
+    local error_handler = function(err)
+        msg = (msg and (msg .. "\n\n") or "") .. err
+        if opts.on_error then
+            opts.on_error(msg)
+        else
+            vim.schedule(function()
+                vim.notify(msg, vim.log.levels.ERROR)
+            end)
+        end
+        return err
+    end
+
+    ---@type boolean, any
+    local ok, result = xpcall(fn, error_handler)
+    return ok and result or nil
+end
+
+--------------------------------------------------------------------------------
 -- PACKAGES --------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -241,71 +367,45 @@ if vim.g.picker == "telescope" then
     })
 end
 
+vim.api.nvim_create_autocmd("PackChanged", {
+    group = augroup("pack_changed"),
+    callback = function(ev)
+        if ev.data.spec.name == "mason.nvim" then
+            if ev.data.kind == "install" or ev.data.kind == "update" then
+                _ = require("mason")
+                vim.cmd("MasonUpdate")
+            end
+        elseif ev.data.spec.name == "nvim-treesitter" then
+            if ev.data.kind == "install" or ev.data.kind == "update" then
+                _ = require("nvim-treesitter")
+                vim.cmd("TSUpdate")
+            end
+        elseif ev.data.spec.name == "telescope-fzf-native.nvim" then
+            if ev.data.kind == "install" or ev.data.kind == "update" then
+                if build_telescope_fzf(ev.data.path) then
+                    vim.defer_fn(function()
+                        if not pcall(require("telescope").load_extension, "fzf") then
+                            vim.notify("failed to load fzf extension for telescope", vim.log.levels.WARN)
+                        end
+                    end, 100)
+                end
+            end
+        end
+    end,
+})
+
 vim.pack.add(pack_specs)
 
 --------------------------------------------------------------------------------
--- GENERAL UTILITIES -----------------------------------------------------------
+-- FILETYPES -------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
----Create an autocommand group.
----@param name string
----@param opts? vim.api.keyset.create_augroup
----@return integer
-local function augroup(name, opts)
-    opts = opts ~= nil and opts or {}
-    opts.clear = opts.clear ~= nil and opts.clear or true
-    return vim.api.nvim_create_augroup("anttikivi_" .. name, opts)
-end
-
-local CREATE_UNDO = vim.api.nvim_replace_termcodes("<c-G>u", true, true, true)
-local function create_undo()
-    if vim.api.nvim_get_mode().mode == "i" then
-        vim.api.nvim_feedkeys(CREATE_UNDO, "n", false)
-    end
-end
-
-local function debounce(ms, fn)
-    local timer = vim.uv.new_timer()
-
-    return function(...)
-        local argv = { ... }
-
-        if timer == nil then
-            vim.notify("error running `debounce`, timer is nil", vim.log.levels.ERROR)
-            return
-        end
-
-        timer:start(ms, 0, function()
-            timer:stop()
-            vim.schedule_wrap(fn)(unpack(argv))
-        end)
-    end
-end
-
----@generic R
----@param fn fun(): R?
----@param opts? string | { msg: string, on_error: fun(msg) }
----@return R
-local function try(fn, opts)
-    opts = type(opts) == "string" and { msg = opts } or opts or {}
-    local msg = opts.msg
-    -- error handler
-    local error_handler = function(err)
-        msg = (msg and (msg .. "\n\n") or "") .. err
-        if opts.on_error then
-            opts.on_error(msg)
-        else
-            vim.schedule(function()
-                vim.notify(msg, vim.log.levels.ERROR)
-            end)
-        end
-        return err
-    end
-
-    ---@type boolean, any
-    local ok, result = xpcall(fn, error_handler)
-    return ok and result or nil
-end
+vim.filetype.add({
+    extension = {
+        tf = "opentofu",
+        tfvars = "opentofu-vars",
+    },
+})
 
 --------------------------------------------------------------------------------
 -- FORMATTER -------------------------------------------------------------------
@@ -1025,7 +1125,26 @@ if vim.g.picker == "telescope" then
         },
     })
     if not pcall(require("telescope").load_extension, "fzf") then
-        vim.notify("failed to load fzf extension for telescope", vim.log.levels.WARN)
+        vim.notify("failed to load fzf extension for telescope, trying to build...", vim.log.levels.WARN)
+        ---@type string?
+        local telescope_fzf_path = nil
+        local plugins = vim.pack.get()
+        for _, p in ipairs(plugins) do
+            if p.spec.name == "telescope-fzf-native.nvim" and p.active then
+                telescope_fzf_path = p.path
+                break
+            end
+        end
+
+        if telescope_fzf_path and build_telescope_fzf(telescope_fzf_path) then
+            vim.defer_fn(function()
+                if not pcall(require("telescope").load_extension, "fzf") then
+                    vim.notify("failed to load fzf extension for telescope", vim.log.levels.WARN)
+                end
+            end, 100)
+        else
+            vim.notify("failed to find path for fzf extension for telescope", vim.log.levels.WARN)
+        end
     end
 
     local builtin = require("telescope.builtin")
@@ -1294,66 +1413,6 @@ vim.api.nvim_create_autocmd("PackChanged", {
         end
     end,
 })
-
-if vim.g.picker == "telescope" then
-    vim.api.nvim_create_autocmd("PackChanged", {
-        group = augroup("pack_changed"),
-        callback = function(ev)
-            if ev.data.spec.name ~= "telescope-fzf-native.nvim" then
-                return
-            end
-
-            if ev.data.kind == "install" or ev.data.kind == "update" then
-                if vim.fn.executable("cmake") == 1 then
-                    local obj = vim.system({
-                        "cmake",
-                        "-S.",
-                        "-Bbuild",
-                        "-DCMAKE_BUILD_TYPE=Release",
-                        "-DCMAKE_POLICY_VERSION_MINIMUM=3.5",
-                    }, { cwd = ev.data.path }):wait()
-
-                    if obj.code ~= 0 then
-                        vim.notify("failed to build telescope-fzf-native.nvim with CMake", vim.log.levels.ERROR)
-                        vim.notify(obj.stderr, vim.log.levels.ERROR)
-
-                        return
-                    end
-
-                    obj = vim.system({
-                        "cmake",
-                        "--build",
-                        "build",
-                        "--config",
-                        "Release",
-                    }, { cwd = ev.data.path }):wait()
-
-                    if obj.code ~= 0 then
-                        vim.notify("failed to build telescope-fzf-native.nvim with CMake", vim.log.levels.ERROR)
-                        vim.notify(obj.stderr, vim.log.levels.ERROR)
-
-                        return
-                    end
-
-                    vim.notify("built telescope-fzf-native.nvim", vim.log.levels.INFO)
-                elseif vim.fn.executable("make") == 1 then
-                    local obj = vim.system({ "make" }, { cwd = ev.data.path }):wait()
-
-                    if obj.code ~= 0 then
-                        vim.notify("failed to build telescope-fzf-native.nvim with make", vim.log.levels.ERROR)
-                        vim.notify(obj.stderr, vim.log.levels.ERROR)
-
-                        return
-                    end
-
-                    vim.notify("built telescope-fzf-native.nvim", vim.log.levels.INFO)
-                else
-                    vim.notify("cannot built telescope-fzf-native.nvim", vim.log.levels.ERROR)
-                end
-            end
-        end,
-    })
-end
 
 --------------------------------------------------------------------------------
 -- USER COMMANDS ---------------------------------------------------------------
