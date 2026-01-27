@@ -1003,6 +1003,13 @@ end))
 ---@type table<string, config.Linter>
 local linters = {
     selene = {
+        args = {
+            "--config",
+            vim.fs.find({ "selene.toml" }, { path = get_root({ normalize = true }), upward = true })[1],
+            "--display-style",
+            "json",
+            "-",
+        },
         condition = function()
             return vim.fs.find({ "selene.toml" }, { path = get_root({ normalize = true }), upward = true })[1]
         end,
@@ -1050,7 +1057,7 @@ local function try_lint()
     end, names)
 
     if #names > 0 then
-        lint.try_lint(names, { cwd = get_root() })
+        lint.try_lint(names)
     end
 end
 
