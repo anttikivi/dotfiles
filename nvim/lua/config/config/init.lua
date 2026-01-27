@@ -1,22 +1,5 @@
 ---@class dot.Config
 return {
-    ---@type boolean
-    autoformat = true,
-
-    ---@type "native" | "nvim-cmp"
-    cmp = "nvim-cmp",
-
-    ---@type boolean
-    enable_icons = false,
-
-    ---@type boolean
-    enable_statusline = true,
-
-    ---@type "netrw" | "oil"
-    file_explorer = "oil",
-
-    ---@type integer
-    formatting_timeout_ms = 3000,
     icons = {
         diagnostics = {
             error = "󰅚 ",
@@ -70,7 +53,4 @@ return {
             branch = " ",
         },
     },
-
-    ---@type "telescope"
-    picker = "telescope",
 }

@@ -138,12 +138,6 @@ function M.setup()
     end))
 end
 
-function M.pack_specs()
-    return {
-        { src = "https://github.com/mason-org/mason.nvim", version = vim.version.range("2.2.1") },
-    }
-end
-
 ---Register packages to be installed by Mason.
 ---@param pkgs string[]
 function M.ensure_installed(pkgs)

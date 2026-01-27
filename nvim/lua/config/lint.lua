@@ -105,10 +105,4 @@ function M.register_linters(linters)
     end
 end
 
-function M.pack_specs()
-    return {
-        { src = "https://github.com/anttikivi/nvim-lint", version = "386ca59429b0b033c45cff8efc0902445a1d6173" },
-    }
-end
-
 return M

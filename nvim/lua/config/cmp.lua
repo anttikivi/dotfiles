@@ -77,29 +77,4 @@ function M.setup()
     end
 end
 
-function M.pack_specs()
-    local result = {}
-
-    if config.cmp == "nvim-cmp" then
-        result[#result + 1] = {
-            src = "https://github.com/hrsh7th/nvim-cmp",
-            version = "da88697d7f45d16852c6b2769dc52387d1ddc45f",
-        }
-        result[#result + 1] = {
-            src = "https://github.com/hrsh7th/cmp-nvim-lsp",
-            version = "cbc7b02bb99fae35cb42f514762b89b5126651ef",
-        }
-        result[#result + 1] = {
-            src = "https://github.com/hrsh7th/cmp-buffer",
-            version = "b74fab3656eea9de20a9b8116afa3cfc4ec09657",
-        }
-        result[#result + 1] = {
-            src = "https://github.com/hrsh7th/cmp-path",
-            version = "c642487086dbd9a93160e1679a1327be111cbc25",
-        }
-    end
-
-    return result
-end
-
 return M

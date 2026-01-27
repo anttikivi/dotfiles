@@ -1,5 +1,3 @@
-local config = require("dot.config")
-
 local M = {}
 
 local start = vim.health.start or vim.health.report_start
@@ -33,26 +31,26 @@ function M.check()
         )
     end
 
-    if config.cmp == "native" then
+    if vim.g.cmp == "native" then
         ok("cmp: native")
-    elseif config.cmp == "nvim-cmp" then
+    elseif vim.g.cmp == "nvim-cmp" then
         ok("cmp: nvim-cmp")
     else
-        error(string.format("invalid cmp: '%s'", config.cmp))
+        error(string.format("invalid cmp: '%s'", vim.g.cmp))
     end
 
-    if config.file_explorer == "netrw" then
+    if vim.g.file_explorer == "netrw" then
         ok("file_explorer: netrw")
-    elseif config.file_explorer == "oil" then
+    elseif vim.g.file_explorer == "oil" then
         ok("file_explorer: oil.nvim")
     else
-        error(string.format("invalid file_explorer: '%s'", config.file_explorer))
+        error(string.format("invalid file_explorer: '%s'", vim.g.file_explorer))
     end
 
-    if config.picker == "telescope" then
+    if vim.g.picker == "telescope" then
         ok("file_explorer: telescope")
     else
-        error(string.format("invalid picker: '%s'", config.picker))
+        error(string.format("invalid picker: '%s'", vim.g.picker))
     end
 end
 

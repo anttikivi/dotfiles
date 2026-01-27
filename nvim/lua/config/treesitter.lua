@@ -22,15 +22,6 @@ function M.setup()
     })
 end
 
-function M.pack_specs()
-    return {
-        {
-            src = "https://github.com/nvim-treesitter/nvim-treesitter",
-            version = "81aca2f9815e26f638f697df1d828ca290847b64",
-        },
-    }
-end
-
 ---Run Tree-sitter for the given filetypes.
 ---@param filetypes string[]
 function M.register_filetypes(filetypes)

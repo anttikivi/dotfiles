@@ -22,10 +22,4 @@ function M.setup()
     end
 end
 
-function M.pack_specs()
-    return {
-        { src = "https://github.com/ThePrimeagen/harpoon", version = "87b1a3506211538f460786c23f98ec63ad9af4e5" },
-    }
-end
-
 return M

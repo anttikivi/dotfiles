@@ -98,10 +98,4 @@ function M.register_servers(servers)
     end
 end
 
-function M.pack_specs()
-    return {
-        { src = "https://github.com/folke/lazydev.nvim", version = vim.version.range("1.10.0") },
-    }
-end
-
 return M

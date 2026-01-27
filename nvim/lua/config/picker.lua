@@ -101,23 +101,4 @@ function M.setup_telescope_fzf_autocmd()
     })
 end
 
-function M.pack_specs()
-    local result = {}
-
-    if config.picker == "telescope" then
-        vim.list_extend(result, {
-            {
-                src = "https://github.com/nvim-telescope/telescope.nvim",
-                version = vim.version.range("0.2.1"),
-            },
-            {
-                src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim",
-                version = "6fea601bd2b694c6f2ae08a6c6fab14930c60e2c",
-            },
-        })
-    end
-
-    return result
-end
-
 return M

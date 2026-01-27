@@ -214,10 +214,4 @@ function M.register_conform_formatters(formatters)
     end
 end
 
-function M.pack_specs()
-    return {
-        { src = "https://github.com/stevearc/conform.nvim", version = vim.version.range("9.1.0") },
-    }
-end
-
 return M

@@ -176,13 +176,4 @@ function M.statusline_filetype_icon()
     return " %#" .. icon_highlight_group .. "#" .. icon .. "%* "
 end
 
-function M.pack_specs()
-    return {
-        {
-            src = "https://github.com/lewis6991/gitsigns.nvim",
-            version = vim.version.range("2.0.0"),
-        },
-    }
-end
-
 return M
