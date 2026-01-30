@@ -923,6 +923,7 @@ local lspconfig_to_package = _.invert(package_to_lspconfig)
 ---Packages that should be installed by Mason in addition to the language servers.
 ---@type string[]
 local ensure_installed = {
+    "ansible-lint",
     "selene",
     "stylua",
 }
