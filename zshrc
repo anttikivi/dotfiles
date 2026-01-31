@@ -11,6 +11,7 @@ setopt EXTENDED_GLOB
 
 setopt HIST_EXPIRE_DUPS_FIRST
 setopt HIST_IGNORE_SPACE
+setopt SHARE_HISTORY
 
 # Credits to https://gist.github.com/ctechols/ca1035271ad134841284
 local dumpfile="${XDG_CACHE_HOME:-"${HOME}/.cache"}/zsh/zcompdump-${ZSH_VERSION}"
