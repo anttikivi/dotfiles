@@ -439,6 +439,8 @@ conform.setup({
         lua = { "stylua" },
         opentofu = { "tofu_fmt" },
         ["opentofu-vars"] = { "tofu_fmt" },
+        yaml = { "prettierd", "prettier" },
+        ["yaml.ansible"] = { "prettierd", "prettier" },
     },
     formatters = {},
 })
@@ -926,6 +928,8 @@ local lspconfig_to_package = _.invert(package_to_lspconfig)
 ---@type string[]
 local ensure_installed = {
     "ansible-lint",
+    "prettier",
+    "prettierd",
     "selene",
     "stylua",
 }
