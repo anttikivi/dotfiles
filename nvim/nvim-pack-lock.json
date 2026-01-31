@@ -50,6 +50,11 @@
       "src": "https://github.com/mason-org/mason.nvim",
       "version": "2.2.1 - 2.2.1"
     },
+    "mini.icons": {
+      "rev": "efc85e42262cd0c9e1fdbf806c25cb0be6de115c",
+      "src": "https://github.com/nvim-mini/mini.icons",
+      "version": "'main'"
+    },
     "nvim-cmp": {
       "rev": "da88697d7f45d16852c6b2769dc52387d1ddc45f",
       "src": "https://github.com/hrsh7th/nvim-cmp",

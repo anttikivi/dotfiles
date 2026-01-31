@@ -80,7 +80,7 @@ vim.g.cmp = "nvim-cmp"
 vim.g.file_explorer = "oil"
 
 ---@type boolean
-vim.g.enable_icons = false
+vim.g.enable_icons = true
 
 ---@type boolean
 vim.g.enable_statusline = true
@@ -356,6 +356,13 @@ if vim.g.file_explorer == "oil" then
     }
 end
 
+if vim.g.enable_icons then
+    pack_specs[#pack_specs + 1] = {
+        src = "https://github.com/nvim-mini/mini.icons",
+        version = "main",
+    }
+end
+
 if vim.g.picker == "telescope" then
     vim.list_extend(pack_specs, {
         {
@@ -397,6 +404,16 @@ vim.api.nvim_create_autocmd("PackChanged", {
 })
 
 vim.pack.add(pack_specs)
+
+--------------------------------------------------------------------------------
+-- ICONS -----------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+-- TODO: Should we move this section elsewhere?
+if vim.g.enable_icons then
+    require("mini.icons").setup()
+    MiniIcons.mock_nvim_web_devicons()
+end
 
 --------------------------------------------------------------------------------
 -- FILETYPES -------------------------------------------------------------------
@@ -1245,22 +1262,20 @@ function _G.statusline_diagnostics()
 end
 
 function _G.statusline_filetype_icon()
-    local ok, devicons = pcall(require, "nvim-web-devicons")
-    if not ok then
+    if not _G.MiniIcons then
         return " "
     end
 
-    local icon, icon_highlight_group = devicons.get_icon(vim.fn.expand("%:t"))
-    if icon == nil then
-        icon, icon_highlight_group = devicons.get_icon_by_filetype(vim.bo.filetype)
+    local icon, hl
+    local name = vim.api.nvim_buf_get_name(0)
+
+    if name ~= "" then
+        icon, hl = MiniIcons.get("file", name)
+    else
+        icon, hl = MiniIcons.get("filetype", vim.bo.filetype)
     end
 
-    if icon == nil and icon_highlight_group == nil then
-        icon = ""
-        icon_highlight_group = "DevIconDefault"
-    end
-
-    return " %#" .. icon_highlight_group .. "#" .. icon .. "%* "
+    return " %#" .. hl .. "#" .. icon .. "%* "
 end
 
 local function statusline()
