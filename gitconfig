@@ -1,0 +1,14 @@
+[user]
+	name = Antti Kivi
+	email = antti@anttikivi.com
+	signingkey = D472BBA2B788F60F4FA932FCAC59AF038792A161
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true
+[core]
+	excludesfile = /Users/anttikivi/.gitignore_global
+[gpg]
+	program = gpg
+[includeIf "gitdir:~/src/visiosto/"]
+	path = ~/.gitconfig_visiosto
