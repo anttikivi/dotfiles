@@ -1268,11 +1268,21 @@ function _G.statusline_filetype_icon()
 
     local icon, hl
     local name = vim.api.nvim_buf_get_name(0)
+    local ft = vim.bo.filetype
 
-    if name ~= "" then
-        icon, hl = MiniIcons.get("file", name)
-    else
-        icon, hl = MiniIcons.get("filetype", vim.bo.filetype)
+    -- Attempt to get icon safely
+    local ok = pcall(function()
+        if ft ~= "" then
+            icon, hl = MiniIcons.get("filetype", ft)
+        elseif name ~= "" then
+            icon, hl = MiniIcons.get("file", name)
+        else
+            icon, hl = MiniIcons.get("filetype", "text")
+        end
+    end)
+
+    if not ok or not icon then
+        return ""
     end
 
     return " %#" .. hl .. "#" .. icon .. "%* "
@@ -1339,15 +1349,16 @@ local function set_statusline_highlights()
     vim.api.nvim_set_hl(0, "StatusLineInfo", { link = "DiagnosticInfo" })
     vim.api.nvim_set_hl(0, "StatusLineHint", { link = "DiagnosticHint" })
 
-    vim.cmd("redrawstatus!")
+    vim.schedule(function()
+        vim.cmd("redrawstatus!")
+    end)
 end
 
 if vim.g.enable_statusline then
     vim.opt.statusline = statusline()
+    vim.schedule(update_statusline_git_branch)
+    set_statusline_highlights()
 end
-
-vim.schedule(update_statusline_git_branch)
-set_statusline_highlights()
 
 --------------------------------------------------------------------------------
 -- AUTOCOMMANDS ----------------------------------------------------------------
