@@ -2,10 +2,10 @@
 
 [user]
 name = "Antti Kivi"
-email = "antti@anttikivi.com"
+email = "antti.kivi@visiosto.fi"
 
 [signing]
 behavior = "own"
 backend = "gpg"
 backends.gpg.program = "gpg"
-key = "B77AA9CD2C2BC68F3418F4AFC8BD979A718D8C84"
+key = "30BDAC10BFF22104983ABDCAC8392FAA9597BFD6"
