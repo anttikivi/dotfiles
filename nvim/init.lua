@@ -454,6 +454,7 @@ conform.setup({
     },
     formatters_by_ft = {
         lua = { "stylua" },
+        markdown = { "prettierd", "prettier" },
         opentofu = { "tofu_fmt" },
         ["opentofu-vars"] = { "tofu_fmt" },
         yaml = { "prettierd", "prettier" },
