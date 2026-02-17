@@ -12,10 +12,6 @@ export VISUAL="nvim"
 
 export GOPATH="${HOME}/go"
 
-if [[ ${OSTYPE} == darwin* ]]; then
-    export SSH_AUTH_SOCK="${HOME}/.bitwarden-ssh-agent.sock"
-fi
-
 export GCLOUD_SDK_DIR="${HOME}/.local/opt/google-cloud-sdk"
 
 # "Internal" options
