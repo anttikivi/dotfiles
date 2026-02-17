@@ -461,6 +461,7 @@ conform.setup({
         markdown = { "prettierd", "prettier" },
         opentofu = { "tofu_fmt" },
         ["opentofu-vars"] = { "tofu_fmt" },
+        toml = { "taplo" },
         yaml = { "prettierd", "prettier" },
         ["yaml.ansible"] = { "prettierd", "prettier" },
         zig = { "zigfmt" },
@@ -955,6 +956,7 @@ local ensure_installed = {
     "prettierd",
     "selene",
     "stylua",
+    "taplo",
 }
 
 local Optional = require("mason-core.optional")
@@ -1100,6 +1102,7 @@ require("nvim-treesitter").install({
     "json",
     "lua",
     "terraform",
+    "toml",
     "yaml",
     "zig",
 })
