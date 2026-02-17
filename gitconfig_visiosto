@@ -1,7 +1,7 @@
 [user]
 	name = Antti Kivi
 	email = antti.kivi@visiosto.fi
-	signingkey = 30BDAC10BFF22104983ABDCAC8392FAA9597BFD6
+	signingkey = 44ABE720A7372780DEF85FCD5C6229C29B79528C!
 [commit]
 	gpgsign = true
 [tag]

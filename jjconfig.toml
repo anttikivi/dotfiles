@@ -8,7 +8,7 @@ email = "antti@anttikivi.com"
 behavior = "own"
 backend = "gpg"
 backends.gpg.program = "gpg"
-key = "B77AA9CD2C2BC68F3418F4AFC8BD979A718D8C84"
+key = "A6274DA55A6868091EB573E8C0660739DD65FF31!"
 
 [[--scope]]
 --when.repositories = ["~/src/visiosto/"]
@@ -21,4 +21,4 @@ email = "antti.kivi@visiosto.fi"
 behavior = "own"
 backend = "gpg"
 backends.gpg.program = "gpg"
-key = "30BDAC10BFF22104983ABDCAC8392FAA9597BFD6"
+key = "44ABE720A7372780DEF85FCD5C6229C29B79528C!"
