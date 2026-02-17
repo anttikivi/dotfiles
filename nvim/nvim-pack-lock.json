@@ -51,7 +51,7 @@
       "version": "2.2.1 - 2.2.1"
     },
     "mini.icons": {
-      "rev": "efc85e42262cd0c9e1fdbf806c25cb0be6de115c",
+      "rev": "68c178e0958d95b3977a771f3445429b1bded985",
       "src": "https://github.com/nvim-mini/mini.icons",
       "version": "'main'"
     },
@@ -89,6 +89,11 @@
       "rev": "3333a52ff548ba0a68af6d8da1e54f9cd96e9179",
       "src": "https://github.com/nvim-telescope/telescope.nvim",
       "version": "0.2.1 - 0.2.1"
+    },
+    "zig.vim": {
+      "rev": "f65b43b90cbc3e179b3146d2237f503783119ab8",
+      "src": "https://codeberg.org/ziglang/zig.vim",
+      "version": "'f65b43b90cbc3e179b3146d2237f503783119ab8'"
     }
   }
 }

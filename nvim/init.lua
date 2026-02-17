@@ -326,6 +326,10 @@ local pack_specs = {
         src = "https://github.com/ThePrimeagen/harpoon",
         version = "87b1a3506211538f460786c23f98ec63ad9af4e5",
     },
+    {
+        src = "https://codeberg.org/ziglang/zig.vim",
+        version = "f65b43b90cbc3e179b3146d2237f503783119ab8",
+    },
 }
 
 if vim.g.cmp == "nvim-cmp" then
@@ -459,6 +463,7 @@ conform.setup({
         ["opentofu-vars"] = { "tofu_fmt" },
         yaml = { "prettierd", "prettier" },
         ["yaml.ansible"] = { "prettierd", "prettier" },
+        zig = { "zigfmt" },
     },
     formatters = {},
 })
@@ -1060,6 +1065,7 @@ lint.linters_by_ft = {
     lua = { "selene" },
     opentofu = { "tofu" },
     ["opentofu-vars"] = { "tofu" },
+    zig = { "zlint" }, -- let's try this out...
 }
 
 local function try_lint()
@@ -1091,8 +1097,11 @@ end
 --------------------------------------------------------------------------------
 
 require("nvim-treesitter").install({
+    "json",
     "lua",
     "terraform",
+    "yaml",
+    "zig",
 })
 
 -- Tree-sitter autocommands are defined here in the Tree-sitter section as I'd
