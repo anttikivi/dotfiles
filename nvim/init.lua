@@ -1103,7 +1103,7 @@ end
 -- TREE-SITTER -----------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-require("nvim-treesitter").install({
+local tree_sitter_ensure_installed = {
     "c",
     "cpp",
     "json",
@@ -1113,14 +1113,27 @@ require("nvim-treesitter").install({
     "toml",
     "yaml",
     "zig",
-})
+}
+
+require("nvim-treesitter").install(tree_sitter_ensure_installed)
+
+---@type string[]
+local tree_sitter_autocmd_pattern = {}
+
+for i, l in ipairs(tree_sitter_ensure_installed) do
+    if l == "terraform" then
+        tree_sitter_autocmd_pattern[i] = "opentofu"
+    else
+        tree_sitter_autocmd_pattern[i] = l
+    end
+end
 
 -- Tree-sitter autocommands are defined here in the Tree-sitter section as I'd
 -- see them so closely tied to the general Tree-sitter configuration.
 vim.api.nvim_create_autocmd("FileType", {
     -- TODO: Do I want to enable different tree-sitter features depending on
     -- the language?
-    pattern = { "lua", "opentofu" },
+    pattern = tree_sitter_autocmd_pattern,
     callback = function()
         vim.treesitter.start()
         vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
