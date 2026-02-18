@@ -11,6 +11,7 @@ vim.g.maplocalleader = " "
 vim.g.netrw_banner = false
 vim.g.netrw_list_hide = "^\\.DS_Store$"
 vim.g.root_spec = { "lsp", { ".git" }, "cwd" }
+vim.g.zig_fmt_autosave = false
 
 ---@type boolean
 local autoformat = true
