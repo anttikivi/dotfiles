@@ -457,6 +457,8 @@ conform.setup({
         lsp_format = "fallback",
     },
     formatters_by_ft = {
+        c = { "clang_format" },
+        cpp = { "clang_format" },
         lua = { "stylua" },
         markdown = { "prettierd", "prettier" },
         opentofu = { "tofu_fmt" },
@@ -952,6 +954,7 @@ local lspconfig_to_package = _.invert(package_to_lspconfig)
 ---@type string[]
 local ensure_installed = {
     "ansible-lint",
+    "clang-format",
     "prettier",
     "prettierd",
     "selene",
@@ -1064,6 +1067,8 @@ for name, linter in pairs(linters) do
 end
 
 lint.linters_by_ft = {
+    c = { "clangtidy" },
+    cpp = { "clangtidy" },
     lua = { "selene" },
     opentofu = { "tofu" },
     ["opentofu-vars"] = { "tofu" },
@@ -1099,8 +1104,11 @@ end
 --------------------------------------------------------------------------------
 
 require("nvim-treesitter").install({
+    "c",
+    "cpp",
     "json",
     "lua",
+    "make",
     "terraform",
     "toml",
     "yaml",
