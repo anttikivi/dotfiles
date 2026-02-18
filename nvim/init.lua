@@ -292,44 +292,44 @@ local pack_specs = {
         version = "b8dac7949c93a824e353bbd24f188b27ebdf8512",
     },
     {
-        src = "https://github.com/anttikivi/nvim-lint",
-        version = "386ca59429b0b033c45cff8efc0902445a1d6173",
-    },
-    {
         src = "https://github.com/f-person/auto-dark-mode.nvim",
         version = "e300259ec777a40b4b9e3c8e6ade203e78d15881",
     },
     {
         src = "https://github.com/folke/lazydev.nvim",
-        version = vim.version.range("1.10.0"),
+        version = "main",
     },
     {
         src = "https://github.com/lewis6991/gitsigns.nvim",
-        version = vim.version.range("2.0.0"),
+        version = "main",
     },
     {
         src = "https://github.com/mason-org/mason.nvim",
-        version = vim.version.range("2.2.1"),
+        version = "main",
+    },
+    {
+        src = "https://github.com/mfussenegger/nvim-lint",
+        version = "master",
     },
     {
         src = "https://github.com/nvim-lua/plenary.nvim",
-        version = "b9fd5226c2f76c951fc8ed5923d85e4de065e509",
+        version = "master",
     },
     {
         src = "https://github.com/nvim-treesitter/nvim-treesitter",
-        version = "81aca2f9815e26f638f697df1d828ca290847b64",
+        version = "main",
     },
     {
         src = "https://github.com/stevearc/conform.nvim",
-        version = vim.version.range("9.1.0"),
+        version = "master",
     },
     {
         src = "https://github.com/ThePrimeagen/harpoon",
-        version = "87b1a3506211538f460786c23f98ec63ad9af4e5",
+        version = "harpoon2",
     },
     {
         src = "https://codeberg.org/ziglang/zig.vim",
-        version = "f65b43b90cbc3e179b3146d2237f503783119ab8",
+        version = "master",
     },
 }
 
@@ -337,19 +337,19 @@ if vim.g.cmp == "nvim-cmp" then
     vim.list_extend(pack_specs, {
         {
             src = "https://github.com/hrsh7th/nvim-cmp",
-            version = "da88697d7f45d16852c6b2769dc52387d1ddc45f",
+            version = "main",
         },
         {
             src = "https://github.com/hrsh7th/cmp-nvim-lsp",
-            version = "cbc7b02bb99fae35cb42f514762b89b5126651ef",
+            version = "main",
         },
         {
             src = "https://github.com/hrsh7th/cmp-buffer",
-            version = "b74fab3656eea9de20a9b8116afa3cfc4ec09657",
+            version = "main",
         },
         {
             src = "https://github.com/hrsh7th/cmp-path",
-            version = "c642487086dbd9a93160e1679a1327be111cbc25",
+            version = "main",
         },
     })
 end
@@ -357,7 +357,7 @@ end
 if vim.g.file_explorer == "oil" then
     pack_specs[#pack_specs + 1] = {
         src = "https://github.com/stevearc/oil.nvim",
-        version = vim.version.range("2.15.0"),
+        version = "master",
     }
 end
 
@@ -372,11 +372,11 @@ if vim.g.picker == "telescope" then
     vim.list_extend(pack_specs, {
         {
             src = "https://github.com/nvim-telescope/telescope.nvim",
-            version = vim.version.range("0.2.1"),
+            version = "master",
         },
         {
             src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim",
-            version = "6fea601bd2b694c6f2ae08a6c6fab14930c60e2c",
+            version = "main",
         },
     })
 end
