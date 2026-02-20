@@ -4,6 +4,9 @@
 name = "Antti Kivi"
 email = "antti@anttikivi.com"
 
+[ui]
+default-command = "log"
+
 [signing]
 behavior = "own"
 backend = "gpg"
