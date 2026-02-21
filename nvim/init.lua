@@ -458,12 +458,14 @@ conform.setup({
         lsp_format = "fallback",
     },
     formatters_by_ft = {
+        bash = { "shfmt" },
         c = { "clang_format" },
         cpp = { "clang_format" },
         lua = { "stylua" },
         markdown = { "prettierd", "prettier" },
         opentofu = { "tofu_fmt" },
         ["opentofu-vars"] = { "tofu_fmt" },
+        sh = { "shfmt" },
         toml = { "taplo" },
         yaml = { "prettierd", "prettier" },
         ["yaml.ansible"] = { "prettierd", "prettier" },
@@ -959,6 +961,7 @@ local ensure_installed = {
     "prettier",
     "prettierd",
     "selene",
+    "shfmt",
     "stylua",
     "taplo",
 }
@@ -1105,6 +1108,7 @@ end
 --------------------------------------------------------------------------------
 
 local tree_sitter_ensure_installed = {
+    "bash",
     "c",
     "cpp",
     "json",
@@ -1114,6 +1118,7 @@ local tree_sitter_ensure_installed = {
     "toml",
     "yaml",
     "zig",
+    "zsh",
 }
 
 require("nvim-treesitter").install(tree_sitter_ensure_installed)
