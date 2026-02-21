@@ -1108,12 +1108,14 @@ end
 --------------------------------------------------------------------------------
 
 local tree_sitter_ensure_installed = {
+    "awk",
     "bash",
     "c",
     "cpp",
     "json",
     "lua",
     "make",
+    "powershell",
     "terraform",
     "toml",
     "yaml",
