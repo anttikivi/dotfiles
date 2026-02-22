@@ -1076,7 +1076,7 @@ lint.linters_by_ft = {
     lua = { "selene" },
     opentofu = { "tofu" },
     ["opentofu-vars"] = { "tofu" },
-    zig = { "zlint" }, -- let's try this out...
+    -- zig = { "zlint" }, -- let's try this out...
 }
 
 local function try_lint()
