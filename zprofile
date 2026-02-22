@@ -9,10 +9,11 @@ path=(
     "${HOME}/.cargo/bin"
     "${GOPATH}/bin"
     "${XDG_CONFIG_HOME}/composer/vendor/bin"
+    "${HOME}/.local/opt/zig"
     $path
 )
 
-optionals=("go" "nvim" "zig" "zlint")
+optionals=("go" "nvim" "zlint")
 for opt in "${optionals[@]}"; do
     path=("${HOME}/.local/opt/${opt}/bin" $path)
 done
