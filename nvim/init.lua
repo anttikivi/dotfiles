@@ -470,6 +470,7 @@ conform.setup({
         ["opentofu-vars"] = { "tofu_fmt" },
         sh = { "shfmt" },
         toml = { "taplo" },
+        typescript = { "prettierd", "prettier" },
         yaml = { "prettierd", "prettier" },
         ["yaml.ansible"] = { "prettierd", "prettier" },
         zig = { "zigfmt" },
