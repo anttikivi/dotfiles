@@ -461,6 +461,8 @@ conform.setup({
         bash = { "shfmt" },
         c = { "clang_format" },
         cpp = { "clang_format" },
+        javascript = { "prettierd", "prettier" },
+        json = { "prettierd", "prettier" },
         lua = { "stylua" },
         markdown = { "prettierd", "prettier" },
         opentofu = { "tofu_fmt" },
