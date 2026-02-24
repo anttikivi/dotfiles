@@ -963,6 +963,7 @@ local ensure_installed = {
     "ansible-lint",
     "clang-format",
     "oxfmt",
+    "oxlint",
     "prettier",
     "selene",
     "shfmt",
@@ -1077,9 +1078,11 @@ end
 lint.linters_by_ft = {
     c = { "clangtidy" },
     cpp = { "clangtidy" },
+    javascript = { "oxlint" },
     lua = { "selene" },
     opentofu = { "tofu" },
     ["opentofu-vars"] = { "tofu" },
+    typescript = { "oxlint" },
     -- zig = { "zlint" }, -- let's try this out...
 }
 
