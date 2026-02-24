@@ -19,6 +19,9 @@ local autoformat = true
 ---@type integer
 local formatting_timeout_ms = 3000
 
+---@type boolean
+local prettier_require_config = true
+
 ---Some icons I've found for various things.
 local icons = {
     diagnostics = {
@@ -257,6 +260,25 @@ local function debounce(ms, fn)
     end
 end
 
+---@type table<(fun()), table<string, any>>
+local memoize_cache = {}
+
+---@generic T: fun()
+---@param fn T
+---@return T
+local function memoize(fn)
+    return function(...)
+        local key = vim.inspect({ ... })
+        memoize_cache[fn] = memoize_cache[fn] or {}
+
+        if memoize_cache[fn][key] == nil then
+            memoize_cache[fn][key] = fn(...)
+        end
+
+        return memoize_cache[fn][key]
+    end
+end
+
 ---@generic R
 ---@param fn fun(): R?
 ---@param opts? string | { msg: string, on_error: fun(msg) }
@@ -448,6 +470,14 @@ local function register_formatter(formatter)
     end)
 end
 
+---Check if a Prettier config exists in the given Conform context.
+---@param ctx conform.Context
+---@return boolean
+local prettier_has_config = memoize(function(ctx)
+    vim.fn.system({ "prettier", "--find-config-path", ctx.filename })
+    return vim.v.shell_error == 0
+end)
+
 local conform = require("conform")
 
 conform.setup({
@@ -475,7 +505,13 @@ conform.setup({
         ["yaml.ansible"] = { "oxfmt", "prettier" },
         zig = { "zigfmt" },
     },
-    formatters = {},
+    formatters = {
+        prettier = {
+            condition = function(_, ctx)
+                return not prettier_require_config or prettier_has_config(ctx)
+            end,
+        },
+    },
 })
 
 register_formatter({
