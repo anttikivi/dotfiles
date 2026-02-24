@@ -463,6 +463,7 @@ conform.setup({
         cpp = { "clang_format" },
         javascript = { "prettierd", "prettier" },
         json = { "prettierd", "prettier" },
+        jsonc = { "prettierd", "prettier" },
         lua = { "stylua" },
         markdown = { "prettierd", "prettier" },
         opentofu = { "tofu_fmt" },
