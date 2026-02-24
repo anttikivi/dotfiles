@@ -1159,6 +1159,12 @@ vim.treesitter.language.register("terraform", { "opentofu" })
 if vim.g.file_explorer == "oil" then
     require("oil").setup({
         default_file_explorer = true,
+        columns = {
+            "icon",
+            -- "permissions",
+            -- "size",
+            -- "mtime",
+        },
         lsp_file_methods = {
             enabled = true,
             timeout_ms = 2000,
