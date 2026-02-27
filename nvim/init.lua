@@ -506,6 +506,16 @@ conform.setup({
         zig = { "zigfmt" },
     },
     formatters = {
+        oxfmt = {
+            append_args = function(_, ctx)
+                local root = vim.fs.root(ctx.dirname, { ".oxfmtrc.json", ".oxfmtrc.jsonc" })
+                if not root then
+                    return { "--config", vim.fs.abspath("~/src/personal/dotfiles/oxfmtrc.json") }
+                end
+
+                return {}
+            end,
+        },
         prettier = {
             condition = function(_, ctx)
                 return not prettier_require_config or prettier_has_config(ctx)
