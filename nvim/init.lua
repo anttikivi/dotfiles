@@ -611,13 +611,31 @@ end
 
 ---@type string[]
 local server_names = {}
-for name, type in vim.fs.dir(vim.fn.stdpath("config") .. "/lsp") do
-    if type == "file" and name:sub(-4) == ".lua" then
-        server_names[#server_names + 1] = name:gsub("%.lua$", "")
+---@type string[]
+local enabled_servers = {}
+local lsp_path = vim.fn.stdpath("config") .. "/lsp"
+for name, entry_type in vim.fs.dir(lsp_path) do
+    if entry_type == "file" and name:sub(-4) == ".lua" then
+        local server_name = name:gsub("%.lua$", "")
+        local config_path = lsp_path .. "/" .. name
+
+        local ok, config = pcall(dofile, config_path)
+        if not ok then
+            vim.notify(("failed to load LSP config %q: %s"):format(server_name, config), vim.log.levels.ERROR)
+        elseif type(config) ~= "table" then
+            vim.notify(("loading LSP config %q did not return a table"):format(server_name), vim.log.levels.WARN)
+        else
+            ---@cast config config.LspConfig
+            if config.enabled ~= false then
+                enabled_servers[#enabled_servers + 1] = server_name
+            end
+        end
+
+        server_names[#server_names + 1] = server_name
     end
 end
 
-vim.lsp.enable(server_names)
+vim.lsp.enable(enabled_servers)
 
 ---Register a function to be run with an autocommand when a language server attaches to a buffer.
 ---@param fn fun(client: vim.lsp.Client, buf: integer)

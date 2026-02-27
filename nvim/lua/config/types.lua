@@ -17,6 +17,9 @@
 ---@field condition function?
 ---@field prepend_args? (string|fun():string)[]
 
+---@class config.LspConfig : vim.lsp.Config
+---@field enabled? boolean
+
 ---@class config.Root
 ---@field paths string[]
 ---@field spec config.RootSpec
