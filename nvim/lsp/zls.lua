@@ -1,6 +1,6 @@
 ---@type vim.lsp.Config
 return {
-    cmd = { "zls" },
+    cmd = { vim.fn.expand("~/.local/bin/zls") },
     filetypes = { "zig", "zir" },
     root_markers = { "zls.json", "build.zig", ".git" },
     workspace_required = false,
