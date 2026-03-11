@@ -9,6 +9,9 @@ mouse-hide-while-typing = true
 # background-opacity = 0.9
 # background-blur = true
 
+notify-on-command-finish = unfocused
+notify-on-command-finish-after = 15s
+
 keybind = super+shift+comma=reload_config
 keybind = super+d=new_split:right
 keybind = super+shift+d=new_split:down
@@ -25,3 +28,7 @@ window-colorspace = display-p3
 focus-follows-mouse = false
 quit-after-last-window-closed = true
 shell-integration-features = no-cursor
+
+bell-features = system,attention,title
+
+macos-titlebar-style = tabs
