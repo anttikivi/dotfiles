@@ -21,12 +21,12 @@
       "version": "'main'"
     },
     "conform.nvim": {
-      "rev": "e969e302bced7ffb9a0a0323629f31feb0ca35a6",
+      "rev": "086a40dc7ed8242c03be9f47fbcee68699cc2395",
       "src": "https://github.com/stevearc/conform.nvim",
       "version": "'master'"
     },
     "gitsigns.nvim": {
-      "rev": "9f3c6dd7868bcc116e9c1c1929ce063b978fa519",
+      "rev": "7c4faa3540d0781a28588cafbd4dd187a28ac6e3",
       "src": "https://github.com/lewis6991/gitsigns.nvim",
       "version": "'main'"
     },
@@ -66,12 +66,12 @@
       "version": "'master'"
     },
     "nvim-treesitter": {
-      "rev": "d660b7c002f3922b6bb3da47206645488a698426",
+      "rev": "5cb05e1b0fa3c469958a2b26f36b3fe930af221c",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter",
       "version": "'main'"
     },
     "oil.nvim": {
-      "rev": "48fc83a9978c5f25833634700c08be583ee78eb7",
+      "rev": "0fcc83805ad11cf714a949c98c605ed717e0b83e",
       "src": "https://github.com/stevearc/oil.nvim",
       "version": "'master'"
     },
@@ -91,7 +91,7 @@
       "version": "'master'"
     },
     "zig.vim": {
-      "rev": "f65b43b90cbc3e179b3146d2237f503783119ab8",
+      "rev": "366ef4855d22fd1377b81c382542466475b73a01",
       "src": "https://codeberg.org/ziglang/zig.vim",
       "version": "'master'"
     }
