@@ -1033,6 +1033,7 @@ local ensure_installed = {
     "shfmt",
     "stylua",
     "taplo",
+    "yamllint",
 }
 
 local Optional = require("mason-core.optional")
@@ -1147,6 +1148,8 @@ lint.linters_by_ft = {
     opentofu = { "tofu" },
     ["opentofu-vars"] = { "tofu" },
     typescript = { "oxlint" },
+    yaml = { "yamllint" },
+    ["yaml.ansible"] = { "ansible_lint" },
     -- zig = { "zlint" }, -- let's try this out...
 }
 
