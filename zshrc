@@ -37,6 +37,9 @@ eval "$(zoxide init zsh)"
 
 source <(COMPLETE=zsh jj)
 
+eval "$(uv generate-shell-completion zsh)"
+eval "$(uvx --generate-shell-completion zsh)"
+
 eval "$(fnm env --use-on-cd --shell zsh)"
 eval "$(fnm completions --shell zsh)"
 

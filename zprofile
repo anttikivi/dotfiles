@@ -8,6 +8,7 @@ path=(
     "${XDG_BIN_HOME}"
     "${HOME}/.cargo/bin"
     "${GOPATH}/bin"
+    "${UV_INSTALL_DIR}"
     "${XDG_CONFIG_HOME}/composer/vendor/bin"
     "${HOME}/.local/opt/zig"
     $path

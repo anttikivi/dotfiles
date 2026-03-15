@@ -12,6 +12,8 @@ export VISUAL="nvim"
 
 export GOPATH="${HOME}/go"
 
+export UV_INSTALL_DIR="${HOME}/.local/opt/uv"
+
 export GCLOUD_SDK_DIR="${HOME}/.local/opt/google-cloud-sdk"
 
 # "Internal" options
