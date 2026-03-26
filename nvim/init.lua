@@ -488,6 +488,7 @@ conform.setup({
         lsp_format = "fallback",
     },
     formatters_by_ft = {
+        astro = { "prettier" },
         bash = { "shfmt" },
         c = { "clang_format" },
         cpp = { "clang_format" },
@@ -515,6 +516,9 @@ conform.setup({
                 end
 
                 return {}
+            end,
+            condition = function(_, ctx)
+                return not prettier_has_config(ctx)
             end,
         },
         prettier = {
@@ -1189,10 +1193,12 @@ end
 --------------------------------------------------------------------------------
 
 local tree_sitter_ensure_installed = {
+    "astro",
     "awk",
     "bash",
     "c",
     "cpp",
+    "css",
     "go",
     "gomod",
     "gosum",
@@ -1209,6 +1215,7 @@ local tree_sitter_ensure_installed = {
     "tsx",
     "typescript",
     "toml",
+    "xml",
     "yaml",
     "zig",
     "zsh",
