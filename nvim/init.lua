@@ -492,6 +492,7 @@ conform.setup({
         bash = { "shfmt" },
         c = { "clang_format" },
         cpp = { "clang_format" },
+        css = { "oxfmt", "prettier" },
         go = { "goimports", "gofumpt" },
         javascript = { "oxfmt", "prettier" },
         json = { "oxfmt", "prettier" },
