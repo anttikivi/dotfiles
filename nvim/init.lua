@@ -1212,6 +1212,7 @@ local tree_sitter_ensure_installed = {
     "markdown",
     "markdown_inline",
     "powershell",
+    "python",
     "terraform",
     "tsx",
     "typescript",
