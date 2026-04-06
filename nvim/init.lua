@@ -16,6 +16,9 @@ vim.g.zig_fmt_autosave = false
 ---@type boolean
 local autoformat = true
 
+---@type "catppuccin" | "lucid" | "rose-pine"
+local color_scheme = "catppuccin"
+
 ---@type integer
 local formatting_timeout_ms = 3000
 
@@ -308,69 +311,98 @@ end
 -- PACKAGES --------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+---Helper for shorter form for Codeberg-hosted plugins.
+---@param repo string
+---@return string
+local function cb(repo)
+    return "https://codeberg.org/" .. repo
+end
+
+---Helper for shorter form for GitHub-hosted plugins.
+---@param repo string
+---@return string
+local function gh(repo)
+    return "https://github.com/" .. repo
+end
+
 local pack_specs = {
     {
-        src = "https://github.com/anttikivi/lucid.nvim",
-        version = "b8dac7949c93a824e353bbd24f188b27ebdf8512",
-    },
-    {
-        src = "https://github.com/f-person/auto-dark-mode.nvim",
+        src = gh("f-person/auto-dark-mode.nvim"),
         version = "e300259ec777a40b4b9e3c8e6ade203e78d15881",
     },
     {
-        src = "https://github.com/folke/lazydev.nvim",
+        src = gh("folke/lazydev.nvim"),
         version = "main",
     },
     {
-        src = "https://github.com/lewis6991/gitsigns.nvim",
+        src = gh("lewis6991/gitsigns.nvim"),
         version = "main",
     },
     {
-        src = "https://github.com/mason-org/mason.nvim",
+        src = gh("mason-org/mason.nvim"),
         version = "main",
     },
     {
-        src = "https://github.com/mfussenegger/nvim-lint",
+        src = gh("mfussenegger/nvim-lint"),
         version = "master",
     },
     {
-        src = "https://github.com/nvim-lua/plenary.nvim",
+        src = gh("nvim-lua/plenary.nvim"),
         version = "master",
     },
     {
-        src = "https://github.com/nvim-treesitter/nvim-treesitter",
+        src = gh("nvim-treesitter/nvim-treesitter"),
         version = "main",
     },
     {
-        src = "https://github.com/stevearc/conform.nvim",
+        src = gh("stevearc/conform.nvim"),
         version = "master",
     },
     {
-        src = "https://github.com/ThePrimeagen/harpoon",
+        src = gh("ThePrimeagen/harpoon"),
         version = "harpoon2",
     },
     {
-        src = "https://codeberg.org/ziglang/zig.vim",
+        src = cb("ziglang/zig.vim"),
         version = "master",
     },
 }
 
+if color_scheme == "catppuccin" then
+    pack_specs[#pack_specs + 1] = {
+        src = gh("catppuccin/nvim"),
+        version = vim.version.range("2.0.0"),
+    }
+elseif color_scheme == "lucid" then
+    pack_specs[#pack_specs + 1] = {
+        src = gh("anttikivi/lucid.nvim"),
+        version = "b8dac7949c93a824e353bbd24f188b27ebdf8512",
+    }
+elseif color_scheme == "rose-pine" then
+    pack_specs[#pack_specs + 1] = {
+        src = gh("rose-pine/neovim"),
+        version = "main",
+    }
+else
+    vim.notify(("invalid color scheme %q"):format(color_scheme), vim.log.levels.ERROR)
+end
+
 if vim.g.cmp == "nvim-cmp" then
     vim.list_extend(pack_specs, {
         {
-            src = "https://github.com/hrsh7th/nvim-cmp",
+            src = gh("hrsh7th/nvim-cmp"),
             version = "main",
         },
         {
-            src = "https://github.com/hrsh7th/cmp-nvim-lsp",
+            src = gh("hrsh7th/cmp-nvim-lsp"),
             version = "main",
         },
         {
-            src = "https://github.com/hrsh7th/cmp-buffer",
+            src = gh("hrsh7th/cmp-buffer"),
             version = "main",
         },
         {
-            src = "https://github.com/hrsh7th/cmp-path",
+            src = gh("hrsh7th/cmp-path"),
             version = "main",
         },
     })
@@ -378,14 +410,14 @@ end
 
 if vim.g.file_explorer == "oil" then
     pack_specs[#pack_specs + 1] = {
-        src = "https://github.com/stevearc/oil.nvim",
+        src = gh("stevearc/oil.nvim"),
         version = "master",
     }
 end
 
 if vim.g.enable_icons then
     pack_specs[#pack_specs + 1] = {
-        src = "https://github.com/nvim-mini/mini.icons",
+        src = gh("nvim-mini/mini.icons"),
         version = "main",
     }
 end
@@ -393,11 +425,11 @@ end
 if vim.g.picker == "telescope" then
     vim.list_extend(pack_specs, {
         {
-            src = "https://github.com/nvim-telescope/telescope.nvim",
+            src = gh("nvim-telescope/telescope.nvim"),
             version = "master",
         },
         {
-            src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim",
+            src = gh("nvim-telescope/telescope-fzf-native.nvim"),
             version = "main",
         },
     })
@@ -1829,4 +1861,8 @@ end, { desc = "Update all found plugins, even those not currently active" })
 --------------------------------------------------------------------------------
 
 require("auto-dark-mode").setup({ update_interval = 5000 })
-vim.cmd.colorscheme("lucid")
+if color_scheme == "catppuccin" then
+    vim.cmd.colorscheme("catppuccin-nvim")
+else
+    vim.cmd.colorscheme(color_scheme)
+end
