@@ -1,6 +1,4 @@
-# theme = dark:/Users/anttikivi/Projects/lucid.nvim/extras/ghostty/lucid-dark,light:/Users/anttikivi/Projects/lucid.nvim/extras/ghostty/lucid-light
-# theme = dark:Rose Pine,light:Rose Pine Dawn
-theme = dark:Catppuccin Mocha,light:Catppuccin Latte
+theme = dark:/Users/anttikivi/src/personal/granite.nvim/extras/ghostty/granite-dark,light:/Users/anttikivi/src/personal/granite.nvim/extras/ghostty/granite-light
 font-family = "Berkeley Mono"
 font-feature = -calt
 adjust-cell-height = 20%

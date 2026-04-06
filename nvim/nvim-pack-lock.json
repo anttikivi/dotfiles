@@ -26,7 +26,7 @@
       "version": "'master'"
     },
     "gitsigns.nvim": {
-      "rev": "50c205548d8b037b7ff6378fca6d21146f0b6161",
+      "rev": "77b813d1aa6a180d903dc744fc81d7e05b138ac2",
       "src": "https://github.com/lewis6991/gitsigns.nvim",
       "version": "'main'"
     },
@@ -40,30 +40,23 @@
       "src": "https://github.com/folke/lazydev.nvim",
       "version": "'main'"
     },
-    "lucid.nvim": {
-      "rev": "b8dac7949c93a824e353bbd24f188b27ebdf8512",
-      "src": "https://github.com/anttikivi/lucid.nvim",
-      "version": "'b8dac7949c93a824e353bbd24f188b27ebdf8512'"
-    },
     "mason.nvim": {
       "rev": "44d1e90e1f66e077268191e3ee9d2ac97cc18e65",
       "src": "https://github.com/mason-org/mason.nvim",
       "version": "'main'"
     },
     "mini.icons": {
-      "rev": "5b9076dae1bfbe47ba4a14bc8b967cde0ab5d77e",
+      "rev": "7fdae2443a0e2910015ca39ad74b50524ee682d3",
       "src": "https://github.com/nvim-mini/mini.icons",
       "version": "'main'"
     },
     "neovim": {
       "rev": "cf2a288696b03d0934da713d66c6d71557b5c997",
-      "src": "https://github.com/rose-pine/neovim",
-      "version": "'main'"
+      "src": "https://github.com/rose-pine/neovim"
     },
     "nvim": {
       "rev": "605b4603797de970e9f3a4238c199c850da03186",
-      "src": "https://github.com/catppuccin/nvim",
-      "version": "2.0.0 - 2.0.0"
+      "src": "https://github.com/catppuccin/nvim"
     },
     "nvim-cmp": {
       "rev": "a1d504892f2bc56c2e79b65c6faded2fd21f3eca",
@@ -76,7 +69,7 @@
       "version": "'master'"
     },
     "nvim-treesitter": {
-      "rev": "7caec274fd19c12b55902a5b795100d21531391f",
+      "rev": "4916d6592ede8c07973490d9322f187e07dfefac",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter",
       "version": "'main'"
     },
@@ -96,12 +89,12 @@
       "version": "'main'"
     },
     "telescope.nvim": {
-      "rev": "5255aa27c422de944791318024167ad5d40aad20",
+      "rev": "cfb85dcf7f822b79224e9e6aef9e8c794211b20b",
       "src": "https://github.com/nvim-telescope/telescope.nvim",
       "version": "'master'"
     },
     "zig.vim": {
-      "rev": "366ef4855d22fd1377b81c382542466475b73a01",
+      "rev": "9e76c2843f6292dc9c804996d78244fe1028891a",
       "src": "https://codeberg.org/ziglang/zig.vim",
       "version": "'master'"
     }

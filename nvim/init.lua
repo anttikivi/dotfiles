@@ -16,9 +16,6 @@ vim.g.zig_fmt_autosave = false
 ---@type boolean
 local autoformat = true
 
----@type "catppuccin" | "lucid" | "rose-pine"
-local color_scheme = "catppuccin"
-
 ---@type integer
 local formatting_timeout_ms = 3000
 
@@ -325,6 +322,8 @@ local function gh(repo)
     return "https://github.com/" .. repo
 end
 
+vim.opt.rtp:prepend("~/src/personal/granite.nvim")
+
 local pack_specs = {
     {
         src = gh("f-person/auto-dark-mode.nvim"),
@@ -367,25 +366,6 @@ local pack_specs = {
         version = "master",
     },
 }
-
-if color_scheme == "catppuccin" then
-    pack_specs[#pack_specs + 1] = {
-        src = gh("catppuccin/nvim"),
-        version = vim.version.range("2.0.0"),
-    }
-elseif color_scheme == "lucid" then
-    pack_specs[#pack_specs + 1] = {
-        src = gh("anttikivi/lucid.nvim"),
-        version = "b8dac7949c93a824e353bbd24f188b27ebdf8512",
-    }
-elseif color_scheme == "rose-pine" then
-    pack_specs[#pack_specs + 1] = {
-        src = gh("rose-pine/neovim"),
-        version = "main",
-    }
-else
-    vim.notify(("invalid color scheme %q"):format(color_scheme), vim.log.levels.ERROR)
-end
 
 if vim.g.cmp == "nvim-cmp" then
     vim.list_extend(pack_specs, {
@@ -1861,8 +1841,4 @@ end, { desc = "Update all found plugins, even those not currently active" })
 --------------------------------------------------------------------------------
 
 require("auto-dark-mode").setup({ update_interval = 5000 })
-if color_scheme == "catppuccin" then
-    vim.cmd.colorscheme("catppuccin-nvim")
-else
-    vim.cmd.colorscheme(color_scheme)
-end
+vim.cmd.colorscheme("granite")
