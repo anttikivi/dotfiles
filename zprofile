@@ -11,6 +11,7 @@ path=(
     "${UV_INSTALL_DIR}"
     "${XDG_CONFIG_HOME}/composer/vendor/bin"
     "${HOME}/.local/opt/zig"
+    "/Applications/Docker.app/Contents/Resources/bin/docker"
     $path
 )
 
