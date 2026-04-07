@@ -1248,14 +1248,14 @@ for i, l in ipairs(tree_sitter_ensure_installed) do
     end
 end
 
--- Tree-sitter autocommands are defined here in the Tree-sitter section as I'd
--- see them so closely tied to the general Tree-sitter configuration.
 vim.api.nvim_create_autocmd("FileType", {
     -- TODO: Do I want to enable different tree-sitter features depending on
     -- the language?
     pattern = tree_sitter_autocmd_pattern,
-    callback = function()
-        vim.treesitter.start()
+    callback = function(ev)
+        if not pcall(vim.treesitter.start) then
+            vim.notify(string.format("failed to start Tree-sitter for %s", ev.match), vim.log.levels.WARN)
+        end
         vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
         vim.wo[0][0].foldmethod = "expr"
         vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
