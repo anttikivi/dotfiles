@@ -1841,4 +1841,7 @@ end, { desc = "Update all found plugins, even those not currently active" })
 --------------------------------------------------------------------------------
 
 require("auto-dark-mode").setup({ update_interval = 5000 })
+require("granite").setup({
+    transparent = true,
+})
 vim.cmd.colorscheme("granite")
