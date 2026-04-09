@@ -10,6 +10,7 @@ M.servers = {
     "ansiblels",
     "astro",
     "clangd",
+    "cmake",
     "gopls",
     "lua_ls",
     "vimls",
