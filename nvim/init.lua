@@ -46,11 +46,4 @@ require("anttikivi.linter")
 require("anttikivi.treesitter")
 require("anttikivi.nav")
 require("anttikivi.cmds")
-
-require("auto-dark-mode").setup({ update_interval = 5000 })
-
--- local granite = require("granite")
--- local colors = granite.colors[vim.o.background]
-require("granite").setup({ transparent = true })
--- vim.api.nvim_set_hl(0, "StatuslineGitBranch", { fg = colors.gray, bg = colors.red })
-vim.cmd.colorscheme("granite")
+require("anttikivi.colors")

@@ -155,7 +155,6 @@ end
 
 ---@type table<number, string>
 local root_cache = {}
-local vcs_cache = {}
 
 ---@param opts? { normalize?: boolean, buf?: number }
 ---@return string
@@ -177,40 +176,12 @@ function M.get(opts)
     return vim.uv.os_uname().sysname:find("Windows") ~= nil and result:gsub("/", "\\") or result
 end
 
----@param opts? { buf?: number, normalize?: boolean }
----@return string
-function M.vcs(opts)
-    opts = opts or {}
-    local buf = opts.buf or vim.api.nvim_get_current_buf()
-    local result = vcs_cache[buf]
-
-    if not result then
-        local roots = detect_root({ all = false, buf = buf, spec = { { ".jj", ".git" } } })
-        result = roots[1] and roots[1].paths[1] or M.get({ buf = buf, normalize = true })
-        vcs_cache[buf] = result
-    end
-
-    if opts.normalize then
-        return result
-    end
-
-    return vim.uv.os_uname().sysname:find("Windows") ~= nil and result:gsub("/", "\\") or result
-end
-
 function M.init()
     vim.api.nvim_create_augroup("root_cache", { clear = true })
     vim.api.nvim_create_autocmd({ "LspAttach", "BufWritePost", "DirChanged", "BufEnter" }, {
         group = "root_cache",
         callback = function(event)
             root_cache[event.buf] = nil
-        end,
-    })
-
-    vim.api.nvim_create_augroup("vcs_cache", { clear = true })
-    vim.api.nvim_create_autocmd({ "LspAttach", "BufWritePost", "DirChanged", "BufEnter" }, {
-        group = "vcs_cache",
-        callback = function(event)
-            vcs_cache[event.buf] = nil
         end,
     })
 
