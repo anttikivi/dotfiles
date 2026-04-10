@@ -1,4 +1,23 @@
 vim.cmd([[
+" Manage arglist.
+nnoremap <leader>aa <cmd>argadd %<cr>
+nnoremap <leader>aD <cmd>argdelete %<cr>
+nnoremap <leader>al <cmd>args<cr>
+" These might also be built in.
+nnoremap ]a <cmd>next<cr>
+nnoremap [a <cmd>Next<cr>
+
+" Really quick keymaps for jumping between arguments!
+nnoremap <leader>1 <cmd>argument 1<cr>
+nnoremap <leader>2 <cmd>argument 2<cr>
+nnoremap <leader>3 <cmd>argument 3<cr>
+nnoremap <leader>4 <cmd>argument 4<cr>
+nnoremap <leader>5 <cmd>argument 5<cr>
+nnoremap <leader>6 <cmd>argument 6<cr>
+nnoremap <leader>7 <cmd>argument 7<cr>
+nnoremap <leader>8 <cmd>argument 8<cr>
+nnoremap <leader>9 <cmd>argument 9<cr>
+
 " Take line wrapping into account when moving up and down.
 nnoremap <silent> <expr> j v:count == 0 ? 'gj' : 'j'
 onoremap <silent> <expr> j v:count == 0 ? 'gj' : 'j'
