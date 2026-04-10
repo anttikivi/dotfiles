@@ -26,6 +26,7 @@ vim.pack.add({
 
 vim.filetype.add({
     extension = {
+        h = "c",
         tf = "opentofu",
         tfvars = "opentofu-vars",
     },
