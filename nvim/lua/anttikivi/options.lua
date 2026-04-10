@@ -28,3 +28,4 @@ vim.opt.smartindent = true
 vim.opt.tabstop = 4
 vim.opt.termguicolors = true
 vim.opt.title = true
+vim.opt.wildignore = ".DS_Store"
