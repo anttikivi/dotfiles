@@ -9,7 +9,7 @@ vim.opt.rtp:prepend("~/src/personal/granite.nvim")
 vim.opt.autocomplete = true
 vim.opt.clipboard = "unnamedplus"
 vim.opt.colorcolumn = "80"
-vim.opt.completeopt = "menu,menuone,popup,preinsert"
+vim.opt.completeopt = "menu,menuone,noinsert,popup"
 vim.opt.expandtab = true
 vim.opt.foldlevel = 99
 vim.opt.foldlevelstart = 99
