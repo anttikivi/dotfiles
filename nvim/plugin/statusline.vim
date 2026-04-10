@@ -274,17 +274,51 @@ function! s:Statusline() abort
   let l:vcs = getwinvar(l:winid, 'statusline_vcs', '')
   let l:hl = getwinvar(l:winid, 'statusline_vcs_hl', 'StatusLine')
 
-  let l:out = '%<'
+  let l:left = []
+  let l:right = []
+
+  call add(l:left, '%<')
 
   if !empty(l:vcs)
-    let l:out .= '%#' . l:hl . '# ' . l:vcs . ' %* '
+    call add(l:left, '%#' . l:hl . '# ' . l:vcs . ' %* ')
   endif
 
-  let l:out .= '%f %h%w%m%r%{get(b:,"gitsigns_status","")}%=%-14.(%l,%c%V%) %P'
-  return l:out
+  call add(l:left, '%f %h%w%m%r')
+  call add(l:left, '%{get(b:,"gitsigns_status","")}')
+  call add(l:left, '%{v:lua.require("vim._core.util").term_exitcode()}')
+
+  call add(l:right, '%{% &showcmdloc == "statusline" ? "%-10.S " : "" %}')
+  call add(
+      \ l:right,
+      \ '%{% exists("b:keymap_name") ? "<"..b:keymap_name.."> " : "" %}'
+      \ )
+  call add(l:right, '%{% &busy > 0 ? "◐ " : "" %}')
+  call add(
+      \ l:right,
+      \ '%{%luaeval("'
+      \ . '('
+      \ . 'package.loaded[\"vim.diagnostic\"]'
+      \ . ' and next(vim.diagnostic.count())'
+      \ . ' and vim.diagnostic.status() .. \" \"'
+      \ . ')'
+      \ . ' or \"\"'
+      \ . '")'
+      \ . '%}'
+      \ )
+  call add(
+      \ l:right,
+      \ '%{% &ruler'
+      \ . ' ? (&rulerformat == "" ? "%-14.(%l,%c%V%) %P" : &rulerformat )'
+      \ . ' : "" %}'
+      \ )
+
+  return join(l:left, '') . '%=' . join(l:right, '')
 endfunction
 
 call s:SetHighlights()
+
+" Current default statusline:
+" %<%f %h%w%m%r %{% v:lua.require('vim._core.util').term_exitcode() %}%=%{% luaeval('(package.loaded[''vim.ui''] and vim.api.nvim_get_current_win() == tonumber(vim.g.actual_curwin or -1) and vim.ui.progress_status()) or '''' ')%}%{% &showcmdloc == 'statusline' ? '%-10.S ' : '' %}%{% exists('b:keymap_name') ? '<'..b:keymap_name..'> ' : '' %}%{% &busy > 0 ? '◐ ' : '' %}%{% luaeval('(package.loaded[''vim.diagnostic''] and next(vim.diagnostic.count()) and vim.diagnostic.status() .. '' '') or '''' ') %}%{% &ruler ? (&rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %}
 
 let &statusline = '%!' . expand('<SID>') . 'Statusline()'
 
@@ -293,6 +327,7 @@ call s:RefreshWindow(bufnr('%'))
 augroup MyStatusline
   autocmd!
   autocmd ColorScheme * call <SID>SetHighlights() | redrawstatus
+  autocmd DiagnosticChanged * redrawstatus
   autocmd LspAttach *
       \ call <SID>InvalidateRootForBuffer(str2nr(expand('<abuf>')))
       \ | call <SID>RefreshWindow(str2nr(expand('<abuf>')))
