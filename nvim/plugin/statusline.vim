@@ -30,10 +30,10 @@ endfunction
 
 function! s:GetVcsRoot(buf) abort
   return luaeval(
-      \   'require("anttikivi.root").vcs({ 
-      \     buf = _A, 
-      \     normalize = true 
-      \   })', 
+      \   'require("anttikivi.root").vcs({
+      \     buf = _A,
+      \     normalize = true
+      \   })',
       \   a:buf
       \ )
 endfunction
@@ -260,12 +260,12 @@ function! s:InvalidateAllRoots() abort
   let s:buf_root_cache = {}
 endfunction
 
-function! s:SetHighlights() abort 
+function! s:SetHighlights() abort
   let l:colors = s:GetColors()
 
-  execute 'highlight StatusLineGitBranch guifg=' . l:colors.bg_light 
+  execute 'highlight StatusLineGitBranch guifg=' . l:colors.bg_light
       \ . ' guibg=' . l:colors.red
-  execute 'highlight StatusLineJjRev guifg=' . l:colors.bg_light 
+  execute 'highlight StatusLineJjRev guifg=' . l:colors.bg_light
       \ . ' guibg=' . l:colors.blue
 endfunction
 
@@ -280,7 +280,7 @@ function! s:Statusline() abort
     let l:out .= '%#' . l:hl . '# ' . l:vcs . ' %* '
   endif
 
-  let l:out .= '%f %h%w%m%r%=%-14.(%l,%c%V%) %P'
+  let l:out .= '%f %h%w%m%r%{get(b:,"gitsigns_status","")}%=%-14.(%l,%c%V%) %P'
   return l:out
 endfunction
 
