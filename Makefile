@@ -1,6 +1,7 @@
 .POSIX:
 .SUFFIXES:
 
+JJ_VERSION = 0.40.0
 ZIG_VERSION = 0.16.0-dev.3028+a85495ca2
 ZIG_ARCHIVE = zig-aarch64-macos-$(ZIG_VERSION).tar.xz
 ZIG_PUBLIC_KEY = RWSGOq2NVecA2UPNdBUZykf1CCb147pkmdtYxgb3Ti+JO/wCYvhbAb/U
@@ -23,6 +24,11 @@ install-nvim: FORCE
 	rm -rf "${HOME}/.local/opt/nvim"
 	cd "${HOME}/build/neovim" && make CMAKE_BUILD_TYPE=Release CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=${HOME}/.local/opt/nvim"
 	cd "${HOME}/build/neovim" && make install
+
+# TODO: Temporary task for installing jj.
+install-jj: FORCE
+	if [ -n "$$(jj --version)" ] && [ "$$(jj --version | xargs -n1 echo | tail -1)" != "$(JJ_VERSION)" ]; then cargo uninstall jj jj-cli; fi
+	cargo install --version "$(JJ_VERSION)" --locked --bin jj jj-cli
 
 # TODO: Temporary task for installing the latest development version.
 install-zig: FORCE
