@@ -2,7 +2,8 @@
 .SUFFIXES:
 
 JJ_VERSION = 0.40.0
-ZIG_VERSION = 0.16.0-dev.3028+a85495ca2
+NVIM_VERSION = 0.12.2
+ZIG_VERSION = 0.16.0
 ZIG_ARCHIVE = zig-aarch64-macos-$(ZIG_VERSION).tar.xz
 ZIG_PUBLIC_KEY = RWSGOq2NVecA2UPNdBUZykf1CCb147pkmdtYxgb3Ti+JO/wCYvhbAb/U
 
@@ -20,7 +21,7 @@ install-nvim: FORCE
 	if [ ! -d "${HOME}/build" ]; then mkdir "${HOME}/build"; fi
 	if [ -d "${HOME}/build/neovim" ]; then rm -rf "${HOME}/build/neovim"; fi
 	git clone git@github.com:neovim/neovim.git "${HOME}/build/neovim"
-	git -C "${HOME}/build/neovim" checkout tags/v0.12.1
+	git -C "${HOME}/build/neovim" checkout "tags/v$(NVIM_VERSION)"
 	rm -rf "${HOME}/.local/opt/nvim"
 	cd "${HOME}/build/neovim" && make CMAKE_BUILD_TYPE=Release CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=${HOME}/.local/opt/nvim"
 	cd "${HOME}/build/neovim" && make install
@@ -48,6 +49,7 @@ install-zls: FORCE
 	if [ ! -d "${HOME}/build" ]; then mkdir "${HOME}/build"; fi
 	if [ -d "${HOME}/build/zls" ]; then rm -rf "${HOME}/build/zls"; fi
 	git clone git@github.com:zigtools/zls.git "${HOME}/build/zls"
+	git -C "${HOME}/build/zls" checkout tags/0.16.0
 	rm -rf "${HOME}/.local/opt/zls"
 	mkdir -p "${HOME}/.local/opt/zls"
 	cd "${HOME}/build/zls" && zig build -p "${HOME}/.local/opt/zls" -Doptimize=ReleaseSafe
