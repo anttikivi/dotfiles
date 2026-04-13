@@ -11,6 +11,7 @@ M.servers = {
     "astro",
     "clangd",
     "cmake",
+    "gh_actions_ls",
     "gopls",
     "lua_ls",
     "vimls",

@@ -23,6 +23,13 @@ local linters = {
             return vim.fs.find({ "selene.toml" }, { path = root.get({ normalize = true }), upward = true })[1]
         end,
     },
+    yamllint = {
+        ---@param ctx { filename: string }?
+        ---@return boolean
+        condition = function(ctx)
+            return ctx ~= nil and ctx.filename:find("%.github[/\\]workflows[/\\]") == nil
+        end,
+    },
 }
 
 for name, linter in pairs(linters) do
