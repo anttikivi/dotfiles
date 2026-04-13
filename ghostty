@@ -1,4 +1,4 @@
-theme = dark:/Users/anttikivi/src/personal/granite.nvim/extras/ghostty/granite-dark,light:/Users/anttikivi/src/personal/granite.nvim/extras/ghostty/granite-light
+theme = dark:/Users/anttikivi/src/personal/granite.vim/extras/ghostty/granite-dark,light:/Users/anttikivi/src/personal/granite.vim/extras/ghostty/granite-light
 font-family = "Berkeley Mono"
 font-feature = -calt
 adjust-cell-height = 20%
