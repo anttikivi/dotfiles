@@ -112,6 +112,7 @@ function M.init()
             astro = { "prettier" },
             bash = { "shfmt" },
             c = { "clang_format" },
+            cmake = { "cmake_format" },
             cpp = { "clang_format" },
             css = { "oxfmt", "prettier" },
             go = { "goimports", "gofumpt" },
@@ -130,6 +131,16 @@ function M.init()
             zig = { "zigfmt" },
         },
         formatters = {
+            cmake_format = {
+                append_args = function(_, ctx)
+                    local root = vim.fs.root(ctx.dirname, { ".cmake-format.py" })
+                    if not root then
+                        return { "-c", vim.fs.abspath("~/src/personal/dotfiles/cmake-format.py") }
+                    end
+
+                    return {}
+                end,
+            },
             oxfmt = {
                 append_args = function(_, ctx)
                     local root = vim.fs.root(ctx.dirname, { ".oxfmtrc.json", ".oxfmtrc.jsonc" })

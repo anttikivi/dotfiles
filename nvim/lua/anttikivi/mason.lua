@@ -6,6 +6,7 @@ local _ = require("mason-core.functional")
 local ensure_installed = {
     "ansible-lint",
     "clang-format",
+    "cmakelang",
     "gofumpt",
     "goimports",
     "golangci-lint",

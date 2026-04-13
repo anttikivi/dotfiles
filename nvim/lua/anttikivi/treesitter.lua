@@ -3,6 +3,7 @@ local parsers = {
     "awk",
     "bash",
     "c",
+    "cmake",
     "cpp",
     "css",
     "go",
