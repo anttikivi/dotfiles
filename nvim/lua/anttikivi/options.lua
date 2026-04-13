@@ -5,7 +5,7 @@ vim.g.netrw_list_hide = "^\\.DS_Store$"
 vim.g.root_spec = { "lsp", { ".git" }, "cwd" }
 
 vim.opt.rtp:prepend("~/src/personal/substratum.vim")
-vim.opt.rtp:prepend("~/src/personal/granite.nvim")
+vim.opt.rtp:prepend("~/src/personal/granite.vim")
 
 vim.opt.autocomplete = true
 vim.opt.clipboard = "unnamedplus"
