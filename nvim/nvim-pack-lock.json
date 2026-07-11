@@ -5,6 +5,11 @@
       "src": "https://github.com/f-person/auto-dark-mode.nvim",
       "version": "'54058b4fe414bd64bd2904a6f8a63f1f14e3d8df'"
     },
+    "blink.cmp": {
+      "rev": "78336bc89ee5365633bcf754d93df01678b5c08f",
+      "src": "https://github.com/saghen/blink.cmp",
+      "version": "'v1.10.2'"
+    },
     "conform.nvim": {
       "rev": "dca1a190aa85f9065979ef35802fb77131911106",
       "src": "https://github.com/stevearc/conform.nvim"

@@ -7,7 +7,7 @@ vim.g.root_spec = { "lsp", { ".git" }, "cwd" }
 vim.opt.rtp:prepend("~/src/personal/substratum.vim")
 vim.opt.rtp:prepend("~/src/personal/granite.vim")
 
-vim.opt.autocomplete = true
+vim.opt.autocomplete = false
 vim.opt.clipboard = "unnamedplus"
 vim.opt.colorcolumn = "80"
 vim.opt.completeopt = "menu,menuone,noinsert,popup"

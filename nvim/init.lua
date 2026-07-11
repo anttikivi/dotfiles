@@ -20,6 +20,10 @@ vim.pack.add({
     "https://github.com/mfussenegger/nvim-lint",
     "https://github.com/neovim/nvim-lspconfig",
     "https://github.com/nvim-treesitter/nvim-treesitter",
+    {
+        src = "https://github.com/saghen/blink.cmp",
+        version = "v1.10.2",
+    },
     "https://github.com/stevearc/conform.nvim",
     "https://github.com/tpope/vim-vinegar",
 })
@@ -44,6 +48,7 @@ require("anttikivi.root").init()
 require("anttikivi.mason")
 require("anttikivi.linter")
 require("anttikivi.treesitter")
+require("anttikivi.cmp")
 require("anttikivi.nav")
 require("anttikivi.cmds")
 require("anttikivi.colors")
