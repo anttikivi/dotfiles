@@ -14,6 +14,7 @@ M.servers = {
     "gh_actions_ls",
     "gopls",
     "lua_ls",
+    "ruff",
     "vimls",
     "zls",
 }
