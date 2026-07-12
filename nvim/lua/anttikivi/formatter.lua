@@ -89,6 +89,41 @@ local function format(opts)
     end
 end
 
+---@param buf number
+local function organize_zig_imports(buf)
+    local method = vim.lsp.protocol.Methods.textDocument_codeAction
+    local params = {
+        textDocument = vim.lsp.util.make_text_document_params(buf),
+        range = {
+            start = { line = 0, character = 0 },
+            ["end"] = { line = 0, character = 0 },
+        },
+        context = {
+            diagnostics = {},
+            only = { "source.organizeImports" },
+            triggerKind = vim.lsp.protocol.CodeActionTriggerKind.Invoked,
+        },
+    }
+
+    for _, client in ipairs(vim.lsp.get_clients({ bufnr = buf, method = method })) do
+        local response, err = client:request_sync(method, params, M.formatting_timeout_ms, buf)
+        if not response then
+            vim.notify(string.format("[formatter] organizing Zig imports failed: %s", err), vim.log.levels.ERROR)
+        elseif response.err then
+            vim.notify(
+                string.format("[formatter] organizing Zig imports failed: %s", response.err.message),
+                vim.log.levels.ERROR
+            )
+        else
+            for _, action in ipairs(response.result or {}) do
+                if action.edit then
+                    vim.lsp.util.apply_workspace_edit(action.edit, client.offset_encoding)
+                end
+            end
+        end
+    end
+end
+
 ---Register a "top-level" formatter. These are things like the language server
 ---client and conform.nvim.
 ---@param formatter anttikivi.Formatter
@@ -178,9 +213,17 @@ function M.init()
         end,
     })
 
-    vim.api.nvim_create_augroup("formatting", { clear = true })
+    local formatting_group = vim.api.nvim_create_augroup("formatting", { clear = true })
     vim.api.nvim_create_autocmd("BufWritePre", {
-        group = "formatting",
+        group = formatting_group,
+        pattern = { "*.zig", "*.zon" },
+        callback = function(event)
+            organize_zig_imports(event.buf)
+        end,
+    })
+
+    vim.api.nvim_create_autocmd("BufWritePre", {
+        group = formatting_group,
         callback = function(event)
             format({ buf = event.buf })
         end,
