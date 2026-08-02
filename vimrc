@@ -50,6 +50,7 @@ set signcolumn=yes
 set smartcase
 set t_vb=
 set tabstop=4
+set tags=./tags;,tags
 set title
 set visualbell
 set wildignore+=.DS_Store
