@@ -2,6 +2,7 @@
 .SUFFIXES:
 
 JJ_VERSION = 0.40.0
+VIM_CLASSIC_VERSION = 8.3.0
 NVIM_VERSION = 0.12.2
 ZIG_VERSION = 0.16.0
 ZIG_ARCHIVE = zig-aarch64-macos-$(ZIG_VERSION).tar.xz
@@ -15,6 +16,17 @@ fmt: FORCE
 lint: FORCE
 	stylua --check --config-path nvim/stylua.toml nvim/
 	selene --config nvim/selene.toml .
+
+install-vim: FORCE
+	if [ ! -d "${HOME}/build" ]; then mkdir "${HOME}/build"; fi
+	if [ -d "${HOME}/build/vim" ]; then rm -rf "${HOME}/build/vim"; fi
+	git clone https://git.sr.ht/~sircmpwn/vim-classic "${HOME}/build/vim"
+	git -C "${HOME}/build/vim" checkout "tags/v$(VIM_CLASSIC_VERSION)"
+	cd "${HOME}/build/vim/src" && ./configure --prefix="${HOME}/.local/opt/vim"
+	cd "${HOME}/build/vim/src" && make
+	cd "${HOME}/build/vim/src" && make test
+	rm -rf "${HOME}/.local/opt/vim"
+	cd "${HOME}/build/vim/src" && make install
 
 # TODO: Temporary task for installing the latest development version.
 install-nvim: FORCE
