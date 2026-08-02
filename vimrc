@@ -3,6 +3,14 @@ set nocompatible
 let mapleader = "\<space>"
 let maplocalleader = "\<space>"
 
+if !isdirectory(expand('~/.vim/swap'))
+  call mkdir(expand('~/.vim/swap'), 'p')
+endif
+
+if !isdirectory(expand('~/.vim/backups'))
+  call mkdir(expand('~/.vim/backups'), 'p')
+endif
+
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
   silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -30,8 +38,10 @@ filetype plugin indent on
 syntax enable
 
 set backspace=indent,eol,start
+set backupdir=~/.vim/backups//
 set clipboard=unnamedplus,unnamed
 set colorcolumn=80
+set directory=~/.vim/swap//
 set noerrorbells
 set expandtab
 set hidden
@@ -57,6 +67,12 @@ set wildignore+=.DS_Store
 
 if has('termguicolors')
   set termguicolors
+endif
+
+if has('persistent_undo')
+  call mkdir(expand('~/.vim/undodir'), 'p')
+  set undodir=~/.vim/undodir//
+  set undofile
 endif
 
 nnoremap <space> <nop>
