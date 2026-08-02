@@ -20,6 +20,8 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-vinegar'
 
+Plug 'https://codeberg.org/ziglang/zig.vim'
+
 Plug '~/src/personal/granite.vim'
 Plug '~/src/personal/substratum.vim'
 call plug#end()
