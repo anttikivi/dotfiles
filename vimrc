@@ -41,6 +41,7 @@ set backspace=indent,eol,start
 set backupdir=~/.vim/backups//
 set clipboard=unnamedplus,unnamed
 set colorcolumn=80
+set completeopt=menu,menuone,noselect
 set directory=~/.vim/swap//
 set noerrorbells
 set expandtab
