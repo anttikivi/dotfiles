@@ -96,6 +96,14 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
+" Ctags.
+nnoremap <leader>cg :call job_start(['ctags', '-R', '.'])<CR>
+nnoremap <leader>tv :vertical stag <C-R><C-W><CR>
+nnoremap <leader>ts :stag <C-R><C-W><CR>
+nnoremap gd <C-]>
+nnoremap gD g<C-]>
+nnoremap <leader>tf :tag /
+
 " Fzf.
 nnoremap <leader>ff :Files<CR>
 nnoremap <leader>fg :Rg<CR>
