@@ -96,10 +96,10 @@ nnoremap <leader>d "_d
 vnoremap <leader>d "_d
 
 " Move between windows.
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
+nnoremap <C-j> <C-W>j
+nnoremap <C-k> <C-W>k
+nnoremap <C-h> <C-W>h
+nnoremap <C-l> <C-W>l
 
 " Ctags.
 nnoremap <leader>cg :call job_start(['ctags', '-R', '.'])<CR>
