@@ -48,7 +48,6 @@ set shiftwidth=4
 let &showbreak = '> '
 set signcolumn=yes
 set smartcase
-set smartindent
 set t_vb=
 set tabstop=4
 set title
