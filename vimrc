@@ -30,6 +30,7 @@ syntax enable
 set backspace=indent,eol,start
 set clipboard=unnamedplus,unnamed
 set colorcolumn=80
+set noerrorbells
 set expandtab
 set hidden
 set hlsearch
@@ -46,8 +47,10 @@ let &showbreak = '> '
 set signcolumn=yes
 set smartcase
 set smartindent
+set t_vb=
 set tabstop=4
 set title
+set visualbell
 set wildignore+=.DS_Store
 
 if has('termguicolors')
