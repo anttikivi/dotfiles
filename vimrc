@@ -28,6 +28,7 @@ filetype plugin indent on
 syntax enable
 
 set backspace=indent,eol,start
+set clipboard=unnamedplus,unnamed
 set colorcolumn=80
 set expandtab
 set hidden
