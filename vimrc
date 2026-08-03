@@ -48,6 +48,7 @@ set expandtab
 set hidden
 set hlsearch
 set ignorecase
+set nojoinspaces
 set incsearch
 set laststatus=2
 set linebreak
