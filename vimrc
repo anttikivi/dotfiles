@@ -52,6 +52,7 @@ set nojoinspaces
 set incsearch
 set laststatus=2
 set linebreak
+set list
 set modeline
 set number
 set relativenumber
