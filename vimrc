@@ -3,6 +3,7 @@ set nocompatible
 let mapleader = "\<space>"
 let maplocalleader = "\<space>"
 
+let g:terraform_fmt_on_save = 1
 let g:zig_fmt_autosave = 1
 
 if !isdirectory(expand('~/.vim/swap'))
@@ -22,6 +23,7 @@ endif
 call plug#begin('~/.vim/plugged')
 Plug 'airblade/vim-gitgutter'
 Plug 'editorconfig/editorconfig-vim'
+Plug 'hashivim/vim-terraform'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-commentary'
