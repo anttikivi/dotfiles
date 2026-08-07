@@ -3,6 +3,8 @@ set nocompatible
 let mapleader = "\<space>"
 let maplocalleader = "\<space>"
 
+let g:zig_fmt_autosave = 1
+
 if !isdirectory(expand('~/.vim/swap'))
   call mkdir(expand('~/.vim/swap'), 'p')
 endif
