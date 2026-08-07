@@ -29,6 +29,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-vinegar'
+Plug 'vim-polyglot/vim-polyglot'
 
 Plug 'https://codeberg.org/ziglang/zig.vim'
 
