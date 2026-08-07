@@ -1,0 +1,54 @@
+diff --git a/runtime/autoload/netrw.vim b/runtime/autoload/netrw.vim
+index 1dcc5db46..09206d5e8 100644
+--- a/runtime/autoload/netrw.vim
++++ b/runtime/autoload/netrw.vim
+@@ -9560,7 +9560,13 @@ fun! s:NetrwWideListing()
+    " fpl: filenames per line
+    " fpc: filenames per column
+    setl ma noro
+-   let keepa= @a
++   let keepregs= {}
++   " Preserve registers changed by the block operations used to build the listing.
++   let keepregs.a= getreginfo('a')
++   for i in range(0, 9)
++    let keepregs[i]= getreginfo(i)
++   endfor
++   let keepregs.unnamed= getreginfo('')
+ "   call Decho("setl ma noro",'~'.expand("<slnum>"))
+    let b:netrw_cpf= 0
+    if line("$") >= w:netrw_bannercnt
+@@ -9568,7 +9574,7 @@ fun! s:NetrwWideListing()
+     exe 'sil NetrwKeepj '.w:netrw_bannercnt.',$g/^./if virtcol("$") > b:netrw_cpf|let b:netrw_cpf= virtcol("$")|endif'
+     NetrwKeepj call histdel("/",-1)
+    else
+-    let @a= keepa
++    call s:NetrwRestoreRegisters(keepregs)
+ "    call Dret("NetrwWideListing")
+     return
+    endif
+@@ -9620,6 +9626,6 @@ fun! s:NetrwWideListing()
+ "   call Decho("NetrwWideListing) setl noma nomod ro",'~'.expand("<slnum>"))
+    exe "setl ".g:netrw_bufsettings
+-    let @a= keepa
++   call s:NetrwRestoreRegisters(keepregs)
+ "   call Decho("ro=".&l:ro." ma=".&l:ma." mod=".&l:mod." wrap=".&l:wrap." (filename<".expand("%")."> win#".winnr()." ft<".&ft.">)",'~'.expand("<slnum>"))
+ "   call Dret("NetrwWideListing")
+    return
+@@ -11636,6 +11642,17 @@ fun! s:RestoreCursorline()
+ "  call Dret("s:RestoreCursorline : restored cul=".&l:cursorline." cuc=".&l:cursorcolumn)
+ endfun
+ 
++" ---------------------------------------------------------------------
++" s:NetrwRestoreRegisters: restores registers saved by NetrwWideListing {{{2
++fun! s:NetrwRestoreRegisters(registers)
++  for i in range(0, 9)
++   call setreg(i, a:registers[i])
++  endfor
++  call setreg('a', a:registers.a)
++  " Restore the unnamed register last so that it points to the original register.
++  call setreg('', a:registers.unnamed)
++endfun
++
+ " ---------------------------------------------------------------------
+ " s:NetrwDelete: Deletes a file. {{{2
+ "           Uses Steve Hall's idea to insure that Windows paths stay

@@ -22,6 +22,7 @@ install-vim: FORCE
 	if [ -d "${HOME}/build/vim" ]; then rm -rf "${HOME}/build/vim"; fi
 	git clone https://git.sr.ht/~sircmpwn/vim-classic "${HOME}/build/vim"
 	git -C "${HOME}/build/vim" checkout "tags/v$(VIM_CLASSIC_VERSION)"
+	git -C "${HOME}/build/vim" apply "$$(pwd)/vim/patches/netrw-preserve-registers.patch"
 	cd "${HOME}/build/vim/src" && ./configure --prefix="${HOME}/.local/opt/vim"
 	cd "${HOME}/build/vim/src" && make
 	cd "${HOME}/build/vim/src" && make test
