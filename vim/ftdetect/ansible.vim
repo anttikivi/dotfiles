@@ -1,0 +1,10 @@
+au BufRead,BufNewFile */defaults/*.yml,*/defaults/*.yaml set filetype=yaml.ansible
+au BufRead,BufNewFile */host_vars/*.yml,*/host_vars/*.yaml set filetype=yaml.ansible
+au BufRead,BufNewFile */group_vars/*.yml,*/group_vars/*.yaml set filetype=yaml.ansible
+au BufRead,BufNewFile */group_vars/*/*.yml,*/group_vars/*/*.yaml set filetype=yaml.ansible
+au BufRead,BufNewFile */playbook*.yml,*/playbook*.yaml set filetype=yaml.ansible
+au BufRead,BufNewFile */playbooks/*.yml,*/playbooks/*.yaml set filetype=yaml.ansible
+au BufRead,BufNewFile */roles/*/tasks/*.yml,*/roles/*/tasks/*.yaml set filetype=yaml.ansible
+au BufRead,BufNewFile */roles/*/handlers/*.yml,*/roles/*/handlers/*.yaml set filetype=yaml.ansible
+au BufRead,BufNewFile */tasks/*.yml,*/tasks/*.yaml set filetype=yaml.ansible
+au BufRead,BufNewFile */molecule/*.yml,*/molecule/*.yaml set filetype=yaml.ansible
