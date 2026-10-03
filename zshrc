@@ -29,11 +29,11 @@ zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:][:lower:]}' 'r:|=*'
 # upper case with upper case:
 # zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'r:|=*' 'l:|=* r:|=*'
 
-export MANPAGER="nvim +Man!"
+# export MANPAGER="nvim +Man!"
 export HISTSIZE=32768
 export SAVEHIST=$HISTSIZE
 
-eval "$(zoxide init zsh)"
+. "${HOME}/.local/opt/z/z.sh"
 
 source <(COMPLETE=zsh jj)
 

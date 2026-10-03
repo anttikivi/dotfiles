@@ -15,7 +15,17 @@ path=(
     $path
 )
 
-optionals=("go" "nvim" "vim" "zlint" "zls")
+optionals=(
+    "composer" 
+    "go" 
+    "nvim" 
+    "superhtml" 
+    "tinycc" 
+    "vim" 
+    "ziggy" 
+    "zine" 
+    "zls"
+)
 for opt in "${optionals[@]}"; do
     path=("${HOME}/.local/opt/${opt}/bin" $path)
 done

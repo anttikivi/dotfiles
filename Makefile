@@ -1,12 +1,15 @@
 .POSIX:
 .SUFFIXES:
 
-JJ_VERSION = 0.40.0
 VIM_CLASSIC_VERSION = 8.3.0
 NVIM_VERSION = 0.12.2
+SUPERHTML_VERSION = 0.7.0
 ZIG_VERSION = 0.16.0
 ZIG_ARCHIVE = zig-aarch64-macos-$(ZIG_VERSION).tar.xz
 ZIG_PUBLIC_KEY = RWSGOq2NVecA2UPNdBUZykf1CCb147pkmdtYxgb3Ti+JO/wCYvhbAb/U
+Z_TAG = 1.12
+ZIGGY_VERSION = 0.2.0
+ZINE_VERSION = 0.13.0
 
 all: lint
 
@@ -39,10 +42,14 @@ install-nvim: FORCE
 	cd "${HOME}/build/neovim" && make CMAKE_BUILD_TYPE=Release CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=${HOME}/.local/opt/nvim"
 	cd "${HOME}/build/neovim" && make install
 
-# TODO: Temporary task for installing jj.
-install-jj: FORCE
-	if [ -n "$$(jj --version)" ] && [ "$$(jj --version | xargs -n1 echo | tail -1)" != "$(JJ_VERSION)" ]; then cargo uninstall jj jj-cli; fi
-	cargo install --version "$(JJ_VERSION)" --locked --bin jj jj-cli
+install-z: FORCE
+	if [ ! -d "${HOME}/build" ]; then mkdir "${HOME}/build"; fi
+	if [ -d "${HOME}/build/z" ]; then rm -rf "${HOME}/build/z"; fi
+	git clone git@github.com:rupa/z.git "${HOME}/build/z"
+	git -C "${HOME}/build/z" checkout "tags/v$(Z_TAG)"
+	rm -rf "${HOME}/.local/opt/z"
+	mv "${HOME}/build/z" "${HOME}/.local/opt/z"
+	rm -rf "${HOME}/.local/opt/z/.git"
 
 # TODO: Temporary task for installing the latest development version.
 install-zig: FORCE
@@ -56,6 +63,33 @@ install-zig: FORCE
 	mkdir -p "${HOME}/.local/opt"
 	tar -C "${HOME}/build" -xf "${HOME}/build/zig/$(ZIG_ARCHIVE)"
 	mv "${HOME}/build/zig-aarch64-macos-$(ZIG_VERSION)" "${HOME}/.local/opt/zig"
+
+# Installs the related tools, too!
+install-zine: FORCE
+	if [ ! -d "${HOME}/build" ]; then mkdir "${HOME}/build"; fi
+	if [ -d "${HOME}/build/superhtml" ]; then rm -rf "${HOME}/build/superhtml"; fi
+	mkdir -p "${HOME}/build/superhtml"
+	curl -fsSLo "${HOME}/build/superhtml/superhtml.zip" "https://github.com/kristoff-it/superhtml/releases/download/v$(SUPERHTML_VERSION)/aarch64-macos.zip"
+	rm -rf "${HOME}/.local/opt/superhtml"
+	mkdir -p "${HOME}/.local/opt/superhtml/bin"
+	unzip "${HOME}/build/superhtml/superhtml.zip" -d "${HOME}/.local/opt/superhtml/bin"
+	rm -rf "${HOME}/build/superhtml"
+	if [ ! -d "${HOME}/build" ]; then mkdir "${HOME}/build"; fi
+	if [ -d "${HOME}/build/ziggy" ]; then rm -rf "${HOME}/build/ziggy"; fi
+	mkdir -p "${HOME}/build/ziggy"
+	curl -fsSLo "${HOME}/build/ziggy/ziggy.zip" "https://github.com/kristoff-it/ziggy/releases/download/v$(ZIGGY_VERSION)/aarch64-macos.zip"
+	rm -rf "${HOME}/.local/opt/ziggy"
+	mkdir -p "${HOME}/.local/opt/ziggy/bin"
+	unzip "${HOME}/build/ziggy/ziggy.zip" -d "${HOME}/.local/opt/ziggy/bin"
+	rm -rf "${HOME}/build/ziggy"
+	if [ ! -d "${HOME}/build" ]; then mkdir "${HOME}/build"; fi
+	if [ -d "${HOME}/build/zine" ]; then rm -rf "${HOME}/build/zine"; fi
+	mkdir -p "${HOME}/build/zine"
+	curl -fsSLo "${HOME}/build/zine/zine.zip" "https://github.com/kristoff-it/zine/releases/download/v$(ZINE_VERSION)/aarch64-macos.zip"
+	rm -rf "${HOME}/.local/opt/zine"
+	mkdir -p "${HOME}/.local/opt/zine/bin"
+	unzip "${HOME}/build/zine/zine.zip" -d "${HOME}/.local/opt/zine/bin"
+	rm -rf "${HOME}/build/zine"
 
 # TODO: Temporary task for installing the latest development version.
 install-zls: FORCE
