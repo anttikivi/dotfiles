@@ -35,12 +35,9 @@ Plug 'vim-polyglot/vim-polyglot'
 
 Plug 'https://codeberg.org/ziglang/zig.vim'
 
-Plug '~/src/personal/granite.vim'
+Plug '~/src/personal/granite/out/vim'
 Plug '~/src/personal/substratum.vim'
 call plug#end()
-
-filetype plugin indent on
-syntax enable
 
 set backspace=indent,eol,start
 set backupdir=~/.vim/backups//
@@ -73,8 +70,22 @@ set title
 set visualbell
 set wildignore+=.DS_Store
 
-if has('termguicolors')
-  set termguicolors
+if exists('+termguicolors')
+  let s:is_screen = !empty($STY) || (&term =~# '^screen' && empty($TMUX))
+
+  if s:is_screen
+    set notermguicolors
+  elseif $COLORTERM =~? '^\%(truecolor\|24bit\)$' || str2nr(&t_Co) >= 16777216
+    set termguicolors
+  endif
+
+  unlet s:is_screen
+endif
+
+filetype plugin indent on
+
+if has('syntax')
+  syntax enable
 endif
 
 if has('persistent_undo')
@@ -143,4 +154,7 @@ nnoremap <leader>fa :Args<CR>
 
 autocmd FileType fzf tnoremap <buffer> <esc> <C-c>
 
-colorscheme granite
+let g:granite_transparent = 1
+
+set background=dark
+colorscheme granite-dark
