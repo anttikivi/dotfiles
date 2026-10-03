@@ -2,6 +2,34 @@ diff --git a/runtime/autoload/netrw.vim b/runtime/autoload/netrw.vim
 index 1dcc5db46..09206d5e8 100644
 --- a/runtime/autoload/netrw.vim
 +++ b/runtime/autoload/netrw.vim
+@@ -3972,0 +3973,4 @@ fun! s:NetrwBrowse(islocal,dirname)
++  let keepregs= {'a': getreginfo('a'), 'unnamed': getreginfo('')}
++  for i in range(0, 9)
++   let keepregs[i]= getreginfo(i)
++  endfor
+@@ -3975 +3980,2 @@ fun! s:NetrwBrowse(islocal,dirname)
+-  call s:NetrwOptionsRestore("w:")
++  call s:NetrwOptionsRestore("w:")
++  call s:NetrwRestoreRegisters(keepregs)
+@@ -6135,7 +6135,7 @@ fun! s:NetrwListHide()
+ "   call Decho("..prune the list by hiding any files which ",((g:netrw_hide == 1)? "" : "don't")." match hide<".hide.">")
+    if g:netrw_hide == 1
+ "    call Decho("..hiding<".hide.">",'~'.expand("<slnum>"))
+-    exe 'sil! NetrwKeepj '.w:netrw_bannercnt.',$g'.sep.hide.sep.'d'
++    exe 'sil! NetrwKeepj '.w:netrw_bannercnt.',$g'.sep.hide.sep.'d _'
+    elseif g:netrw_hide == 2
+ "    call Decho("..showing<".hide.">",'~'.expand("<slnum>"))
+     exe 'sil! NetrwKeepj '.w:netrw_bannercnt.',$g'.sep.hide.sep.'s@^@ /-KEEP-/ @'
+@@ -6146,5 +6146,5 @@ fun! s:NetrwListHide()
+   if g:netrw_hide == 2
+-   exe 'sil! NetrwKeepj '.w:netrw_bannercnt.',$v@^ /-KEEP-/ @d'
++   exe 'sil! NetrwKeepj '.w:netrw_bannercnt.',$v@^ /-KEEP-/ @d _'
+ "   call Decho("..v KEEP: ".string(getline(w:netrw_bannercnt,'$')),'~'.expand("<slnum>"))
+    exe 'sil! NetrwKeepj '.w:netrw_bannercnt.',$s@^\%( /-KEEP-/ \)\+@@e'
+ "   call Decho("..g KEEP: ".string(getline(w:netrw_bannercnt,'$')),'~'.expand("<slnum>"))
+@@ -6155 +6155 @@ fun! s:NetrwListHide()
+-  exe 'sil! NetrwKeepj 1,$g@^\s*$@d'
++  exe 'sil! NetrwKeepj 1,$g@^\s*$@d _'
 @@ -9560,7 +9560,13 @@ fun! s:NetrwWideListing()
     " fpl: filenames per line
     " fpc: filenames per column
@@ -42,11 +70,11 @@ index 1dcc5db46..09206d5e8 100644
 +" s:NetrwRestoreRegisters: restores registers saved by NetrwWideListing {{{2
 +fun! s:NetrwRestoreRegisters(registers)
 +  for i in range(0, 9)
-+   call setreg(i, a:registers[i])
++   call setreg(i, empty(a:registers[i]) ? [] : a:registers[i])
 +  endfor
-+  call setreg('a', a:registers.a)
++  call setreg('a', empty(a:registers.a) ? [] : a:registers.a)
 +  " Restore the unnamed register last so that it points to the original register.
-+  call setreg('', a:registers.unnamed)
++  call setreg('', empty(a:registers.unnamed) ? [] : a:registers.unnamed)
 +endfun
 +
  " ---------------------------------------------------------------------
