@@ -1,0 +1,6 @@
+startup_message off
+term screen-256color
+defbce off
+defscrollback 16384
+hardstatus alwayslastline
+hardstatus string '%{= kG} %-Lw%{= kW}%n %t%{-}%+Lw %= %Y-%m-%d %c '
