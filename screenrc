@@ -1,5 +1,7 @@
 startup_message off
 term screen-256color
+truecolor on
+setenv COLORTERM truecolor
 defbce off
 defscrollback 16384
 hardstatus alwayslastline

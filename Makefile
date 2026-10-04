@@ -20,6 +20,9 @@ lint: FORCE
 	stylua --check --config-path nvim/stylua.toml nvim/
 	selene --config nvim/selene.toml .
 
+install-screenrc: FORCE
+	ln -sf "$$(pwd)/screenrc" "${HOME}/.screenrc"
+
 install-vim: FORCE
 	if [ ! -d "${HOME}/build" ]; then mkdir "${HOME}/build"; fi
 	if [ -d "${HOME}/build/vim" ]; then rm -rf "${HOME}/build/vim"; fi

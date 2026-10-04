@@ -71,15 +71,12 @@ set visualbell
 set wildignore+=.DS_Store
 
 if exists('+termguicolors')
-  let s:is_screen = !empty($STY) || (&term =~# '^screen' && empty($TMUX))
+  let &termguicolors = $COLORTERM =~? '^\%(truecolor\|24bit\)$'
 
-  if s:is_screen
-    set notermguicolors
-  elseif $COLORTERM =~? '^\%(truecolor\|24bit\)$' || str2nr(&t_Co) >= 16777216
-    set termguicolors
+  if &termguicolors && empty(&t_8f)
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
   endif
-
-  unlet s:is_screen
 endif
 
 filetype plugin indent on
@@ -157,4 +154,10 @@ autocmd FileType fzf tnoremap <buffer> <esc> <C-c>
 let g:granite_transparent = 1
 
 set background=dark
-colorscheme granite-dark
+" Current granite revision requires at least 256 colors to look sensible.
+if has('gui_running') || (exists('+termguicolors') && &termguicolors)
+      \ || str2nr(&t_Co) >= 256
+  colorscheme granite-dark
+else
+  colorscheme default
+endif
