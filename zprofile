@@ -6,6 +6,8 @@ fi
 
 path=(
     "${XDG_BIN_HOME}"
+    "${HOME}/pkg/bin"
+    "${HOME}/pkg/sbin"
     "${HOME}/.cargo/bin"
     "${GOPATH}/bin"
     "${UV_INSTALL_DIR}"

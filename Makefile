@@ -2,7 +2,7 @@
 .SUFFIXES:
 
 VIM_CLASSIC_VERSION = 8.3.0
-NVIM_VERSION = 0.12.2
+NVIM_VERSION = 0.12.6
 SUPERHTML_VERSION = 0.7.0
 ZIG_VERSION = 0.16.0
 ZIG_ARCHIVE = zig-aarch64-macos-$(ZIG_VERSION).tar.xz
@@ -44,6 +44,9 @@ install-nvim: FORCE
 	rm -rf "${HOME}/.local/opt/nvim"
 	cd "${HOME}/build/neovim" && make CMAKE_BUILD_TYPE=Release CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=${HOME}/.local/opt/nvim"
 	cd "${HOME}/build/neovim" && make install
+
+install-nvim-config: FORCE
+	ln -sf "$$(pwd)/nvim" "${HOME}/.config/"
 
 install-z: FORCE
 	if [ ! -d "${HOME}/build" ]; then mkdir "${HOME}/build"; fi

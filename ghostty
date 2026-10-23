@@ -1,4 +1,4 @@
-theme = /Users/anttikivi/src/personal/granite/out/ghostty/granite-darK
+theme = light:Catppuccin Latte,dark:Catppuccin Mocha
 font-family = "Berkeley Mono"
 font-feature = -calt
 adjust-cell-height = 20%
