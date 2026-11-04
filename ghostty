@@ -31,4 +31,4 @@ shell-integration-features = no-cursor
 
 bell-features = system,attention,title
 
-macos-titlebar-style = tabs
+macos-titlebar-style = native

@@ -7,8 +7,8 @@ export XDG_STATE_HOME="${HOME}/.local/state"
 export CC="clang"
 export CXX="clang++"
 
-export EDITOR="vim"
-export VISUAL="vim"
+export EDITOR="nvim"
+export VISUAL="nvim"
 
 export GOPATH="${HOME}/go"
 
