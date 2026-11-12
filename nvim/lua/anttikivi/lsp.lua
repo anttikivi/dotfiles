@@ -9,6 +9,7 @@ local M = {}
 M.servers = {
     "ansiblels",
     "astro",
+    "basedpyright",
     "clangd",
     "cmake",
     "gh_actions_ls",
