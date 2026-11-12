@@ -156,6 +156,7 @@ function M.init()
             jsonc = { "oxfmt", "prettier" },
             lua = { "stylua" },
             markdown = { "oxfmt", "prettier" },
+            meson = { "meson" },
             opentofu = { "tofu_fmt" },
             ["opentofu-vars"] = { "tofu_fmt" },
             sh = { "shfmt" },

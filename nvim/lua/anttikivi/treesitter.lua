@@ -17,6 +17,7 @@ local parsers = {
     "make",
     "markdown",
     "markdown_inline",
+    "meson",
     "powershell",
     "python",
     "terraform",

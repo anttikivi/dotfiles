@@ -14,6 +14,7 @@ M.servers = {
     "gh_actions_ls",
     "gopls",
     "lua_ls",
+    "mesonlsp",
     "ruff",
     "vimls",
     "zls",
@@ -44,6 +45,7 @@ end
 
 function M.init()
     vim.lsp.enable(M.servers)
+    -- vim.lsp.enable("muon")
 
     M.on_attach(function(_, buf)
         -- "gra": vim.lsp.buf.code_action()
