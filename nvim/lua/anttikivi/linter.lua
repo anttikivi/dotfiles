@@ -46,8 +46,8 @@ for name, linter in pairs(linters) do
 end
 
 lint.linters_by_ft = {
-    c = { "clangtidy" },
-    cpp = { "clangtidy" },
+    -- c = { "clangtidy" },
+    -- cpp = { "clangtidy" },
     go = { "golangcilint" },
     javascript = { "oxlint" },
     lua = { "selene" },
