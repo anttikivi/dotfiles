@@ -20,6 +20,7 @@ local parsers = {
     "meson",
     "powershell",
     "python",
+    "rust",
     "terraform",
     "tsx",
     "typescript",

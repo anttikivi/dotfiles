@@ -17,6 +17,7 @@ M.servers = {
     "lua_ls",
     "mesonlsp",
     "ruff",
+    "rust_analyzer",
     "vimls",
     "zls",
 }
