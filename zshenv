@@ -17,7 +17,6 @@ export UV_INSTALL_DIR="${HOME}/.local/opt/uv"
 export GCLOUD_SDK_DIR="${HOME}/.local/opt/google-cloud-sdk"
 
 # "Internal" options
-export ENABLE_TMUX=false
 export PROMPT_ENABLE_GIT_DIRTY=true
 
 # vi: ft=zsh

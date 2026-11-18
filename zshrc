@@ -35,8 +35,6 @@ export SAVEHIST=$HISTSIZE
 
 . "${HOME}/.local/opt/z/z.sh"
 
-source <(COMPLETE=zsh jj)
-
 eval "$(uv generate-shell-completion zsh)"
 eval "$(uvx --generate-shell-completion zsh)"
 
